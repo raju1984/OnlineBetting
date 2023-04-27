@@ -1,0 +1,86 @@
+﻿@model QuickBetCore.Areas.Agent.Data.RedeemLotteryAmountModel
+@using QuickBetCore.Models;
+
+@{
+    ViewBag.Title = "WiningBetRedeem";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+<style>
+    fieldset {
+        border: 1px solid;
+        padding:10px;
+    }
+</style>
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-warning" href="@Url.Action("Index","UserDashboard",new {area="user" })"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
+                    <h5 class="page-title">Withdraw Amount</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    @if (Model != null && Model.ErrorMessage != null)
+                    {
+                        if (Model.ErrorMessage.ErrorCode == (int)ApiResponseCode.ok)
+                        {
+
+                            using (Html.BeginForm("WiningBetRedeem", "UserDashboard", FormMethod.Post, new { @class = "log-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(m => m.winingId)
+                                <div class="form-group row">
+                                    <div class="col-md-12" style="padding-left: 0;">
+                                        <fieldset>
+                                            <legend>Agent Detail:</legend>
+                                            <label class="col-form-label col-md-12">Name</label>
+                                            @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control", type = "text", @readonly = "true", placeholder = "Enter amount" })
+                                            <label class="col-form-label col-md-12">Agent Number</label>
+                                            @Html.TextBoxFor(m => m.AgentNumber, new { @class = "form-control", type = "text", @readonly = "true", placeholder = "Enter amount" })
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0;">
+                                        <fieldset>
+                                            <legend>
+                                                Amount
+                                            </legend>
+                                            @Html.ValidationMessageFor(m => m.Amount, "", new { @class = "error" })
+                                            @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", type = "number", placeholder = "Enter amount" })
+                                        </fieldset>
+                                        <br />
+                                        
+                                    </div>
+                                    <button type="submit" class="btn-chat" style="display: inline;width: auto;">Submit Request</button>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+
+                            <div class="alert alert-danger" style="margin-top:5%;margin-bottom:10%">
+                                <i class="fa fa-frown-o text-warning fa-2x" aria-hidden="true"></i>
+                                <span class="text-success">@Model.ErrorMessage.ErrorMessage</span> <br />
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" style="margin-top:5%;margin-bottom:10%">
+                            <i class="fa fa-frown-o text-danger fa-2x" aria-hidden="true"></i>
+                            <span class="text-danger">Sorry, your payment failed.</span>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

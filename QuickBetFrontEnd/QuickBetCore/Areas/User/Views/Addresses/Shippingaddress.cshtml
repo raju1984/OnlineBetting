@@ -1,0 +1,183 @@
+﻿@model QuickBetCore.Models.BillingShippingAddressViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "Shippingaddress";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-12">
+            <div class="d-flex align-items-center">
+                <h5 class="page-title">Shipping Address</h5>
+                <ul class="breadcrumb ml-2">
+                    <li class="breadcrumb-item">
+                        <a href="#"><i class="fa fa-map-marker"></i></a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-xl-12 d-flex flex-wrap">
+        <div class="card">
+            <div class="card-body">
+                @using (Html.BeginForm("PostShippingaddress", "Addresses", FormMethod.Post, new { @class = "log-form", area = "user", enctype = "multipart/form-data" }))
+                {
+                    <input type="hidden" value="@Context.Request.Query["AddreesId"]" name="Id" id="Id" />
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">Full name * </label>
+                        <div class="col-md-10">
+                            <input type="text" id="fullname" value="@Model.fullname" required name="fullname" class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">Country / Region *</label>
+                        <div class="col-md-10">
+                            <select class="form-control" onchange="OnCountryChange()" required id="CountryCode" name="CountryCode">
+                                @if (Model != null && Model.Countrys != null && Model.Countrys.Count() > 0)
+                                {
+                                    foreach (var item in Model.Countrys)
+                                    {
+                                        if (!string.IsNullOrEmpty(Model.CountryCode))
+                                        {
+                                            if (item.Code == Model.CountryCode)
+                                            {
+                                                <option value="@item.Code" selected>@item.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Code">@item.Name</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (item.Code == "NG")
+                                            {
+                                                <option value="@item.Code" selected>@item.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Code">@item.Name</option>
+                                            }
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">Street* </label>
+                        <div class="col-md-10">
+                            <input type="text" value="@Model.Street" id="Street" name="Street" required class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">StreetNO* </label>
+                        <div class="col-md-10">
+                            <input type="text" value="@Model.StreetNO" id="StreetNo" name="StreetNo" required class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">Town / City * </label>
+                        <div class="col-md-10">
+                            <input type="text" value="@Model.City" id="City" name="City" required class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">Phone * </label>
+                        <div class="col-md-10">
+                            <input type="number" value="@Model.PhoneNumber" id="PhoneNumber" name="PhoneNumber" minlength="6" required class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">Pincode * </label>
+                        <div class="col-md-10">
+                            <input type="number" value="@Model.ZipCode" id="ZipCode" name="ZipCode" minlength="4" required class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-2">Email Address * </label>
+                        <div class="col-md-10">
+                            <input type="email" value="@Model.BillingEmail" id="BillingEmail" name="BillingEmail" required class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <button type="submit" class="btn btn-primary">Save Address</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+@{
+    if (ViewData["error"] != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                alertify.alert("@ViewData["error"]");
+            })
+        </script>
+    }
+}
+@if (ViewBag.response != null)
+{
+    var response = (string)ViewBag.response;
+    <script>
+        alertify.success("@response");
+    </script>
+}
+<script>
+    $(document).ready(function () {
+        $("#Addresses").addClass("active");
+    })
+    function validate() {
+        debugger;
+        var stateId = $('#stateId').val();
+        var countryId = $('#countryId').val();
+        if (stateId == 0) {
+            alertify.alert("please select state!");
+            return false;
+        }
+        else if (countryId == 0) {
+            alertify.alert("please select country!");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function OnCountryChange() {
+        var countryId = $("#countryId").val()
+        debugger;
+        if (countryId > 0) {
+            Loader(true);
+            $.ajax({
+                type: "POST",
+                url: "/User/Addresses/GetStateByCountry",
+                data: '{countryId: "' + countryId + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    $("#stateId").empty();
+                    if (result && result.Data) {
+                        $.each(result.Data, function () {
+                            $("#stateId").append($("<option/>").val(this.Id).text(this.Name));
+                        });
+                    }
+                    Loader(false);
+                },
+                error: function (err) {
+                    Loader(false);
+                }
+            });
+        }
+    }
+</script>

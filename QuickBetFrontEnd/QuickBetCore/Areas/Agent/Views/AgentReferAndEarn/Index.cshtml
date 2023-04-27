@@ -1,0 +1,201 @@
+﻿@model QuickBetCore.Models.ReferAndEarnViewModel
+@using QuickBetCore.Models
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Agent/Views/Shared/_Layout.cshtml";
+}
+<div class="page-content">
+    <div class="page-bar">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                    <h4 style="color:seagreen">Refer a customer with your code and receive @ViewBag.ReferAndEarn.ReferPercentage % of each bet placed for @ViewBag.ReferAndEarn.ReferPeriods days, Refer now and get unlimited benifits! </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title">Refer and Earn</h6>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-12">Your Refer Code * </label>
+                            <div class="col-md-12">
+                                <input type="text" id="ReferCode" onchange="CheckReferCodeandUpdate()" class="form-control" value="@Model.ReferCode.Trim()" name="ReferCode" required placeholder="ReferCode" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-12">Email * </label>
+                            <div class="col-md-12">
+                                <input type="email" id="Email" class="form-control" name="Email" required placeholder="Enter email address" />
+                            </div>
+                        </div>
+
+                        <button type="submit" value="Submit" id="Submit" class="btn btn-primary" onclick="SendReferalCode()" style="display: inline;">Send</button>
+                        @*<button type="submit" value="Submit" id="Submit" class="btn-chat" onclick="SendLink()" style="display: inline;">Send Link</button>*@
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title">Customer list joined through Refer code</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-wrap">
+                            <div class="table-responsive">
+                                <table class="table display product-overview mb-30"
+                                       id="datatable" style="width:100%" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>UserName</th>
+                                            <th>Email Id</th>
+                                            <th>Commission</th>
+                                            <th>Registered date</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Refer != null && Model.Refer.Count > 0)
+                                        {
+                                            foreach (var item in Model.Refer)
+                                            {
+                                                <tr>
+                                                    <td>@item.ReferedUsername</td>
+                                                    <td>@item.Email</td>
+                                                    <td>@item.Commission %</td>
+                                                    <td>@item.ReferedDate</td>
+
+                                                </tr>
+                                            }
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#ReferCode").on({
+            keydown: function (e) {
+                if (e.which === 32)
+                    return false;
+            },
+            change: function () {
+                this.value = this.value.replace(/\s/g, "");
+            }
+        })
+    })
+    function CheckReferCodeandUpdate() {
+        var referCode = $("#ReferCode").val();
+        if (referCode) {
+            $.ajax({
+                beforeSend: function () {
+                    //$('#Submit').html('Please wait..');
+                    $('#Submit').attr("disabled", true);
+                    Loader(true);
+                },
+                type: "POST",
+                url: "/Agent/AgentReferAndEarn/CheckReferCodeandUpdate?ReferCode=" + referCode,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    console.log(result.Code);
+                    if (result.Code == 200 || result.Code == "200") {
+                        $('#Submit').attr("disabled", false);
+                        swal({
+                            title: "success",
+                            text: result.Msg,
+                            type: "success"
+
+                        })
+                        Loader(false);
+                    }
+                    else {
+                        swal({
+                            title: "error",
+                            text: result.Msg,
+                            type: "error"
+                        })
+                        Loader(false);
+                    }
+                }
+            });
+        }
+    }
+    function SendReferalCode() {
+        var referobj = {
+            Id: $('#Id').val(),
+            Email: $('#Email').val(),
+            ReferCode: $('#ReferCode').val(),
+        }
+        $.ajax({
+            beforeSend: function () {
+                //$('#Submit').html('Please wait..');
+                $('#Submit').attr("disabled", true);
+            },
+            type: "POST",
+            data: JSON.stringify(referobj),
+            url: "/Agent/AgentReferAndEarn/SendEmailToFriend",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                debugger;
+                console.log(result.Code);
+                if (result.Code == 200 || result.Code == "200") {
+                    swal({
+                        title: "success", text: result.Msg, type:
+                            "success"
+                    }).then(function () {
+                        location.reload();
+                    }
+                    );
+                }
+                else {
+                    swal({
+                        title: "error", text: result.Msg, type:
+                            "error"
+                    }).then(function () {
+                        location.reload();
+                    }
+                    );
+                }
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            responsive: true,
+            "aaSorting": []
+        });
+        $("#ReferAndEarn").addClass("active");
+    });
+
+</script>
+
+

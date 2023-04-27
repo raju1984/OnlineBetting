@@ -1,0 +1,52 @@
+﻿
+@model QuickBetCore.Models.UserSignUpViewModel
+@using QuickBetCore.Models;
+
+<div class="" style="padding: 20px 30px;">
+
+    @using (Html.BeginForm("UpdateReferCode", "UserDashboard", FormMethod.Post, new { @class = "log-form", area = "user", enctype = "multipart/form-data" }))
+    {
+
+        <div class="form-group">
+            <label class="form-label">Refer Code * </label>
+
+            <input type="text" required name="ReferCode" id="ReferCode" class="form-control" placeholder="Enter refer code here">
+
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button> 
+        
+        <button type="button" onclick="Close();" id="CancelRefer" class="btn btn-danger">Cancel</button>
+
+    }
+
+</div>
+<script>
+    function Close() {
+        $('#exampleModala').modal('hide');
+        $.ajax({
+            beforeSend: function () {
+                $('#CancelRefer').html('Please wait..');
+                $('#CancelRefer').attr("disabled", true);
+            },
+            type: "POST",
+            dataType: "json",
+            //data: Product,
+            url: "/user/UserDashboard/CancelReferCode",
+            Contenttype: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.Code == 200 || result.Code == "200")
+                    alertify.alert("Successfully Updated");
+                else {
+                    swal({
+                        title: "Error",
+                        text: "Something went wrong",
+                        icon: "info"
+                    });
+                }
+
+
+            }
+        });
+    }
+</script>

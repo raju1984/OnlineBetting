@@ -1,0 +1,248 @@
+﻿@model QuickBetCore.Areas.Agent.Data.AgentDahsboardViewModel
+@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    UserSession agentSession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Agent/Views/Shared/_Layout.cshtml";
+}
+<style>
+    fieldset {
+        border: 3px solid black;
+    }
+
+    legend {
+        color: black;
+    }
+
+    .ml-auto {
+        margin-left: auto
+    }
+</style>
+
+<div class="page-content" style="min-height:563px">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Dashboard</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="/">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Dashboard</li>
+            </ol>
+        </div>
+    </div>
+    <!-- start widget -->
+    <div class="state-overview">
+        <div class="row">
+            @if (Model != null && Model.isAprove == false)
+            {
+                <div class="alert alert-warning">
+                    <strong>Warning!</strong> Your account is waiting for approval. Please contact administrator.
+                </div>
+            }
+
+            @if (Model != null && Model.IsBalance == false)
+            {
+                <div class="alert alert-danger">
+                    <strong>Warning!</strong> Required minimum ₦ @ApplicationVariable.MininumBalance account balance for Agents to operate.
+                </div>
+            }
+
+            @if (ViewBag.SuperAgentRequest == true)
+            {
+                <div class="alert alert-success">
+                    Your request to become a Super Agent is under progress,Please Wait for the admin approval.
+                </div>
+            }
+            @*@if (ApplicationSession.UserSession.MyWallet >= 1000)
+                {
+                    <span style="color: red; text-align: right; font-weight: 600; margin-bottom: 10px; ">*** If promoted to Super Agent, you will no longer recieve commissions from customers***</span>
+                }*@
+
+            <div class="d-flex mb-5">
+                <a href="@Url.Action("Depositfunds","AgentFunds",new {area="Agent" })" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> Add Balance</a>
+                @if (agentSession.MyWallet >= 1000)
+                {
+                    if (ViewBag.SuperAgentRequest == false)
+                    {
+                        <a href="@Url.Action("PromotionAsSuperAgent", "Dashboard", new { area = "Agent" })" class="btn btn-info ml-auto"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Promote as super agent</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-info ml-auto"><i class="fa fa-graduation-cap" aria-hidden="true"></i>Requested to Promote as super agent</a>
+                    }
+                }
+            </div>
+
+            @if (agentSession.UserType == (int)UserType.Agent)
+            {
+                <div class="alert alert-success">
+                    For(@Model.CustomerRetention days),each account you create,pays you  @Model.AgentCommison% of every amount
+                    they play.You will also recive @Model.CashBackonPayment % of game winnings that you cashout
+                    for your customers.<br />
+                    <p class="text-danger">**50k maximum payout</p>
+                </div>
+            }
+            else
+            { <div class="alert alert-success">
+                    For(@Model.CustomerRetention days),each account you create,pays you  @Model.AgentCommison% of every amount
+                    they play.You will also recive.<br />
+                </div>
+
+            }
+            <!-- /.col -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("Index","AgentTransactionsHistory",new { area="agent"})">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Account balance</span>
+
+                        </div>
+                        <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.Balance)</span>
+                    </div>
+                </a>
+            </div>
+            <!-- /.col -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("Index","Betting",new { area="agent",tabtype="bet"})">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total BetAmount</span>
+
+                        </div>
+                        <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.TotalBetAmount)</span>
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("Index","Betting",new { area="agent"})">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total WinAmount</span>
+
+                        </div>
+                        <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.TotalWinAmount)</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("Index","Customer",new { area="agent"})">
+                    <div class="info-box bg-blue">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Customer </span>
+
+                        </div>
+                        <span class="info-box-number">@Model.NoofCustomer</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    @if (Model.UserType == (int)UserType.Agent)
+    {
+        if (agentSession.MyWallet >= 1000)
+        {
+            <div class="state-overview">
+
+                <div class="row">
+                    <fieldset>
+                        <legend>
+                            WithDraw Request by Players
+                        </legend>
+                        <button class="btn btn-info" onclick="loadPaymentRequets(true)"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+                        <div id="divcontent">
+
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@* Barcode *@
+<div class="modal fade" id="qrcode" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body qr-code-body">
+                <span class="pop-close" data-bs-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></span>
+                <div id="barcode">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Dashboard").addClass("active");
+        loadPaymentRequets(true);
+    });
+
+    function loadPaymentRequets(IsLoad) {
+        if (IsLoad) {
+            Loader(true);
+        }
+        $.ajax({
+            url: "/Agent/Dashboard/GetwinWithdrawRequets",
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divcontent').val("")
+                $('#divcontent').html(result);
+                $('#datatable').DataTable({
+                    responsive: true,
+                    "aaSorting": []
+                });
+                setTimeout(function () {
+                    loadPaymentRequets(false);
+                }, 50000);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>
+
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == 200)
+    {
+        <script>
+            swal({
+                title: "Good job!",
+                text: "@response.Msg",
+                icon: "success",
+            });
+        </script>
+    }
+    else
+    {
+        <script>
+            swal({
+                title: "error",
+                text: "@response.Msg",
+                icon: "error",
+            });
+        </script>
+    }
+}

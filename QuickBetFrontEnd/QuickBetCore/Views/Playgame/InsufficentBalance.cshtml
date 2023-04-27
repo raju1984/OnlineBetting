@@ -1,0 +1,34 @@
+﻿@model QuickBetCore.Models.ApiResponse
+@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    UserSession UserSession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+@{
+    ViewBag.Title = "InsufficentBalance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="padding: 100px;
+    text-align: center;">
+    <div class="alert alert-danger">
+        <strong><i class="fa fa-frown-o text-danger fa-2x" aria-hidden="true"></i> </strong> @Model.Msg
+        @if (Model.Code != 500)
+        {
+            if (UserSession.UserType == (int)UserType.Agent)
+            {
+                <strong><a href="@Url.Action("Index","Dashboard",new { area="Agent"})">Go to dashboard</a></strong>
+            }
+            else
+            {
+                <strong><a href="@Url.Action("Index","UserDashboard",new { area="User"})">Go to dashboard</a></strong>
+            }
+
+        }
+    </div>
+    <br />
+</div>
+
+

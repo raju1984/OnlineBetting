@@ -1,0 +1,180 @@
+﻿@model IEnumerable<QuickBetCore.Models.GameViewModel>
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">All Games</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Users</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <button onclick="SyncGame()" type="submit" class="btn btn-success" style="margin: 15px 10px; width: 300px;">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>  Sync Game From  Geniegamestudios
+                </button>
+                <div class="table-scrollable">
+                    <div id="example4_wrapper"
+                         class="dataTables_wrapper container-fluid
+                         dt-bootstrap4  no-footer
+                         ">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="dataTables_scroll">
+
+                                    <table class="table" id="datatable" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Game Id
+                                                </th>
+                                                <th>
+                                                    Game Name
+                                                </th>
+                                                <th>
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model != null && Model.Count() > 0)
+                                            {
+                                                foreach (var item in Model)
+                                                {
+                                                    //string backclr = item.status == (int)UserStatus.active ? "#ffffff" : " #dddddd";
+                                                    string backclr = item.enable ? "#ffffff" : "grey;";
+                                                    string trid = "tr" + item.Id;
+                                                    string blckId = "blck" + item.Id;
+                                                    string unblck = "unblck" + item.Id;
+                                                    <tr id="@trid" style="background-color:@backclr">
+
+                                                        <td>
+                                                            @item.gameid
+                                                        </td>
+                                                        <td @*class="patient-img sorting_1"*@ style="background-color:@backclr">
+                                                            @if (!string.IsNullOrEmpty(item.gameimg))
+                                                            {
+                                                                <img src="@item.gameimg" class="imgtable"
+                                                                     alt="" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="~/img/nouser.jpg" class="imgtable" />
+                                                            }
+                                                            @item.gamename
+                                                        </td>
+                                                        <td>
+                                                            @if (item.enable)
+                                                            {
+                                                                <a href="javascript:" class="btn btn-danger btn-xs" id="@blckId" onclick="BlockCUpdate('0','@item.Id')">
+                                                                    <i class="fa fa-ban"></i>
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="btn btn-primary btn-xs" href="javascript:" title="unlock" id="@unblck" onclick="BlockCUpdate('1','@item.Id')">
+                                                                    <i class="fa fa-unlock" aria-hidden="true"></i>
+                                                                </a>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            responsive: true
+        });
+        $("#ManageGame").addClass("active");
+    });
+</script>
+<script type="text/javascript">
+    function BlockCUpdate(Type, Id) {
+        debugger;
+        if (!Type) {
+            return false;
+        }
+        if (!Id) {
+            return false;
+        }
+        var trid = "#tr" + Id;
+        var blckId = "#blck" + Id;
+        var unblck = "#unblck" + Id;
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "/Admin/ManageGame/Enabledisablegame",
+            data: '{isenable: "' + Type + '",Id: "' + Id + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                debugger;
+                Loader(false);
+                location.reload(true);
+                //alertify.alert(response.Msg);
+            },
+            failure: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function SyncGame()
+    {
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "/Admin/ManageGame/SyncGame",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                debugger;
+                Loader(false);
+                location.reload(true);
+                //alertify.alert(response.Msg);
+            },
+            failure: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+

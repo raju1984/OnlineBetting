@@ -1,0 +1,51 @@
+﻿@model IEnumerable<QuickBetCore.Models.TransactionHistoryViewModel>
+@using QuickBetCore.Models;
+
+<table class="table display product-overview mb-30"
+       id="datatable">
+    <thead>
+        <tr>
+            <th>Transaction Id</th>
+            <th>User</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>#@item.TransactionId</td>
+                    <td>@item.Name</td>
+                    <td>@item.Date</td>
+                    <td>₦ @item.Amount</td>
+                    <td>
+                        @if (item.TransactionStatus == (int)PaymentStatusType.PaymentSuccess)
+                        {
+                            <span class="label label-sm" style="background-color: #198754 !important">
+                                Completed
+                            </span>
+                        }
+                        else if (item.TransactionStatus == (int)PaymentStatusType.PaymentPending)
+                        {
+                            <span class="label label-sm label-warning" style="color: #333">
+                                Pending
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="label label-sm label-danger" style="color: #333">
+                                Failed
+                            </span>
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

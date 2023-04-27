@@ -1,0 +1,33 @@
+﻿@model IEnumerable<QuickBetCore.Models.GameViewModel>
+@using QuickBetCore.Models;
+@{
+    Layout = null;
+}
+
+
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var item in Model)
+    {
+        <div class="col-lg-3 col-sm-6">
+            <img src="@item.gameimg" alt="image" class="img-fluid" />
+            <div class="jackpot-item text-center">
+                <div class="scroll">
+                    <h5 class="title">@item.gamename</h5>
+                    @*<h5 class="title">@item.GameCaption</h5>*@
+                    @*<h6 class="title">Win upto @ApplicationVariable.currencysymbol : @ApplicatiopnCommonFunction.FormatStringCurrency(item.JackPot) Ticket cost @ApplicationVariable.currencysymbol :@ApplicatiopnCommonFunction.FormatStringCurrency(item.TicketCost)</h6>*@
+                </div>
+                <a href="@Url.Action("Index","Playgame",new {gameid=item.gameid })" class="cmn-btn">Try now!</a>
+            </div>
+        </div>
+    }
+}
+<div class="col-lg-12 text-center">
+    <a href="@Url.Action("Lottery","Home")"
+       class="cmn-btn"
+       style="width: 200px; margin-top: 10px">
+        load more
+    </a>
+</div>
+
+

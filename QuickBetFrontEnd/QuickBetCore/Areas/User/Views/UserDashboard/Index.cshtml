@@ -1,0 +1,270 @@
+﻿@model QuickBetCore.Models.UserDashboardViewModel
+@using QuickBetCore.Models;
+@{
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Index";
+    decimal balacne = Model.balance;
+    decimal cashbackbalance = Model.Cashbackbalance;
+    decimal wining = Model != null ? Model.winning : 0;
+    var viewtype = CommonMetadata.GetviewType();
+}
+<style>
+    .dataTables_wrapper {
+        display: block !important;
+    }
+
+    .card-ui i {
+        font-size: 55px;
+        color: #323584;
+    }
+
+    .card-ui h5 span {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        display: inline-block;
+    }
+
+    .card-ui h5 {
+        margin-bottom: 0;
+        margin-top: 10px;
+        font-weight: 700;
+    }
+
+        .card-ui h5 .info {
+            font-size: 15px;
+            color: #999;
+        }
+</style>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card card-ui">
+            <div class="card-body">
+                <a href="@Url.Action("TransactionHistory","Funds",new { area="user"})">
+                    <i class="fa fa-money" aria-hidden="true"></i>
+                    <h5>
+                        <span>Account balance:</span>
+                        <br />
+                        ₦ @ApplicatiopnCommonFunction.FormatStringCurrency(balacne)
+                    </h5>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card card-ui">
+            <div class="card-body">
+                <a href="@Url.Action("CashBackOffers","UserDashboard",new { area="user"})">
+                    <i class="fa fa-money" aria-hidden="true"></i>
+                    <h5>
+                        <span>Cashback balance:</span>
+                        <br />
+                        ₦ @ApplicatiopnCommonFunction.FormatStringCurrency(cashbackbalance)
+                        <i class="fa fa-info-circle info" title="Cashback balance will transfer to your wallet account according
+                       to bonus rule" aria-hidden="true"></i>
+                    </h5>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="align-items-center">
+                        <br />
+                        <div>
+                            <a href="@Url.Action("Depositfunds","Funds",new {area="user" })" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> Add Balance</a>
+                            <a href="@Url.Action("Lottery","Home",new {area="" })" class="btn btn-success">Go to Games</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.CashBack > 0)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="align-items-center">
+                            <br />
+                            <div>
+                                @if (Model.isInitail)
+                                {
+                                    <span class="btn-info" style="padding: 10px; border-radius: 12px;font-size:15px">
+                                        <i class="fa fa-gift" aria-hidden="true"></i>You will receive <b>@Model.CashBack %</b>  cashback <b>BONUS</b>
+                                        on this initial deposit.
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="btn-info" style="padding: 10px; border-radius: 12px;font-size:15px">
+                                        <i class="fa fa-gift" aria-hidden="true"></i>Make a <b>DEPOSIT</b> now and get a <b>@Model.CashBack %</b>  cashback <b>BONUS</b>
+                                    </span>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card" id="divwinninghistory">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="exampleModala" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Do you have Refer Code</h5>
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
+            </div>
+            <div class="modal-body">
+                <div class="load-details">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" onclick="close()" >Close</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"
+        integrity="sha512-DNeDhsl+FWnx5B1EQzsayHMyP6Xl/Mg+vcnFPXGNjUZrW28hQaa1+A4qL9M+AiOMmkAhKAWYHh1a+t6qxthzUw=="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"
+      integrity="sha512-yye/u0ehQsrVrfSd6biT17t39Rg9kNc+vENcCXZuMz2a+LWFGvXUnYuWUW6pbfYj1jcBb/C39UZw2ciQvwDDvg=="
+      crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        integrity="sha512-BNZ1x39RMH+UYylOW419beaGO0wqdSkO7pi1rYDYco9OL3uvXaC/GTqA5O4CVK2j4K9ZkoDNSSHVkEQKkgwdiw=="
+        crossorigin="anonymous"></script>
+
+@{
+    if (ViewData["error"] != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                alertify.alert("@ViewData["error"]");
+            })
+        </script>
+    }
+}
+
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        $('#PhoneNumber').on("countrychange", function (e, countryData) {
+            $('#CountryCode').val($('.iti__selected-dial-code').text());
+        });
+
+        $('#CountryCode').val($('.iti__selected-dial-code').text());
+
+
+        $("#History").addClass("active");
+        $("#UserDashboard").addClass("active");
+
+        LoadTransaction(true);
+    })
+    function ReloadViewType() {
+        var ddlviewType = $("#ddlviewType").val();
+        window.location = "/User/UserDashboard/index?viewType=" + ddlviewType;
+    }
+    function validate() {
+        debugger;
+        var newpassword = $('#newpassword').val();
+        var repeatpassword = $('#repeatpassword').val();
+        if (newpassword != repeatpassword) {
+            alertify.alert("Password and confirm password does not match");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function LoadTransaction(IsLoad) {
+        if (IsLoad) {
+            Loader(true);
+        }
+        $.ajax({
+            url: '/User/UserDashboard/WiningBetForPayment',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divwinninghistory').html(result);
+                $('#datatable1').dataTable({
+                    responsive: true,
+                    "aaSorting": []
+                });
+                setTimeout(function () {
+                    LoadTransaction(false);
+                }, 50000);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+    //function close() {
+    //    console.log('comimng');
+    //    $('#exampleModala').modal('hide');
+    //}
+    function LoadReferalcodePopup() {
+        $('#exampleModala').modal('show');
+        // console.log('coming');
+
+        $.ajax({
+            url: '/User/UserDashboard/ReferParticalView',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('.load-details').html(result);
+
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        //if ('@ViewBag.IsReferalChecked' == 0) {
+        //    LoadReferalcodePopup();
+        //}
+    });
+</script>
+

@@ -1,0 +1,282 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "Bettinglist";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var viewtype = CommonMetadata.GetviewType();
+}
+
+<style type="text/css">
+    .btn-group-center {
+        text-align: center;
+    }
+
+    .pop-close {
+        position: absolute;
+        right: -10px;
+        background: #ffffff;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        top: -10px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 1px 2px rgb(0 0 0 / 18%);
+    }
+
+    .qr-code-body p {
+        text-align: center;
+        font-size: 19px;
+        font-weight: 700;
+        color: #FFF;
+    }
+
+    .qr-code-body {
+        background: #673ab7;
+    }
+
+    .tablabel {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    .tabactive {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+</style>
+
+<div class="page-content">
+    <div class="page-bar">
+        <span class="pull-left">
+            <a class="btn btn-sm btn-warning" href="@Url.Action("Index","AgentManagement")">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>Back
+            </a>
+        </span>
+        <br />
+        <br />
+        <div class="page-title-breadcrumb">
+            <a class="parent-item tablabel tabactive" id="btnwin" onclick="loaddata('win')">
+                <i class="fa fa-gamepad" aria-hidden="true"></i> Win List
+            </a>
+            <a class="parent-item tablabel" id="btnbet" onclick="loaddata('bet')">
+                <i class="fa fa-gamepad" aria-hidden="true"></i> Bet List
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            View Type:
+                            <select onchange="ReloadViewType()" class="form-control" id="ddlviewType" style="width: 250px;">
+                                @foreach (var item in viewtype)
+                                {
+                                    if (item.value == Context.Request.Query["viewType"])
+                                    {
+                                        <option selected value="@item.value">@item.key</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.value">@item.key</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            Agents:
+                            <select onchange="ReloadViewType()" class="form-control" id="ddlagents" style="width: 250px;">
+                                <option value="0">All</option>
+                                @if (Model != null && Model.Count() > 0)
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        if (item.Id.ToString() == Context.Request.Query["CustomerId"])
+                                        {
+                                            <option selected value="@item.Id">@item.name (@item.email)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.name (@item.email)</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="pd-0">
+                        <div class="table-responsive" id="divbettinglist">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Barcode *@
+<div class="modal fade" id="qrcode" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body qr-code-body">
+                <span class="pop-close" data-bs-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></span>
+                <div id="barcode">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var url = "/Admin/AgentManagement/Getwinlist";
+
+    var tabtype = '@Context.Request.Query["tabtype"]';
+    $(document).ready(function () {
+
+        if (tabtype && tabtype == 'bet') {
+            $("#Betting").addClass("tabactive");
+            $("#btnwin").removeClass("tabactive");
+            loaddata('bet')
+        }
+        else {
+            $("#Betting").removeClass("tabactive");
+            $("#btnwin").addClass("tabactive");
+            loadwinbet(url)
+        }
+
+    });
+
+    function loaddata(type) {
+        debugger;
+        if (type == 'bet') {
+            $("#btnwin").removeClass("tabactive");
+            $("#btnbet").addClass("tabactive");
+            loadwinbet("/Admin/AgentManagement/Getbetlist");
+        }
+        else {
+            $("#btnwin").addClass("tabactive");
+            $("#btnbet").removeClass("tabactive");
+            loadwinbet(url)
+        }
+
+    }
+
+    function ReloadViewType()
+    {
+        if ($("#btnwin").hasClass("tabactive")) {
+            loadwinbet("/Admin/AgentManagement/Getwinlist");
+        }
+        else {
+            loadwinbet("/Admin/AgentManagement/Getbetlist");
+        }
+    }
+
+    function loadwinbet(callingurl)
+    {
+        debugger;
+        Loader(true);
+        var customerId = $("#ddlagents").val();
+        if (customerId && customerId != '')
+        {
+            var viewType = $("#ddlviewType").val();
+            callingurl = callingurl + "?viewType=" + viewType + "&AgentId=" + customerId;
+        }
+        else {
+            var viewType = $("#ddlviewType").val();
+            callingurl = callingurl + "?viewType=" + viewType + "&AgentId=0";
+        }
+        $.ajax({
+            url: callingurl,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divbettinglist').val("")
+                $('#divbettinglist').html(result);
+                $('#datatable').DataTable({
+                    responsive: true,
+                    "aaSorting": []
+                });
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+    function OpenModel() {
+        $("#qrcode").modal("show");
+    }
+
+    function loadBarcode(WinId) {
+        debugger;
+        console.log('Win id:'+ WinId);
+        Loader(true);
+        $.ajax({
+            url: "/Admin/AgentManagement/GetBarcode?WinId=" + WinId,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+              //  OpenModel();
+                $('#barcode').val("")
+                $('#barcode').html(result);
+                $("#qrcode").modal("show");
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+
+    function PayLottery(LotteryId)
+    {
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("PayLottery", "AgentManagement")",
+            data: '{WinId: "' + LotteryId + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                $("#qrcode").modal("hide");
+                if (response.Code == 200)
+                {
+                    alertify.success(response.Msg);
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+                loadwinbet(url)
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            }
+        });
+    }
+</script>
+

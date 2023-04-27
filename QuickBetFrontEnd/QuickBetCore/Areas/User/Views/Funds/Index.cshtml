@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    decimal balacne = 0;
+    if (ViewData["balance"] != null)
+    {
+        var amount = ViewData["balance"].ToString();
+        balacne = Convert.ToDecimal(amount);
+    }
+}
+
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-12">
+            <div class="d-flex align-items-center">
+                <h5 class="page-title">Account balance: ₦ @balacne</h5>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6 col-lg-4 d-flex flex-wrap">
+        <div class="card detail-box1 details-box">
+            <div class="card-body">
+                <div class="dash-contetnt">
+
+                    <h4 class="text-white">Deposit Funds to account</h4>
+                    @*<h2 class="text-white">₦ 245</h2>*@
+                    <div class="growth-indicator">
+                        <a href="@Url.Action("Depositfunds","Funds",new { area="user"})" class="btn-chat" style="display: inline;">Deposit here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4 d-flex flex-wrap">
+        <div class="card detail-box2 details-box">
+            <div class="card-body">
+                <div class="dash-contetnt">
+
+                    <h4 class="text-white">Withdraw Funds from account</h4>
+                    @*<h2 class="text-white">₦ 1137</h2>*@
+                    <div class="growth-indicator">
+                        <a href="@Url.Action("Withdrawfund","Funds",new { area="user"})" class="btn-chat" style="display: inline;">Withdraw Funds here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4 d-flex flex-wrap">
+        <div class="card detail-box3 details-box">
+            <div class="card-body">
+                <div class="dash-contetnt">
+
+                    <h4 class="text-white">Transfer Funds to another player</h4>
+                    @*<h2 class="text-white">₦ 24</h2>*@
+                    <div class="growth-indicator">
+                        <a href="@Url.Action("Fundtransfer","Funds",new { area="user"})" class="btn-chat" style="display: inline;">Transfer Funds here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 d-flex flex-wrap">
+        <div class="card detail-box3 details-box">
+            <div class="card-body">
+                <div class="dash-contetnt">
+
+                    <h4 class="text-white">Withdraw Funds from Agent</h4>
+                    @*<h2 class="text-white">₦ 24</h2>*@
+                    <div class="growth-indicator">
+                        <a href="@Url.Action("WithdrawalFromAgent","Funds",new { area="user"})" class="btn-chat" style="display: inline;">Transfer Funds here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+        $("#Funds").addClass("active");
+    })
+</script>

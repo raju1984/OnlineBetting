@@ -1,0 +1,162 @@
+﻿@model QuickBetCore.Models.AdminDashboardViewModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/SuperAgent/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Dashboard</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "SuperDashboard",new { area="SuperAgent"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Dashboard</li>
+            </ol>
+        </div>
+    </div>
+    <!-- start widget -->
+    <div class="state-overview">
+        <div class="row">
+            @if (Model != null && Model.isAprove == false)
+            {
+                <div class="alert alert-warning">
+                    <strong>Warning!</strong> Your account is waiting for approval. Please contact administrator.
+                </div>
+            }
+
+            @if (Model != null && Model.IsEntryAvailable == true)
+            {
+                <div class="alert alert-success">
+                    <strong>Congratulations!</strong> Your account has been converted to super agent as per your request.
+                </div>
+            }
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a style="color:white" href="">
+                    <div class="info-box bg-blue">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Active Agents </span>
+
+                        </div>
+                        <span class="info-box-number">@Model.TotalAgents</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a style="color:white" href="">
+                    <div class="info-box bg-success">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Agents Pending</span>
+
+                        </div>
+                        <span class="info-box-number">@Model.Agents</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a style="color:white" href="">
+                    <div class="info-box bg-b-green">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Agents Earnings</span>
+
+                        </div>
+                        <span class="info-box-number">@Model.TotalAgentsEarning</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a style="color:white" href="">
+                    <div class="info-box bg-b-yellow">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">My Wallet Amount</span>
+
+                        </div>
+                        <span class="info-box-number">@Model.SuperAgentBalance</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- /.col -->
+            @*<div class="col-xl-3 col-md-6 col-12">
+                    <a href="">
+                        <div class="info-box bg-orange">
+                            <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Agents Blocked</span>
+                                <span class="info-box-number">@Model.BlockedAgent </span>
+                            </div>
+
+
+                        </div>
+                    </a>
+
+                </div>*@
+
+
+        </div>
+
+        @*<div class="state-overview">
+
+            <div class="row">
+                <fieldset>
+                    <legend style="color: #5e7990">
+                        WithDraw Request
+                    </legend>
+                    <button class="btn btn-info" onclick="loadPaymentRequets(true)"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+                    <div id="divcontent">
+
+                    </div>
+                </fieldset>
+            </div>
+        </div>*@
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#AdminDashboard").addClass("active");
+        //loadPaymentRequets(true);
+    })
+
+    function loadPaymentRequets(IsLoad) {
+        if (IsLoad) {
+            Loader(true);
+        }
+        $.ajax({
+            url: "/SuperAgent/SuperDashboard/GetwinWithdrawRequets",
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divcontent').val("")
+                $('#divcontent').html(result);
+                $('#datatable').DataTable({
+                    responsive: true,
+                    "aaSorting": []
+                });
+                setTimeout(function () {
+                    loadPaymentRequets(false);
+                }, 50000);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>
+

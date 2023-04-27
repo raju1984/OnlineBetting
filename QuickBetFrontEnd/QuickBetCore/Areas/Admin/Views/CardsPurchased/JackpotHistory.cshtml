@@ -1,0 +1,123 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "JackpotHistory";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var viewtype = CommonMetadata.GetviewType();
+}
+
+<style>
+    .label.label-sm {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 6px 6px;
+        margin-right: 5px;
+    }
+
+    .label{
+            box-shadow: none;
+    }
+
+    .dt-button {
+        width: 70px;
+        padding: 0 !important;
+    }
+</style>
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Jackpot History</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="#">Jackpot History</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Jackpot History</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <br />
+                    <header style="margin-left:5px">Jackpot HISTORY</header>
+
+                </div>
+                <div class="card-body">
+                    <div class="dropdown" data-toggle="dropdown" style="margin-left: 15px;">
+                        viewType:
+                        <select onchange="ReloadViewType()" class="form-control" id="ddlviewType" style="width: 250px;">
+                            @foreach (var item in viewtype)
+                            {
+                                if (item.value == Context.Request.Query["viewType"])
+                                {
+                                    <option selected value="@item.value">@item.key</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.value">@item.key</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <br />
+                    <div class="table-wrap">
+                        <div class="table-responsive" id="divcontent">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.print.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+       loadJackpotWins("mm");
+    });
+     function loadJackpotWins(ddlviewType) 
+     {
+        Loader(true);
+        $.ajax({
+            url:'/Admin/CardsPurchased/JackpotHistoryList?viewType=' + ddlviewType,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divcontent').val("")
+                $('#divcontent').html(result);
+                $('#datatable').DataTable({
+                    responsive: true,
+                    dom: 'Bfrtip',
+                      buttons: [
+                        'csv', 'excel'
+                    ]
+                });
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+    function ReloadViewType() 
+    {
+        var ddlviewType = $("#ddlviewType").val();
+        if(ddlviewType)
+        {
+             loadJackpotWins(ddlviewType);
+        }
+    }
+</script>
+

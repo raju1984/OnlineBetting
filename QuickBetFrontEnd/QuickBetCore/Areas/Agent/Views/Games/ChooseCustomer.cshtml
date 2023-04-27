@@ -1,0 +1,84 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "ChooseCustomer";
+    Layout = "~/Areas/Agent/Views/Shared/_Layout.cshtml";
+}
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Choose Customer</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;
+                    <a class="parent-item"
+                       href="@Url.Action("Index", "Dashboard",new { area="Agent"})">Home</a>
+                    &nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Games</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" style="width:100%">
+                        Choose Customers
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-6 gamelistdiv">
+                                <label>Choose Customers</label>
+                                <div class="main-search-input-item col-md-6">
+                                    <select class="form-control" id="ddlcustomer">
+                                        @if (Model != null && Model.Count() > 0)
+                                        {
+                                            foreach (var item in Model)
+                                            {
+                                                string user = item.name + "(" + item.email + "," + item.phone + ")";
+                                                string encrypted = new AES_ALGORITHM().encryptMessage(item.Id.ToString());
+                                                <option value="@encrypted">@user</option>
+                                            }
+                                        }
+                                    </select>
+                                    <br />
+                                    <button onclick="PlayGame()"
+                                            class="btn btn-sm btn-primary float-end">
+                                        Play
+                                    </button>
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <h4 class="card-title" style="width:100%">
+                        Or  Add New Customers
+                        <a href="@Url.Action("CreateAgentCustomer", "Customer", new { gameid = Context.Request.Query["gameid"] })"
+                           class="btn btn-sm btn-primary float-end">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Add Customer
+                        </a>
+                    </h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function PlayGame()
+    {
+        var customerid = $("#ddlcustomer").val();
+        window.location = '/Playgame/PlayAgentGame?customerId=' + customerid + "&gameid=" + '@Context.Request.Query["gameid"]'
+    }
+</script>

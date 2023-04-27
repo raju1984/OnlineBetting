@@ -1,0 +1,34 @@
+﻿@using QuickBetCore.Models;
+@{
+    decimal minimmumAmount = ApplicationVariable.DefaultMininumBalanceToWithdraw;
+    if (ViewData["minumumAmount"] != null)
+    {
+        var amount = ViewData["minumumAmount"].ToString();
+        minimmumAmount = Convert.ToDecimal(amount);
+    }
+    decimal balacne = 0;
+    if (ViewData["balance"] != null)
+    {
+        var amount = ViewData["balance"].ToString();
+        balacne = Convert.ToDecimal(amount);
+    }
+}
+@if (balacne >= minimmumAmount)
+{
+    <div class="form-group row">
+        <label class="col-form-label col-md-12" style="background: none;padding-left: 0; text-align: left;">Withdraw Naira value * </label>
+        <div class="col-md-12" style="padding-left: 0;">
+            <input type="number" id="txtamount" min="@minimmumAmount" value="@minimmumAmount" class="form-control" placeholder="Enter Here">
+            <p>Minimum Amount: @minimmumAmount</p>
+        </div>
+        <button onclick="TransferAmountToBank()" class="btn-chat" style="display: inline;width: auto;">Submit Request</button>
+    </div>
+}
+else
+{
+    <span class="label btn-danger">
+        insufficient funds to withdraw ,
+        minimum amount to withdraw:@minimmumAmount
+    </span>
+}
+

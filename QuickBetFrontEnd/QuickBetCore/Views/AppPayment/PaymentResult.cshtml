@@ -1,0 +1,79 @@
+﻿@model QuickBetCore.Models.PaymentData.PaymentResultModel
+@using QuickBetCore.Models;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PaymentResult</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+</head>
+<body>
+    <div> 
+        <div class="row margin10 bgWhite">
+            <div class="col-sm-12" style="text-align: center;">
+                <h2 class="text-success">
+                    <span class="fa-stack fa-lg text-center">
+                        @{
+                            if (Model != null)
+                            {
+                                if (Model.PaymentStatus == (int)PaymentStatusType.PaymentSuccess)
+                                {
+                                    <i class="fa fa-smile-o text-success fa-2x" aria-hidden="true"></i>
+                                }
+                                else if (Model.PaymentStatus == (int)PaymentStatusType.PaymentPending)
+                                {
+                                    <i class="fa fa-smile-o text-warning fa-2x" aria-hidden="true"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-frown-o text-danger fa-2x" aria-hidden="true"></i>
+                                }
+                            }
+                            else
+                            {
+                                <i class="fa fa-frown-o text-danger fa-2x" aria-hidden="true"></i>
+                            }
+
+                        }
+                    </span>
+                </h2>
+                @{
+                    if (Model != null)
+                    {
+                        if (Model.PaymentStatus == (int)PaymentStatusType.PaymentSuccess)
+                        {
+                            decimal amout = Model.amount / 100;
+                            <div class="alert alert-success">
+                                <span class="text-success">Payment Successful</span> <br />
+                                TransactionId:@Model.transactionId;<br />
+                                Amount: ₦ @amout added to your wallet, let's play game
+                            </div>
+
+
+                        }
+                        else if (Model.PaymentStatus == (int)PaymentStatusType.PaymentPending)
+                        {
+                            <span class="text-success">Payment Successful</span> <br />
+                        }
+                        else
+                        {
+                            <span class="text-danger">Sorry, your payment failed.</span>
+                            @*<small><small>Invoice has been send to your linked Email address, You can download also a copy of invoice by clicking on Invoice button</small></small>*@
+                        }
+
+                    }
+
+                }
+                <br>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

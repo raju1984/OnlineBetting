@@ -1,0 +1,145 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+<div class="table-responsive">
+    <table class="table" id="datatable">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    E-mail
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    string phone = item.countrycode + item.phone;
+                    string backclr = "";
+                    if (item.status == (int)UserStatus.active)
+                    {
+                        backclr = "#ffffff";
+                    }
+                    else if (item.status == (int)UserStatus.Pending_for_approval)
+                    {
+                        backclr = "#cb9e5f";
+                    }
+                    else
+                    {
+                        backclr = "grey;";
+                    }
+                    string trid = "tr" + item.Id;
+                    string blckId = "blck" + item.Id;
+                    string unblck = "unblck" + item.Id;
+                    <tr id="@trid" style="background-color:@backclr">
+                        <td style="background-color:@backclr">
+
+                            @if (!string.IsNullOrEmpty(item.profile))
+                            {
+
+                                <img src="@item.profile" class="imgtable"
+                                     alt="" />
+
+
+                            }
+                            else
+                            {
+                                <img src="~/img/nouser.jpg" class="imgtable" />
+                            }
+
+
+                            @item.name
+                        </td>
+                        <td>
+                            @item.email
+                        </td>
+                        <td>
+                            @item.phone
+                        </td>
+
+                        <td>
+
+                            @if (item.status == (int)UserStatus.active)
+                            {
+                                <label class="label-success">
+                                    Active
+                                </label>
+                            }
+                            else
+                            {
+                                <label class="label-danger">
+                                    Blocked
+                                </label>
+                                //blocked
+                            }
+                        </td>
+                        <td>
+
+                            @if (item.status == (int)UserStatus.active)
+                            {
+                                <a href="javascript:" class="btn btn-danger btn-xs" id="@blckId" onclick="BlockCUpdate('buser','@item.Id')" title="Block User">
+                                    <i class="fa fa-ban"></i>
+                                </a>
+                            }
+                            else if (item.status == (int)UserStatus.block)
+                            {
+                                <a class="btn btn-primary btn-xs" href="javascript:" title="Unblock User" id="@unblck" onclick="BlockCUpdate('uuser','@item.Id')">
+                                    <i class="fa fa-unlock" aria-hidden="true"></i>
+                                </a>
+                            }
+                            <button type="button" class="btn btn-xs btn-primary" onclick="ShowPassowordResetPasswordPopup('@item.Id')" title="Reset Password">
+                                <i class="fa fa-undo" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    function BlockCUpdate(Type, Id) {
+        if (!Type) {
+            return false;
+        }
+        if (!Id) {
+            return false;
+        }
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Customers/BlockUser",
+            data: '{type: "' + Type + '",Id: "' + Id + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                debugger;
+                Loader(false);
+                loadNationallottery()
+                //alertify.alert(response.Msg);
+            },
+            failure: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

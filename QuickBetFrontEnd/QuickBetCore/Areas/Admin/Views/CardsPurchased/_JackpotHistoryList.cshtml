@@ -1,0 +1,94 @@
+﻿@model IEnumerable<QuickBetCore.Models.WinViewModel>
+@using QuickBetCore.Models;
+<table class="table display product-overview mb-30" id="datatable" style="width:100%" width="100%">
+    <thead>
+        <tr>
+            <th><strong>S.NO</strong></th>
+            <th><strong>Transaction Id</strong></th>
+            <th><strong>Name</strong></th>
+            <th><strong>Email</strong></th>
+            <th><strong>Amount</strong></th>
+            <th><strong>Currency</strong></th>
+            <th><strong>Game</strong></th>
+            <th><strong>Type</strong></th>
+            <th><strong>Date</strong></th>
+            <th><strong>Jackpot Type</strong></th>
+            <th><strong>Action</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            var sn = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @sn
+                    </td>
+                    <td>#@item.transactionId</td>
+                    <td>@item.PlayerName</td>
+                    <td>@item.PlayerEmail</td>
+                    <td>₦ @item.winamount</td>
+                    <td>@item.currency</td>
+                    <td>@item.GameName</td>
+                    <td>@item.type</td>
+                    <td>@item.Insertdate.ToString("dd/MM/yyyy")</td>
+                    <td><img src="@item.JackPotImage"/> @item.JackpotText</td>
+                    <td>
+                        @if (item.IsJackAprovebyAdmin == true)
+                        {
+                            <span class="label label-sm label-success">
+                                Jackpot Approved
+                            </span>
+                        }
+                        else
+                        {
+                            <button class="btn btn-success btn-xs" type="button" title="Approve Jacpot" onclick="ApproveJackpot('@item.Id')">
+                               <i class="fa fa-check" aria-hidden="true"></i> Approve Jacpot
+                            </button>
+                        }
+                    </td>
+                </tr>
+                sn++;
+            }
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+      function ApproveJackpot(user) 
+      {
+        debugger;
+        alertify.confirm('Are you sure? you want to approve this jackpot win!',
+            function () {
+                Loader(true);
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/CardsPurchased/ApproveJackpot?Id=" + parseInt(user),
+                    //data: '{Id: "' + parseInt(user) + '"}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        Loader(false);
+                        if (response.Code == 200) {
+                            alertify.success(response.Msg);
+                            ReloadViewType();
+                        }
+                        else {
+                            alertify.error(response.Msg);
+                        }
+                    },
+                    failure: function (response) {
+                        Loader(false);
+                        alertify.error(response.responseText);
+                    },
+                    error: function (response) {
+                        Loader(false);
+                        alertify.error(response.responseText);
+                    }
+                });
+            }
+            , function () { alertify.error('Cancelled') });
+    }
+
+</script>

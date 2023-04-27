@@ -1,0 +1,211 @@
+﻿@model QuickBetCore.Models.CustomerUploadModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Create Agent";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #ContactNo {
+        border: 0;
+        width: 100%;
+    }
+
+    .iti {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+</style>
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Create Nationallottery User</div>
+                <a class="btn btn-warning" href="@Url.Action("Index", "NationallotteryManagement",new { area="Admin"})"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active"><a href="@Url.Action("Index", "NationallotteryManagement",new { area="Admin"})">All Nationallottery User</a> </li>
+            </ol>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            @if (Model.Id > 0)
+            {
+                <h4 class="card-title" style="width:100%;">Update Nationallottery</h4>
+            }
+            else
+            {
+                <h4 class="card-title" style="width:100%;">Create Nationallottery</h4>
+            }
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("CreateUpdateNationallottery", "NationallotteryManagement", FormMethod.Post, new
+            {
+                id = "AddCustomer",
+                enctype = "multipart/form-data",
+                autocomplete = "off"
+            }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.ProfilePicture)
+                    @Html.HiddenFor(m => m.CountryCode)
+                    <div class="form-group row">
+                        <label class="text-black font-w500 col-md-2 control-label">Name @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })</label>
+                        <div class="col-md-8">
+                            @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter Name", autocomplete = "off" } })
+
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="text-black font-w500 col-md-2 control-label">Email @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })</label>
+                        <div class="col-md-8">
+                            @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter Email Address", autocomplete = "off" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="text-black font-w500 col-md-2 control-label">Contact Number @Html.ValidationMessageFor(m => m.ContactNo, "", new { @class = "text-danger" })</label>
+                        <div class="col-md-8">
+                            @Html.EditorFor(m => m.ContactNo, new
+                       {
+                           htmlAttributes = new
+                           {
+                               @class = "form-control",
+                               placeholder = "Enter Contact Number",
+                               autocomplete = "off",
+                               type = "tel",
+                               oninput = "this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\\..*?)\\..*/g, '$1').replace(/^0[^.]/, '0');"
+                           }
+                       })
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Profile" class="control-label col-md-2">Profile Image</label>
+                        <div class="col-md-8 d-flex">
+                            <input type="file" id="file" name="file" class="form-control" accept="image/*" onchange="loadFile(event)" />
+                        </div>
+                        <div class="_profileArea col-md-2">
+                            @if (string.IsNullOrEmpty(Model.ProfilePicture))
+                            {
+                                <img src="~/Content/Images/no-image.png" class="img-fluid" id="file-selected" style="max-width:100px;" />
+                            }
+                            else
+                            {
+                                <img src="@Model.ProfilePicture" class="img-fluid" id="file-selected" style="max-width:100px;" />
+                            }
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="text-black font-w500 col-md-2 control-label">Password @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })</label>
+                        <div class="col-md-8">
+                            @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter Password", autocomplete = "off", type = "password" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-offset-2 col-md-12 justify-content-center d-flex">
+                            <button type="submit" id="submit" class="btn btn-sm btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"
+        integrity="sha512-DNeDhsl+FWnx5B1EQzsayHMyP6Xl/Mg+vcnFPXGNjUZrW28hQaa1+A4qL9M+AiOMmkAhKAWYHh1a+t6qxthzUw=="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"
+      integrity="sha512-yye/u0ehQsrVrfSd6biT17t39Rg9kNc+vENcCXZuMz2a+LWFGvXUnYuWUW6pbfYj1jcBb/C39UZw2ciQvwDDvg=="
+      crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        integrity="sha512-BNZ1x39RMH+UYylOW419beaGO0wqdSkO7pi1rYDYco9OL3uvXaC/GTqA5O4CVK2j4K9ZkoDNSSHVkEQKkgwdiw=="
+        crossorigin="anonymous"></script>
+
+
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}
+<script>
+    const loadFile = function (event) {
+        var output = document.getElementById('file-selected');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function () {
+            URL.revokeObjectURL(output.src) // free memory
+        }
+    };
+
+    var input = document.querySelector("#ContactNo");
+    window.intlTelInput(input, {
+        initialCountry: "ng",
+        separateDialCode: true,
+        customPlaceholder: function (
+            selectedCountryPlaceholder,
+            selectedCountryData
+        ) {
+            return "e.g. " + selectedCountryPlaceholder;
+        },
+    });
+    $(document).ready(function () {
+        $('#ContactNo').on("countrychange", function (e, countryData) {
+            $('#CountryCode').val($('.iti__selected-dial-code').text());
+        });
+
+        $('#CountryCode').val($('.iti__selected-dial-code').text());
+        $('#datatable').DataTable({
+            responsive: true
+        });
+        $("#Customers").addClass("active");
+
+        $('#AddCustomer').submit(function () {
+            if ($('#Name').val() !== "" && $('#Email').val() !== "" && $('#ContactNo').val() !== "" && $('#Password').val() !== "") {
+                $('#submit').attr("disabled", true);
+                $('#submit').html('Please wait..');
+            }
+        });
+    });
+
+
+</script>
+

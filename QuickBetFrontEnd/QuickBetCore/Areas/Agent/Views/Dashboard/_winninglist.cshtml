@@ -1,0 +1,200 @@
+﻿@model IEnumerable<QuickBetCore.Areas.Agent.Data.BettingViewModel>
+@using QuickBetCore.Models;
+<table class="table data-tables" id="datatable" style="width:100%">
+    <thead>
+        <tr>
+            <th>WithDraw Request</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Name:@item.customername<br />
+                                Transaction Id:@item.TransactionId<br />
+                                Withdraw Amount: @ApplicationVariable.currencysymbol @ApplicatiopnCommonFunction.FormatStringCurrency(item.WithdrawrequestAmount)<br />
+                                @* Game Name:@item.gamename<br />*@
+                                Date:@item.datetime
+                            </div>
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Staus:
+                                @if (item.PaidMoneyStatus == (int)WalletTransactionStatusType.TransactionInitiated)
+                                {
+                                    <span class="label-warning">
+                                        Request For withdraw Amount @ApplicationVariable.currencysymbol @ApplicatiopnCommonFunction.FormatStringCurrency(item.WithdrawrequestAmount)
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span class="label-default"></span>
+                                }
+
+                            </div>
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Action:
+                                @if (item.PaidMoneyStatus == (int)WalletTransactionStatusType.TransactionInitiated)
+                                {
+                                    @*<button onclick="loadBarcode(@item.Id)" class="btn btn-info waves-effect waves-light qr-code">
+                <i class="fa fa-qrcode fa-5" aria-hidden="true"></i>
+            </button>*@
+                                    <button class="btn btn-round btn-primary" onclick="PayLottery(@item.Id)">Cash Withdrawal</button>
+                                }
+                                else if (item.PaidMoneyStatus == (int)WalletTransactionStatusType.TransactionPending)
+                                {
+                                    <span class="label-warning">Wait for User Approval of Payment.</span>
+                                }
+                                
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+
+        @if (ViewBag.models != null)
+        {
+
+            foreach (var item in ViewBag.models)
+            {
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-sm-12" style="padding: 10px;">
+                                <b>Agent Name:</b> @item.RequestedBy<br />
+
+                                <b>Transaction Id:</b> @item.TransactionId<br />
+                                <b>Date:</b> @item.RequestedDate<br />
+                                <b>Withdraw request Amount:</b>@ApplicationVariable.currencysymbol @item.Amount <br />
+                                <b>Remarks:</b> Amount @ApplicationVariable.currencysymbol @item.Amount Requested to withdraw <br />
+                            </div>
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Status:
+                                @if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionPending)
+                                {
+                                    <span class="label-primary">
+                                        Amount ₦ @ApplicatiopnCommonFunction.FormatStringCurrency(@item.Amount)
+                                        Paid By Quickbet Admin Waiting For Your approval
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span class="label label-sm label-danger">
+                                        Unknown
+                                    </span>
+
+                                }
+                            </div>
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Action:
+                                @if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionPending)
+                                {
+                                    <button class="btn btn-info btn-xs" onclick="AproveDenyPayment(@item.Id, 1)" title="Aprove Request"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                    <button class="btn btn-danger btn-xs" onclick="AproveDenyPayment(@item.Id,0)" title="Deny Request"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                }
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    function loadBarcode(WinId) {
+        Loader(true);
+        $.ajax({
+            url: "/Agent/Betting/GetBarcode?WinId=" + WinId,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#barcode').val("")
+                $('#barcode').html(result);
+                $("#qrcode").modal("show");
+
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+
+    function PayLottery(LotteryId)
+    {
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("PayLottery", "Betting")",
+            data: '{WinId: "' + LotteryId + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                $("#qrcode").modal("hide");
+                if (response.Code == 200)
+                {
+                    alertify.success(response.Msg);
+                    loadPaymentRequets(true);
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+                loadwinbet(url)
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            }
+        });
+    }
+
+
+    function AproveDenyPayment(WalletId, Action)
+      {
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AproveDenyPayment", "Dashboard")",
+            data: '{WalletId: "' + WalletId + '",Action:"' + Action+'"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                if (response.Code == 200)
+                {
+                    //LoadTransaction(true);
+                    alertify.success(response.Msg);
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+               // loadwinbet(url)
+                loadPaymentRequets(true)
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            }
+        });
+    }
+
+</script>

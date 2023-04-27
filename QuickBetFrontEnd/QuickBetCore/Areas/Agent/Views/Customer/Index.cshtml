@@ -1,0 +1,88 @@
+﻿@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Agent/Views/Shared/_Layout.cshtml";
+}
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">All Customers</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                     href="@Url.Action("Index", "Dashboard",new { area="Agent"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Customers</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" style="width:100%">All Customers 
+                    <a href="@Url.Action("CreateAgentCustomer","Customer")" class="btn btn-sm btn-primary float-end">Add Customer</a> </h4>
+                </div>
+                <div class="card-body" id="divagents">
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Customer").addClass("active");
+        loadAgentCustomers()
+    });
+
+    function loadAgentCustomers() {
+        Loader(true);
+        $.ajax({
+            url: '/Agent/Customer/GetAgentCustomerlist',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divagents').val("")
+                $('#divagents').html(result);
+                $('#datatable').DataTable({
+                    responsive: true
+                });
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>
+

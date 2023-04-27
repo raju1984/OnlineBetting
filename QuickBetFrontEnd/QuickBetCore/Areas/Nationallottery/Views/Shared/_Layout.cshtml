@@ -1,0 +1,379 @@
+﻿@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    UserSession nationallotterySession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title - Quickbet</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"
+          rel="stylesheet"
+          type="text/css" />
+
+    <!-- icons -->
+    <link href="~/adminassest/assets/bundles/simple-line-icons/simple-line-icons.min.css"
+          rel="stylesheet"
+          type="text/css" />
+    <link href="~/adminassest/assets/css/font-awesome.min.css"
+          rel="stylesheet"
+          type="text/css" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <!--bootstrap -->
+    <link href="~/adminassest/assets/bundles/bootstrap/css/bootstrap.min.css"
+          rel="stylesheet"
+          type="text/css" />
+    <!-- Material Design Lite CSS -->
+    <link rel="stylesheet" href="~/adminassest/assets/bundles/material/material.min.css" />
+    <link rel="stylesheet" href="~/adminassest/assets/css/material_style.css" />
+    <!-- Theme Styles -->
+    <link href="~/adminassest/assets/css/theme_style.css"
+          rel="stylesheet"
+          id="rt_style_components"
+          type="text/css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+    <link href="~/adminassest/assets/css/plugins.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/adminassest/assets/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="~/adminassest/assets/css/responsive.css" rel="stylesheet" type="text/css" />
+    <link href="~/adminassest/assets/css/theme-color.css" rel="stylesheet" type="text/css" />
+    <!-- favicon -->
+    <link rel="shortcut icon" href="/adminassest/assets/img/favicon.ico" />
+    <link href="~/css/alertify.core.css" rel="stylesheet" />
+    <link href="~/css/alertify.default.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Scripts/DataTable/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="~/Scripts/DataTable/dataTables.responsive.css" rel="stylesheet" />
+    <style>
+        .error {
+            color: red;
+        }
+
+        .admin-logo {
+            position: relative;
+            top: -6px;
+            left: -25px;
+        }
+
+        table.dataTable tbody td.patient-img {
+            padding: 2px;
+            max-width: 100% !important;
+            text-align: left;
+        }
+
+        label {
+            display: -webkit-inline-box;
+        }
+
+        .info-box-text,
+        .progress-description {
+            display: block;
+            font-size: 14px;
+        }
+
+        select.form-control.form-control-sm {
+            height: 30px !important;
+            margin: 0 15px;
+        }
+    </style>
+    <style>
+        @@media (min-width: 320px) and (max-width: 480px) {
+
+            .header .header-left .logo {
+                display: inline-block;
+            }
+
+            a.btn.btn-success {
+                position: relative !important;
+                top: -8px !important;
+            }
+
+            .mobile_btn {
+                color: #000 !important;
+            }
+        }
+
+        .chart-count > div {
+            width: 50%;
+        }
+
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            width: 100%;
+            height: 100%;
+            background: #2f33413d;
+            overflow: hidden;
+        }
+
+            .preloader .preloader-inner {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+
+                .preloader .preloader-inner .preloader-icon {
+                    width: 72px;
+                    height: 72px;
+                    display: inline-block;
+                    padding: 0px;
+                }
+
+                    .preloader .preloader-inner .preloader-icon span {
+                        position: absolute;
+                        display: inline-block;
+                        width: 72px;
+                        height: 72px;
+                        border-radius: 100%;
+                        background: #032055;
+                        -webkit-animation: preloader-fx 1.6s linear infinite;
+                        animation: preloader-fx 1.6s linear infinite;
+                    }
+
+                        .preloader .preloader-inner .preloader-icon span:last-child {
+                            animation-delay: -0.8s;
+                            -webkit-animation-delay: -0.8s;
+                        }
+
+        @@keyframes preloader-fx {
+            0% {
+                -webkit-transform: scale(0, 0);
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                -webkit-transform: scale(1, 1);
+                transform: scale(1, 1);
+                opacity: 0;
+            }
+        }
+
+        @@-webkit-keyframes preloader-fx {
+            0% {
+                -webkit-transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                -webkit-transform: scale(1, 1);
+                opacity: 0;
+            }
+        }
+
+        .imgtable {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            box-shadow: 0px 5px 25px 0px rgb(0 0 0 / 20%);
+            border: 1px solid #fff;
+        }
+    </style>
+    <script type="text/javascript">
+        function Loader(_value) {
+            if (_value) {
+                document.getElementById("divloader").style.display = "block";
+            }
+            else {
+                document.getElementById("divloader").style.display = "none";
+            }
+            setTimeout(function () { document.getElementById("divloader").style.display = "none"; }, 30000);
+        }
+    </script>
+</head>
+<body class="page-header-fixed sidemenu-closed-hidelogo  page-content-white page-md
+      header-white
+      white-sidebar-color
+      logo-indigo
+    ">
+    <div class="preloader" style="display:none" id="divloader">
+        <div class="preloader-inner">
+            <div class="preloader-icon">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <div class="page-wrapper">
+        <!-- start header -->
+        <div class="page-header navbar navbar-fixed-top">
+            <div class="page-header-inner">
+                <!-- logo start -->
+                <div class="page-logo">
+                    <a href="/">
+                        <img src="/assets/images/logo.png" class="img-responsive admin-logo" />
+                    </a>
+                </div>
+                <!-- logo end -->
+                <ul class="nav navbar-nav navbar-left in">
+                    <li>
+                        <a href="#" class="menu-toggler sidebar-toggler">
+                            <i class="icon-menu"></i>
+                        </a>
+                    </li>
+                </ul>
+                <a class="menu-toggler responsive-toggler"
+                   data-bs-toggle="collapse"
+                   data-bs-target=".navbar-collapse">
+                    <span></span>
+                </a>
+                <div class="top-menu">
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="dropdown dropdown-user">
+                            <a class="dropdown-toggle"
+                               data-bs-toggle="dropdown"
+                               data-hover="dropdown"
+                               data-close-others="true">
+                                @if (nationallotterySession.profilepicture != null)
+                                {
+                                    <img alt="" class="img-circle" src="@nationallotterySession.profilepicture" />
+                                }
+                                else
+                                {
+                                    <img alt="" class="img-circle" src="/adminassest/assets/img/dp.jpg" />
+                                }
+                                <span class="username username-hide-on-mobile">@nationallotterySession.name </span>
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-default">
+                                <li>
+                                    <a href="@Url.Action("Index","ProfileSetting",new { area="Nationallottery"})">
+                                        <i class="fa fa-user" aria-hidden="true"></i>My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("PasswordChange","Index",new { area="Nationallottery"})">
+                                        <i class="fa fa-cog"></i> Setting
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Logout","Account",new { area=""})">
+                                        <i class="icon-logout"></i> Log Out
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- end color quick setting -->
+        <!-- start page container -->
+        <div class="page-container">
+            <!-- start sidebar menu -->
+            <div class="sidebar-container">
+                <div class="sidemenu-container navbar-collapse collapse fixed-menu">
+                    <div id="remove-scroll" class="left-sidemenu">
+                        <ul class="sidemenu page-header-fixed slimscroll-style"
+                            data-keep-expanded="false"
+                            data-auto-scroll="true"
+                            data-slide-speed="200"
+                            style="padding-top: 20px">
+                            <li class="sidebar-toggler-wrapper hide">
+                                <div class="sidebar-toggler">
+                                    <span></span>
+                                </div>
+                            </li>
+                            <li class="sidebar-user-panel">
+                                <div class="user-panel">
+                                    @if (nationallotterySession.profilepicture != null)
+                                    {
+
+
+                                        <div class="pull-left image">
+                                            <img src="@nationallotterySession.profilepicture"
+                                                 class="img-circle user-img-circle"
+                                                 alt="User Image" />
+                                        </div>
+                                    }
+                                    else
+                                    { <div class="pull-left image">
+                                            <img src="/adminassest/assets/img/dp.jpg"
+                                                 class="img-circle user-img-circle"
+                                                 alt="User Image" />
+                                        </div>}
+                                    <div class="pull-left info">
+                                        <p>@nationallotterySession.name</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="nav-item" id="Dashboard">
+                                <a href="@Url.Action("Index","NationallotteryDashboard",new { area="Nationallottery" })" class="nav-link nav-toggle">
+                                    <i class="material-icons">dashboard</i>
+                                    <span class="title">Dashboard</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="CardsHistory">
+                                <a href="@Url.Action("BetHistory","NationallotteryCardsPurchased",new { area="Nationallottery",viewType="w" })" class="nav-link nav-toggle">
+                                    <i class="material-icons">dashboard</i>
+                                    <span class="title">Cards History</span>
+                                    <span class="selected"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <script src="~/adminassest/assets/bundles/jquery/jquery.min.js"></script>
+            <script src="~/scripts/alertify.js"></script>
+            <script src="~/adminassest/assets/bundles/popper/popper.js"></script>
+            <script src="~/adminassest/assets/bundles/jquery-blockUI/jquery.blockui.min.js"></script>
+            <script src="~/adminassest/assets/bundles/jquery.slimscroll/jquery.slimscroll.js"></script>
+
+            <!--Jquery Validation-->
+            <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+            <script src="~/Scripts/jquery.validate.min.js"></script>
+            <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+            <!-- bootstrap -->
+            <script src="~/adminassest/assets/bundles/bootstrap/js/bootstrap.min.js"></script>
+            <script src="~/adminassest/assets/bundles/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+            <!-- counterup -->
+            <script src="~/adminassest/assets/bundles/counterup/jquery.waypoints.min.js"></script>
+            <script src="~/adminassest/assets/bundles/counterup/jquery.counterup.min.js"></script>
+            <!-- Common js-->
+            <script src="~/adminassest/assets/app.js"></script>
+            <script src="~/adminassest/assets/layout.js"></script>
+            <script src="~/adminassest/assets/theme-color.js"></script>
+            <!-- material -->
+            <script src="~/adminassest/assets/bundles/material/material.min.js"></script>
+            <!-- chart js -->
+            <script src="~/adminassest/assets/bundles/chart-js/Chart.min.js"></script>
+            <script src="~/adminassest/assets/bundles/chart-js/utils.js"></script>
+            <script src="~/adminassest/assets/bundles/apexcharts/apexcharts.min.js"></script>
+            <script src="~/adminassest/assets/data/apex-home.js"></script>
+            @*<script src="~/Scripts/DataTable/jquery.dataTables.js"></script>*@
+            <script src="~/scripts/DataTable/jquery.dataTables.min.js"></script>
+            <script src="~/scripts/DataTable/dataTables.bootstrap.min.js"></script>
+            @*<script src="~/Scripts/DataTable/dataTables.bootstrap.js"></script>*@
+            <script src="~/Scripts/DataTable/dataTables.responsive.js"></script>
+            <div class="page-content-wrapper">
+                @RenderBody()
+            </div>
+        </div>
+        <!-- end page container -->
+        <!-- start footer -->
+        <div class="page-footer">
+            <div class="page-footer-inner">@DateTime.UtcNow.Year &copy; Quickbet nigeria</div>
+            <div class="scroll-to-top">
+                <i class="icon-arrow-up"></i>
+            </div>
+        </div>
+        <!-- end footer -->
+    </div>
+
+</body>
+</html>

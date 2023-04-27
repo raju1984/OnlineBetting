@@ -1,0 +1,176 @@
+﻿@model IEnumerable<QuickBetCore.Areas.Agent.Data.WalletAccountWithralRequestModel>
+@using QuickBetCore.Models;
+<table class="table data-tables" id="datatable" style="width:100%">
+    <thead>
+        <tr>
+            <th>Winning List</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                string txtid = "txtremark" + item.Id;
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-sm-12" style="padding: 10px;">
+                                <b>Agent Name:</b> @item.RequestedBy<br />
+                                <b>Email:</b> @item.Email<br />
+                                <b>PhoneNo:</b> @item.PhoneNo<br />
+
+                                <b>Transaction Id:</b> @item.TransactionId<br />
+                                <b>Date:</b> @item.RequestedDate<br />
+                                <b>Withdraw request Amount:</b>@ApplicationVariable.currencysymbol @item.Amount <br />
+                                <b>Remarks:</b> Amount @ApplicationVariable.currencysymbol @item.Amount Requested to withdraw <br />
+                            </div>
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Status:
+                                @if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionInitiated
+                                    || item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionPending)
+                                {
+                                    <span class="label label-sm label-default">
+                                        Pending for approval
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span class="label label-sm label-danger">
+                                        Unknown
+                                    </span>
+
+                                }
+                            </div>
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Action:
+                                @if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionInitiated
+                                || item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionPending)
+                                {
+                                    @*<button onclick="loadBarcode(@item.Id)" class="btn btn-info waves-effect waves-light qr-code">
+                                            <i class="fa fa-qrcode fa-2" aria-hidden="true"></i> Scan
+                                        </button>*@
+                                    <button onclick="AcceptPayment(@item.Id)" class="btn btn-success">
+                                        <i class="fa fa-credit-card-alt" aria-hidden="true"></i>Change Status to Pay
+                                    </button>
+
+                                    <button class="btn btn-danger" onclick="RejectPayment('@item.Id','@txtid')">
+                                        <i class="fa fa-window-close" aria-hidden="true"></i>  Reject
+                                    </button>
+                                    <br />
+                                    <br />
+                                    <input style="display:none" type="text" placeholder="please enter remark.." id="@txtid" />
+                                }
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script>
+
+    function PayMoney(id) {
+        var Id = id;
+        var formURL = "/Admin/AdminDashboard/ApproveRequest?id=" + Id;
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: formURL,
+            //data: '{Id: "' + parseInt(user) + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                if (response.Code == 200) {
+                    alertify.success(response.Msg);
+                    loadPaymentRequets(true);
+
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            }
+        });
+    }
+
+    function RejectPayment(walletTranId, elementId)
+    {
+        var remarkselector = "#" + elementId;
+        $(remarkselector).css('display', 'block');
+        var remarktxt = $(remarkselector).val();
+        if (remarktxt == "") {
+            $(remarkselector).css('border-color', 'Red');
+            return false;
+        }
+        else {
+            $(remarkselector).css('border-color', 'lightgrey');
+        }
+        if (walletTranId && walletTranId > 0) {
+            Loader(true);
+            $.ajax({
+                type: "POST",
+                url: "/Admin/TransactionHistory/RejectPaymentRequest?walletId=" + walletTranId + "&remark=" + remarktxt,
+                //data: '{walletId: "' + walletTranId + '",remark: "' + remarktxt + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    Loader(false);
+                    if (result && result.Data) {
+                        alertify.alert(result.Data.Msg);
+                        $("#alertify").css('display', 'block')
+                        location.reload(true);
+                    }
+                },
+                error: function (err) {
+                    alertify.alert(err);
+                    $("#alertify").css('display', 'block')
+                    Loader(false);
+                }
+            });
+        } else {
+            alertify.alert("Minimum Amount:100");
+            $("#alertify").css('display', 'block')
+        }
+    }
+    function AcceptPayment(walletTranId) {
+        if (walletTranId && walletTranId > 0) {
+            Loader(true);
+            $.ajax({
+                type: "POST",
+                url: "/Admin/TransactionHistory/AcceptPaymentRequest?walletId=" + walletTranId,
+                //data: '{walletId: "' + walletTranId + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    Loader(false);
+                    if (result && result.Data) {
+                        //alertify.alert(result.Data.Msg);
+                        $("#alertify").css('display', 'block')
+                        location.reload(true);
+                    }
+                },
+                error: function (err) {
+                    alertify.alert(err);
+                    $("#alertify").css('display', 'block')
+                    Loader(false);
+                }
+            });
+        } else {
+            alertify.alert("Minimum Amount:100");
+            $("#alertify").css('display', 'block')
+        }
+    }
+</script>

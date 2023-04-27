@@ -1,0 +1,81 @@
+﻿@model QuickBetCore.Areas.Nationallottery.Data.NationallotteryDahsboardViewModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Nationallottery/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .info-box-text{
+            white-space: pre-line;
+    }
+</style>
+<div class="page-content" style="min-height:563px">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Dashboard</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="index.html">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Dashboard</li>
+            </ol>
+        </div>
+    </div>
+    <!-- start widget -->
+    <div class="state-overview">
+        <div class="row">
+            <!-- /.col -->
+            <div class="col-xl-6 col-md-6 col-12">
+                <a href="@Url.Action("BetHistory","CardsPurchased",new { area="Nationallottery"})">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Current Month(3 % card sales)</span>
+                            <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.CurrentMontheCommison)</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!-- /.col -->
+            <div class="col-xl-6 col-md-6 col-12">
+                <a href="@Url.Action("BetHistory", "CardsPurchased", new { area= "Nationallottery"})">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Last Month(3 % card sales)</span>
+                            <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.LastMontheCommison) </span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="col-xl-6 col-md-6 col-12">
+                <a href="@Url.Action("BetHistory","CardsPurchased",new { area="Nationallottery"})">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Current Month(100 % card sales) </span>
+                            <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.CurrentMontheBet)</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-xl-6 col-md-6 col-12">
+                <a href="@Url.Action("BetHistory","CardsPurchased",new { area="Nationallottery"})">
+                    <div class="info-box bg-blue">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Last Month(100 % card sales) </span>
+                            <span class="info-box-number">₦@ApplicatiopnCommonFunction.FormatStringCurrency(Model.LastMontheBet)</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+

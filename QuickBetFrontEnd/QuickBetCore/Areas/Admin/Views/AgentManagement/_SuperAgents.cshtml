@@ -1,0 +1,175 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+<div class="table-responsive">
+    <table class="table" id="datatable">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    E-mail
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Super Agent Commission
+                    <i class="fa fa-info-circle" data-toggle="tooltip" title="Super Agent Commision on Agent earning!" aria-hidden="true"></i>
+                </th>
+                @*<th>
+                        Agent Cashback <br />
+                        <i class="fa fa-info-circle" data-toggle="tooltip" title="Cashback to agent ,if he/she make the payment
+                          to the customer instead of giving barcode!" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                        Customer Retention Period(Days)
+                    </th>*@
+                <th>
+                    Wallet balance
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    string phone = item.countrycode + item.phone;
+                    string backclr = "";
+                    if (item.status == (int)UserStatus.active)
+                    {
+                        backclr = "#ffffff";
+                    }
+                    else if (item.status == (int)UserStatus.Pending_for_approval)
+                    {
+                        backclr = "#cb9e5f";
+                    }
+                    else
+                    {
+                        backclr = "grey;";
+                    }
+                    string trid = "tr" + item.Id;
+                    string blckId = "blck" + item.Id;
+                    string unblck = "unblck" + item.Id;
+                    <tr id="@trid" style="background-color:@backclr">
+                        <td style="background-color:@backclr">
+                            @if (!string.IsNullOrEmpty(item.profile))
+                            {
+                                <img src="@item.profile" class="imgtable"
+                                     alt="" />
+                            }
+                            else
+                            {
+                                <img src="~/img/nouser.jpg" class="imgtable" />
+                            }
+                            @item.name
+                        </td>
+                        <td>
+                            @item.email
+                        </td>
+                        <td>
+                            @item.phone
+                        </td>
+                        <td>
+                            <input type="number" onchange="UpdateCommision('@item.Id',this,'SuperAgentCommission')" value="@item.quickbetcommision" min="0" step="any" style="width:60px" />%
+                        </td>
+                        @*<td>
+                                <input type="number" onchange="UpdateCommision('@item.Id',this,'cashback')" min="0" value="@item.cashback" step="any" style="width:60px" />%
+                            </td>
+                            <td>
+                                <input type="number" onchange="UpdateCommision('@item.Id',this,'retention')" min="0" value="@item.CustomerRetentionPeriod" style="width:60px" />Days
+                            </td>*@
+                        <td>
+                            @ApplicationVariable.currencysymbol @item.walletbalance
+                        </td>
+
+                        <td>
+                            @if (item.status == (int)UserStatus.active)
+                            {
+                                <button class="btn btn-success btn-xs">
+                                    Active
+                                </button>
+                            }
+                            else if (item.status == (int)UserStatus.Pending_for_approval)
+                            {
+                                <button class="btn btn-warning btn-xs">
+                                    Pending for
+                                    approval
+                                </button>
+                                <a href="javascript:" class="btn btn-success btn-xs"
+                                   id="@unblck" onclick="BlockCUpdate('uuser','@item.Id')" title="Approve">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </a>
+                                <a href="javascript:" class="btn btn-danger btn-xs"
+                                   id="@blckId" onclick="BlockCUpdate('buser','@item.Id')" title="Reject">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary btn-xs">
+                                    Blocked
+                                </button>
+                                //blocked
+                            }
+                        </td>
+                        <td>
+
+                            <div class="dropdown">
+                                <a class="dropdown-toggle actionbtn" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+                                    <li>
+                                        <a title="See Customers" class="dropdown-item" href="@Url.Action("SuperAgentClient","AgentManagement",new { AgentId=item.Id})">
+                                            <i class="fa fa-users" aria-hidden="true"></i>See Agents
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" title="Delete User" onclick="DeleteUser('@item.Id')">
+                                            <i class="fa fa-trash" aria-hidden="true"></i> Delete User
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:" class="dropdown-item" onclick="ShowPassowordResetPasswordPopup('@item.Id')" title="Reset Password">
+                                            <i class="fa fa-key" aria-hidden="true"></i>Reset Password
+                                        </a>
+                                    </li>
+                                    @if (item.status == (int)UserStatus.active)
+                                    {
+                                        <li>
+                                            <a href="javascript:" class="dropdown-item" id="@blckId" onclick="BlockCUpdate('buser','@item.Id')"
+                                               title="Block User">
+                                                <i class="fa fa-ban"></i>Block User
+                                            </a>
+                                        </li>
+
+                                    }
+                                    else if (item.status == (int)UserStatus.block)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="javascript:" title="Unblock User" id="@unblck" onclick="BlockCUpdate('uuser','@item.Id')">
+                                                <i class="fa fa-unlock" aria-hidden="true"></i> Unblock User
+                                            </a>
+                                        </li>
+
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>
+
+

@@ -1,0 +1,203 @@
+﻿@model QuickBetCore.Models.AdminDashboardViewModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+<style>
+    fieldset {
+        border: 3px solid black;
+    }
+
+    legend {
+        color: black;
+    }
+</style>
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Dashboard</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Dashboard</li>
+            </ol>
+        </div>
+    </div>
+    <!-- start widget -->
+    <div class="state-overview">
+        <a class="btn btn-success" href="@Url.Action("ManageOffers","AdminDashboard",new {area="Admin" })">
+            <i class="fa fa-money" aria-hidden="true"></i> Manage Offers
+        </a>
+        <a class="btn btn-success" href="@Url.Action("Minimumcustomerwithdrawal","AdminDashboard",new {area="Admin" })">
+            <i class="fa fa-money" aria-hidden="true"></i> Manage minimum customer withdrawal
+        </a>
+        <a class="btn btn-success" href="@Url.Action("Managerandombonus","AdminDashboard",new {area="Admin" })">
+            <i class="fa fa-money" aria-hidden="true"></i> Manage random bonus
+        </a>
+         <a class="btn btn-success" href="@Url.Action("JackpotHistory","CardsPurchased",new { area="Admin" })">
+            <i class="fa fa-money" aria-hidden="true"></i> Jackpot Winnings
+        </a>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-xl-3 col-md-6 col-12">
+                <a style="color:white" href="@Url.Action("Index","Customers",new {area="Admin" })">
+                    <div class="info-box bg-blue">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Customers</span>
+
+                        </div>
+                        <span class="info-box-number">@Model.totaluser</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a style="color:white" href="@Url.Action("Index","AgentManagement",new { status=(int)UserStatus.Pending_for_approval, area="Admin" })">
+                    <div class="info-box bg-blue">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Agents Approveal Pending</span>
+
+                        </div>
+                        <span class="info-box-number">@Model.Agents</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- /.col -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("WithDrawRequest","TransactionHistory",new {area="Admin" })">
+                    <div class="info-box bg-orange">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Approve Pending</span>
+
+                        </div>
+                        <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.aprovepending) </span>
+
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("History","TransactionHistory",new {area="Admin",trantype="tfsfund" })">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Transfered Fund</span>
+
+                        </div>
+                        <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.Transferedfund)</span>
+
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("History","TransactionHistory",new {area="Admin",trantype="disfund" })">
+                    <div class="info-box bg-red">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Disputed Fund</span>
+
+                        </div>
+                        <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.Disputed)</span>
+                        <!-- /.info-box-content -->
+                    </div>
+                </a>
+
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <a href="@Url.Action("RefundTransaction","AdminCommisonRefund",new {area="Admin"})">
+                    <div class="info-box bg-danger">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">monetization_on</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Refunded Fund</span>
+
+                        </div>
+                        <span class="info-box-number">₦ @ApplicatiopnCommonFunction.FormatStringCurrency(Model.RefundAmont)</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="state-overview">
+                <div class="row">
+                    <fieldset>
+                        <legend>
+                            WithDraw Request To Bank Account
+                        </legend>
+                        <button class="btn btn-info" onclick="loadPaymentRequets(true)"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+                        <div id="divcontent">
+
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#AdminDashboard").addClass("active");
+        loadPaymentRequets(true);
+    })
+
+    function loadPaymentRequets(IsLoad) {
+        if (IsLoad) {
+            Loader(true);
+        }
+        $.ajax({
+            url: "/Admin/AdminDashboard/GetWithdrawRequets",
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                debugger;
+                Loader(false);
+                $('#divcontent').val("")
+                $('#divcontent').html(result);
+                $('#datatable').DataTable({
+                    responsive: true,
+                    "aaSorting": []
+                });
+                setTimeout(function () {
+                    loadPaymentRequets(false);
+                }, 50000);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>
+
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}

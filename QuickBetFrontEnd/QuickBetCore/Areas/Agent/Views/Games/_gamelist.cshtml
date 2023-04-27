@@ -1,0 +1,124 @@
+﻿
+@model IEnumerable<QuickBetCore.Models.GameViewModel>
+@using QuickBetCore.Models;
+
+
+<style>
+    .jackpot-item {
+        padding: 30px 30px 10px 30px;
+        background-color: #ffffff;
+        box-shadow: 0 0 10px 0 rgb(0 0 0 / 15%);
+        border-bottom: 2px solid #6c0092;
+        transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -ms-transition: all 0.3s;
+        -o-transition: all 0.3s;
+    }
+    .scroll {
+        padding: 10px 10px 10px 0;
+        min-height: 250px;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    /* ===== Scrollbar CSS ===== */
+    /* Firefox */
+    *.scroll {
+        scrollbar-width: auto;
+        scrollbar-color: #8f54a0 #ffffff;
+    }
+
+        /* Chrome, Edge, and Safari */
+        *.scroll::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        *.scroll::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        *.scroll::-webkit-scrollbar-thumb {
+            background-color: #8f54a0;
+            border-radius: 10px;
+            border: 3px solid #ffffff;
+        }
+    .jackpot-item.text-center {
+        margin-bottom: 60px;
+    }
+    .cmn-btn {
+        font-size: 20px;
+        text-transform: capitalize;
+        background-color: #6c0092;
+        color: #ffffff;
+        padding: 10px 26px;
+        font-weight: 400;
+        border-radius: 999px;
+        -webkit-border-radius: 999px;
+        -moz-border-radius: 999px;
+        -ms-border-radius: 999px;
+        -o-border-radius: 999px;
+        transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -ms-transition: all 0.3s;
+        -o-transition: all 0.3s;
+        font-size: 16px;
+        text-transform: uppercase;
+        position: relative;
+        top: 20px;
+    }
+
+    .gamelistdiv img.img-fluid {
+        width: 100%;
+    }
+
+    .gamelistdiv .title {
+        color: #000;
+    }
+    .gamelistdiv h4 {
+        font-size: 18px !important;
+        font-weight: 500;
+        color: #525252 !important;
+    }
+    .gamelistdiv h5 {
+        font-size: 18px !important;
+        font-weight: 400;
+        line-height: 25px;
+    }
+    .gamelistdiv h6 {
+        font-size: 15px !important;
+        font-weight: 500;
+    }
+
+</style>
+@if (Model != null && Model.Count() > 0)
+{
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="first-select wide">
+                <label>Search Lottery</label>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" oninput="filtergamelist()" id="txtsearch" placeholder="Search..." value="">
+                </div>
+            </div>
+            <br />
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-sm-6 gamelistdiv" data="@item.gamename">
+                <img src="@item.gameimg" alt="image" class="img-fluid" />
+                <div class="jackpot-item text-center">
+                    <div class="scroll">
+                        <h4 class="title gamename" id="@item.gameid">@item.gamename</h4>
+                       @* <h5 class="title">@item.GameCaption</h5>*@
+                        @*<h6 class="title">Win upto @ApplicationVariable.currencysymbol : @ApplicatiopnCommonFunction.FormatStringCurrency(item.JackPot) <br /> Ticket cost @ApplicationVariable.currencysymbol :@ApplicatiopnCommonFunction.FormatStringCurrency(item.TicketCost)</h6>*@
+                    </div>
+                        <a class="cmn-btn" target="_blank" href="@Url.Action("ChooseCustomer","Games",new {gameid=item.gameid })">Try now!</a>
+                </div>
+            </div>
+        }
+    </div>
+}
+

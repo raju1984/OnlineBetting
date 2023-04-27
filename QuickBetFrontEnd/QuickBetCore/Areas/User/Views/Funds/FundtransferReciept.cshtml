@@ -1,0 +1,61 @@
+﻿@model QuickBetCore.Areas.Agent.Data.FundTransferModelUser
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "FundtransferReciept";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-12">
+            <div class="d-flex align-items-center">
+                <h5 class="page-title">Transfer funds to Customer</h5>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="row">
+                        <span class="pull-left">
+                            <a class="btn btn-sm btn-warning" href="@Url.Action("Fundtransfer","Funds",new { area="User"})">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i>Back
+                            </a>
+                        </span>
+                        @if (Model != null && Model.ErrorMessage != null)
+                        {
+                            if (Model.ErrorMessage.ErrorCode == (int)ReturnCode.Success)
+                            {
+                                <div class="alert alert-success" style="margin-top:5%;margin-bottom:10%">
+                                    <i class="fa fa-smile-o text-success fa-2x" aria-hidden="true"></i>
+                                    <span class="text-success">Payment Successfullly</span> <br />
+                                    Amount: ₦ @Model.amount transfer Successfullly!
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger" style="margin-top:5%;margin-bottom:10%">
+                                    <i class="fa fa-frown-o text-warning fa-2x" aria-hidden="true"></i>
+                                    <span class="text-success">@Model.ErrorMessage.ErrorMessage </span> <br />
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger" style="margin-top:5%;margin-bottom:10%">
+                                <i class="fa fa-frown-o text-danger fa-2x" aria-hidden="true"></i>
+                                <span class="text-danger">Sorry, your payment failed.</span>
+
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

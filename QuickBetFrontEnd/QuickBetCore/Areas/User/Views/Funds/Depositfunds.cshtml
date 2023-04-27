@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Depositfunds";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    decimal balacne = 0;
+    if (ViewData["balance"] != null)
+    {
+        var amount = ViewData["balance"].ToString();
+        balacne = Convert.ToDecimal(amount);
+    }
+}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-12">
+            <div class="d-flex align-items-center">
+                <h5 class="page-title">Account balance: ₦ @balacne</h5>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Deposit funds to account</h5>
+            </div>
+            <div class="card-body">
+                <!-- <h4 style="color: #13662c;">₦1,000.00 – ₦250,000.00</h4> -->
+                <form id="contactForm"
+                      method="GET"
+                      action="/Payment/PaymentMode"
+                      class="log-form">
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-12" style="font-size: 18px;">Amount to deposit *</label>
+                        <div class="col-md-12">
+                            <input type="number" name="amount" id="amount" required class="form-control" min="1" placeholder="Enter Amount">
+                        </div>
+                    </div>
+                    <button type="submit" onclick="return validate()" class="btn-chat">Click to continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function validate() {
+        var amount = $("#amount").val();
+        if (amount < 0 || amount == 0) {
+            alert("please enter valid amount!")
+            return false
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#Funds").addClass("active");
+    })
+</script>

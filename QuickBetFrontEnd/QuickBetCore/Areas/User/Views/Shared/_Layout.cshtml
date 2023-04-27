@@ -1,0 +1,375 @@
+﻿@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    UserSession userSession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Quickbet</title>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="~/userassets/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="~/userassets/plugins/fontawesome/css/fontawesome.min.css" />
+    <link rel="stylesheet" href="~/userassets/plugins/fontawesome/css/all.min.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet"
+          href="~/userassets/plugins/simple-calendar/simple-calendar.css" />
+    <link rel="stylesheet" href="~/userassets/css/feather.css" />
+    <link rel="stylesheet" href="~/userassets/css/style.css" />
+    <link href="~/css/alertify.core.css" rel="stylesheet" />
+    <link href="~/css/alertify.default.css" rel="stylesheet" />
+    <link href="~/Scripts/DataTable/dataTables.bootstrap.css" rel="stylesheet" />
+    <link href="~/Scripts/DataTable/dataTables.responsive.css" rel="stylesheet" />
+
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.foundation.min.css" rel="stylesheet" />
+     <!-- Google tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-237628863-1">
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-237628863-1');
+    </script>
+    <style>
+    .label.label-sm {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 6px 6px;
+        margin-right: 5px;
+    }
+
+    .label-warning {
+        background: linear-gradient( 45deg, #ffb64d, #ffcb80) !important;
+    }
+
+    .label-success {
+        background-color: #198754 !important
+    }
+
+    .label-danger {
+        background: linear-gradient( 45deg, #ff5370, #ff869a) !important;
+    }
+</style>
+    <style>
+        @@media (min-width: 320px) and (max-width: 480px) {
+
+            .header .header-left .logo {
+                display: inline-block;
+            }
+
+            a.btn.btn-success {
+                position: relative !important;
+                top: -8px !important;
+            }
+
+            .mobile_btn {
+                color: #000 !important;
+            }
+        }
+
+        .chart-count > div {
+            width: 50%;
+        }
+
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            width: 100%;
+            height: 100%;
+            background: #2f33413d;
+            overflow: hidden;
+        }
+
+            .preloader .preloader-inner {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+
+                .preloader .preloader-inner .preloader-icon {
+                    width: 72px;
+                    height: 72px;
+                    display: inline-block;
+                    padding: 0px;
+                }
+
+                    .preloader .preloader-inner .preloader-icon span {
+                        position: absolute;
+                        display: inline-block;
+                        width: 72px;
+                        height: 72px;
+                        border-radius: 100%;
+                        background: #032055;
+                        -webkit-animation: preloader-fx 1.6s linear infinite;
+                        animation: preloader-fx 1.6s linear infinite;
+                    }
+
+                        .preloader .preloader-inner .preloader-icon span:last-child {
+                            animation-delay: -0.8s;
+                            -webkit-animation-delay: -0.8s;
+                        }
+
+        @@keyframes preloader-fx {
+            0% {
+                -webkit-transform: scale(0, 0);
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                -webkit-transform: scale(1, 1);
+                transform: scale(1, 1);
+                opacity: 0;
+            }
+        }
+
+        @@-webkit-keyframes preloader-fx {
+            0% {
+                -webkit-transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                -webkit-transform: scale(1, 1);
+                opacity: 0;
+            }
+        }
+    </style>
+    <style>
+        .user-img img {
+            width: 25px;
+        }
+
+        .sidebar-menu li:hover > a, .sidebar-menu li > a.subdrop {
+            color: #000;
+            background: #f4f4f4;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .sidebar-menu .nav-sub li:hover > a {
+            color: #fff;
+            background: transparent;
+        }
+
+        .sidebar-menu .nav-sub li > a {
+            text-decoration: none !important;
+            background: transparent !important;
+        }
+
+            .sidebar-menu .nav-sub li > a i {
+                line-height: normal;
+                padding: 0px;
+                height: auto;
+                font-size: 15px;
+            }
+
+        .sidebar-menu li:hover a i, .sidebar-menu li > a.subdrop i {
+            border-radius: 50px;
+            background: #323584;
+            color: #fff;
+        }
+
+        .user-menu .dropdown-menu {
+            min-width: 150px;
+            padding: 0;
+            border-radius: 5px;
+        }
+
+        span.user-name {
+            color: #323584;
+        }
+    </style>
+    <script type="text/javascript">
+        function Loader(_value) {
+            if (_value) {
+                document.getElementById("divloader").style.display = "block";
+            }
+            else {
+                document.getElementById("divloader").style.display = "none";
+            }
+            setTimeout(function () { document.getElementById("divloader").style.display = "none"; }, 30000);
+        }
+    </script>
+</head>
+<body>
+    <div class="preloader" style="display:none" id="divloader">
+        <div class="preloader-inner">
+            <div class="preloader-icon">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="header-left">
+                <a href="/" class="logo">
+                    <img src="/assets/images/logo.png" alt="Logo" />
+                </a>
+                <!-- <a href="index.html" class="logo logo-small">
+                  <img
+                    src="assets/img/logo-small.png"
+                    alt="Logo"
+                    width="30"
+                    height="30"
+                  />
+                </a> -->
+            </div>
+            <a href="javascript:void(0);" id="toggle_btn">
+                <i class="fas fa-bars"></i>
+            </a>
+            <div class="top-nav-search">
+                @*<form>
+                        <input type="text" class="form-control" placeholder="Search here" />
+                        <button class="btn" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>*@
+            </div>
+            <a class="mobile_btn" id="mobile_btn"> <i class="fas fa-bars"></i> </a>
+            <ul class="nav user-menu">
+                <li class="nav-item dropdown has-arrow main-drop ml-md-3">
+                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+
+                        <span class="user-img">
+                            @if (userSession != null && !string.IsNullOrEmpty(userSession.profilepicture))
+                            {
+                                <img src="@userSession.profilepicture" alt="" />
+                                <span class="status online"></span>
+                            }
+                            else
+                            {
+                                <img src="~/userassets/img/avatar.jpg" alt="" />
+                                <span class="status online"></span>
+                            }
+                        </span>
+                        <span class="user-name">@userSession.name <i class="fas fa-angle-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="@Url.Action("Myprofile","UserSetting",new { area="User"})"><i class="feather-user"></i>My Profile</a>
+                        <a class="dropdown-item" href="@Url.Action("Setting","UserSetting",new { area="User"})"> <i class="fa fa-cog" aria-hidden="true"></i>Setting</a>
+                        <a class="dropdown-item" href="@Url.Action("Logout","Account",new { area=""})"><i class="feather-power"></i>Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li id="UserDashboard">
+                            <a href="@Url.Action("Index","UserDashboard",new { area="User"})">
+                                <i class="feather-home"></i><span class="shape1"></span><span class="shape2"></span><span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li id="Addresses">
+                            <a href="@Url.Action("Index","Addresses",new { area="User"})">
+                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                <span>Addresses</span>
+                            </a>
+                        </li>
+                        <li id="Funds">
+                            <a href="@Url.Action("Index","Funds",new { area="User"})"><i class="fa fa-money"></i><span>Funds</span></a>
+                        </li>
+                        <li id="transaction">
+                            <a href="@Url.Action("TransactionHistory","Funds",new { area="User" })">
+                                <i class="material-icons">monetization_on</i>
+                                <span>Transactions History</span>
+                            </a>
+                        </li>
+                        <li id="CardsPlayed" class="submenu">
+                            <a href="#">
+                                <i class="material-icons">monetization_on</i><span>Bet History </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul class="nav-sub">
+                                <li class="side-menu-label1">
+                                    <a href="@Url.Action("BetHistory","CardsPlayed",new { area="User" })" class="nav-link d-flex">
+                                        <i class="fa fa-history"></i> Bet History
+                                    </a>
+                                </li>
+                                <li class="side-menu-label1">
+                                    <a href="@Url.Action("WinningHistory","CardsPlayed",new { area="User" })" class="nav-link d-flex">
+                                        <i class="fa fa-history"></i> Winning History
+                                    </a>
+                                </li>
+                                <li class="side-menu-label1">
+                                    <a href="@Url.Action("JackpotHistory","CardsPlayed",new { area="User" })" class="nav-link d-flex">
+                                        <i class="fa fa-history"></i> Jackpot Wins
+                                    </a>
+                                </li>
+                                @*<li class="side-menu-label1"><a href="#">Crypto Currencies</a></li>*@
+                            </ul>
+                        </li>
+                        <li id="Dispute">
+                            <a href="@Url.Action("Index","Dispute",new { area="User" })" class="nav-link nav-toggle">
+                                <i class="material-icons">person</i>
+                                <span class="title">Dispute </span>
+                            </a>
+                        </li>
+                        <li id="support">
+                            <a href="@Url.Action("Index","CustomerSupport",new { area="User" })" class="nav-link nav-toggle">
+                                <i class="material-icons">person</i>
+                                <span class="title">Support </span>
+                            </a>
+                        </li>
+                        <li id="Setting">
+                            <a href="@Url.Action("Setting","UserSetting",new { area="User"})">
+                                <i class="fa fa-cog" aria-hidden="true"></i>
+                                <span>Setting</span>
+                            </a>
+                        </li>
+                        <li id="ReferAndEarn">
+                            <a href="@Url.Action("Index","ReferAndEarn",new { area="User"})">
+                                <i class="material-icons">monetization_on</i>
+                                <span>Refer and Earn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Logout","Account",new { area=""})">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                <span>Log out</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="~/userassets/js/jquery-3.6.0.min.js"></script>
+        <script src="~/scripts/alertify.js"></script>
+        <script src="~/userassets/js/bootstrap.bundle.min.js"></script>
+        <script src="~/userassets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+        @*<script src="~/userassets/plugins/apexchart/apexcharts.min.js"></script>
+            <script src="~/userassets/plugins/apexchart/dsh-apaxcharts.js"></script>*@
+        <script src="~/userassets/plugins/simple-calendar/jquery.simple-calendar.js"></script>
+        <script src="~/userassets/js/calander.js"></script>
+        <script src="~/userassets/js/script.js"></script>
+        <script src="~/Scripts/DataTable/jquery.dataTables.js"></script>
+        <script src="~/Scripts/DataTable/dataTables.bootstrap.js"></script>
+        <script src="~/Scripts/DataTable/dataTables.responsive.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

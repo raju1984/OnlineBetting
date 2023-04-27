@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "withdrawalBalance";
+    Layout = "~/Areas/Agent/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="align-items-center">
+                    <h5 class="page-title updd">Account balance: ₦ @ViewBag.BalanceAmount</h5>
+                    <br />
+                    <a class="btn btn-success" href="@Url.Action("withdrawalBalance","AgentFunds",new { area="Agent" })">
+                        Withdraw Funds from account
+                    </a>
+                    <a class="btn btn-default" href="@Url.Action("ManageBankDetail","AgentFunds",new { area="Agent" })">
+                        Manage Bank Detail
+                    </a>
+                    <br />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title" style="width:100%">
+                            Withdraw Funds from account
+
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-12" style="background: none;padding-left: 0; text-align: left;">Withdraw Naira value * </label>
+                            <div class="col-md-12" style="padding-left: 0;">
+                                <input type="number" id="txtamount" min="100" value="100" class="form-control" placeholder="Enter Here">
+                                <p>Minimum Amount: 100</p>
+                            </div>
+                            <button onclick="TransferAmountToBank()" class="btn-chat" style="display: inline;width: auto;">Submit Request</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#Funds").addClass("active");
+        loadAgentCustomers()
+    });
+    function TransferAmountToBank() {
+        var amount = $("#txtamount").val();
+        if ($('#txtamount').val().trim() == "") {
+            $('#txtamount').css('border-color', 'Red');
+            return false;
+        }
+        else {
+            $('#txtamount').css('border-color', 'lightgrey');
+        }
+        if (amount >= 100) {
+            Loader(true);
+            $.ajax({
+                type: "POST",
+                url: "/Agent/AgentFunds/withdrawalBalanceRequest",
+                data: '{amount: "' + amount + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    Loader(false);
+                    $("#txtamount").val("");
+                   // console.log('Result:' + result.Data.MyWallet);
+                  //  console.log('Result:' + result.Data.Wall);
+                    if (result && result.Data.Code == 200) {
+                        swal({
+                            title: "success!",
+                            text: result.Data.Msg,
+                            type: "success",
+                        }).then(function () {
+                            //$("#tab2").trigger("click");
+                            window.location.reload();
+                        });
+                        //ext(result.Data.Wall);
+                        $('.updd').text("Account balance: ₦"+ result.Data.MyWallet);
+                    }
+                    else {
+                        if (result && result.Data) {
+                            alertify.error(result.Data.Msg)
+                            swal({
+                                title: "Error!",
+                                text: result.Data.Msg,
+                                type: "error",
+                            }).then(function () {
+                                $("#tab1").trigger("click");
+                            });
+                        }
+                        else {
+
+                            swal({
+                                title: "Error!",
+                                text: 'Something went wrong please try again!',
+                                type: "error",
+                            })
+                        }
+                    }
+                },
+                error: function (err) {
+                    Loader(false);
+                }
+            });
+        } else {
+            alertify.alert("Minimum Amount:100");
+            $("#alertify").css('display', 'block')
+        }
+    }
+</script>

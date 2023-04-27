@@ -1,0 +1,189 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+<div class="table-responsive">
+    <table class="table" id="datatable">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    E-mail
+                </th>
+                <th>
+                    Phone
+                </th>
+
+                <th>
+                    Wallet balance
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    string phone = item.countrycode + item.phone;
+                    string backclr = "";
+                    if (item.status == (int)UserStatus.active)
+                    {
+                        backclr = "#ffffff";
+                    }
+                    else if (item.status == (int)UserStatus.Pending_for_approval)
+                    {
+                        backclr = "#cb9e5f";
+                    }
+                    else
+                    {
+                        backclr = "grey;";
+                    }
+                    string trid = "tr" + item.Id;
+                    string blckId = "blck" + item.Id;
+                    string unblck = "unblck" + item.Id;
+                    <tr id="@trid" style="background-color:@backclr">
+                        <td style="background-color:@backclr">
+                            @*@if (!string.IsNullOrEmpty(item.profile))
+                                {
+                                    <img src="@item.profile" class="imgtable"
+                                         alt="" />
+                                }
+                                else
+                                {
+                                    <img src="~/img/nouser.jpg" class="imgtable" />
+                                }*@
+                            @item.name
+                        </td>
+                        <td>
+                            @item.email
+                        </td>
+                        <td>
+                            @item.phone
+                        </td>
+
+                        <td>
+                            @ApplicationVariable.currencysymbol @item.walletbalance
+                        </td>
+
+                        <td>
+                            @if (item.status == (int)UserStatus.active)
+                            {
+                                <button class="btn btn-success btn-xs">
+                                    Active
+                                </button>
+                            }
+                            else if (item.status == (int)UserStatus.Pending_for_approval)
+                            {
+                                <button class="btn btn-warning btn-xs">
+                                    Pending for
+                                    approval
+                                </button>
+                                <a href="javascript:" class="btn btn-success btn-xs"
+                                   id="@unblck" onclick="BlockCUpdate('uuser','@item.Id')" title="Approve">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </a>
+                                <a href="javascript:" class="btn btn-danger btn-xs"
+                                   id="@blckId" onclick="BlockCUpdate('buser','@item.Id')" title="Reject">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary btn-xs">
+                                    Blocked
+                                </button>
+                                //blocked
+                            }
+                        </td>
+                        <td>
+
+                            @if (item.profile == "1")
+                            {
+                                <button class="btn btn-info btn-xs" onclick="AproveDenyPayment(@item.Id)" title="Aprove Request"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                <button class="btn btn-danger btn-xs" onclick="DenyPayment(@item.Id)" title="Deny Request"><i class="fa fa-times" aria-hidden="true"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+
+
+    function AproveDenyPayment(id) {
+        if (id > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/Admin/AgentManagement/AproveSuperAgent?id=" + id,
+                // data: '{WalletId: "' + WalletId + '",Action:"' + Action+'"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    Loader(false);
+                    if (response.Code == 200) {
+                        loadAgents();
+                        alertify.success(response.Msg);
+                    }
+                    else {
+                        alertify.error(response.Msg);
+                    }
+                    $('.pList').text(response.ActiveUser);
+                    $('.ASlist').text(response.BlockUser);
+                  
+                },
+                failure: function (response) {
+                    Loader(false);
+                    alertify.error(response.responseText);
+                },
+                error: function (response) {
+                    Loader(false);
+                    alertify.error(response.responseText);
+                }
+            });
+        }
+    }
+
+    function DenyPayment(id) {
+        if (id > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/Admin/AgentManagement/RejectSuperAgent?id=" + id,
+                // data: '{WalletId: "' + WalletId + '",Action:"' + Action+'"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    Loader(false);
+                    if (response.Code == 200) {
+                        loadAgents();
+                        alertify.success(response.Msg);
+                    }
+                    else {
+                        alertify.error(response.Msg);
+                    }
+                    $('.pList').text(response.ActiveUser);
+                    $('.ASlist').text(response.BlockUser);
+                },
+                failure: function (response) {
+                    Loader(false);
+                    alertify.error(response.responseText);
+                },
+                error: function (response) {
+                    Loader(false);
+                    alertify.error(response.responseText);
+                }
+            });
+        }
+    }
+
+</script>

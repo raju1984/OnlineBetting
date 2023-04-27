@@ -1,0 +1,62 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+<div class="table-responsive">
+    <table class="table" id="datatable">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    string name = item.name + "(" + item.email+")";
+                    <tr>
+                        <td>
+                            @name
+                        </td>
+                        <td>
+                            @item.phone
+                        </td>
+                        <td>
+                            @if (item.UserStatus == (int)UserStatus.active)
+                            {
+                                <a class="btn btn-success btn-xs" target="_blank" href="@Url.Action("Index","Betting",new { CustomerId=item.Id,area="agent"})" title="View betting history">
+                                    <i class="fa fa-gamepad" aria-hidden="true"></i>
+                                </a>
+                                <a class="btn btn-warning btn-xs" href="@Url.Action("Fundtransfer","AgentFunds",new { CustomerId=item.Id,area="agent"})" title="Transfer fund">
+                                    <i class='fa fa-exchange' aria-hidden="true"></i>
+                                </a>
+                                @*<a class="btn btn-success btn-xs" href="@Url.Action("CreateAgentCustomer","Customer",new { AgentCustomerId=item.Id,area="agent"})" title="Update customer">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </a>*@
+                            }
+                            else
+                            {
+                                <button class="btn btn-warning btn-xs">
+                                    Blocked By Admin
+                                </button>
+                                <a class="btn btn-success btn-xs" target="_blank" href="@Url.Action("Index","Betting",new { CustomerId=item.Id,area="agent"})" title="View betting history">
+                                    <i class="fa fa-gamepad" aria-hidden="true"></i>
+                                </a>
+                            }
+
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>
+

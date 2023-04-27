@@ -1,0 +1,97 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+
+<div class="table-responsive">
+    <table class="table" id="datatable">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    E-mail
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Wallet Balance
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+
+                    string backclr = item.status == (int)UserStatus.active ? "#ffffff" : "grey;";
+                    string trid = "tr" + item.Id;
+                    string blckId = "blck" + item.Id;
+                    string unblck = "unblck" + item.Id;
+                    <tr id="@trid" style="background-color:@backclr">
+                        <td style="background-color:@backclr">
+                            @if (!string.IsNullOrEmpty(item.profile))
+                            {
+                                <img src="@item.profile" class="imgtable"
+                                     alt="" />
+                            }
+                            else
+                            {
+                                <img src="~/img/nouser.jpg" class="imgtable" />
+                            }
+                            @item.name
+                        </td>
+                        <td>
+                            @item.email
+                        </td>
+                        <td>
+                            @item.phone
+                        </td>
+                        <td>
+                            @ApplicationVariable.currencysymbol @item.walletbalance
+                        </td>
+                        <td>
+
+                            <a href="@Url.Action("TranHistoryByUser","TransactionHistory",new { customerid=item.Id })" title="See Transaction History" class="btn btn-warning btn-xs">
+                                <i class="fa fa-money"></i>
+                            </a>
+                            @if (item.status == (int)UserStatus.active)
+                            {
+                                <a class="btn btn-warning btn-xs" href="@Url.Action("TransferFunds","Customers",new { customerId=item.Id})" title="Fund Increase/Decrease">
+                                    <i class='fa fa-exchange' aria-hidden="true"></i>
+                                </a>
+                            }
+                            @if (item.status == (int)UserStatus.active)
+                            {
+                                <a href="javascript:" class="btn btn-danger btn-xs" id="@blckId" onclick="BlockCUpdate('buser','@item.Id')" title="Block User">
+                                    <i class="fa fa-ban"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-primary btn-xs" href="javascript:" title="Unblock User" id="@unblck" onclick="BlockCUpdate('uuser','@item.Id')">
+                                    <i class="fa fa-unlock" aria-hidden="true"></i>
+                                </a>
+                            }
+
+                            @*<a class="btn btn-success btn-xs" href="@Url.Action("CreateCustomer","Customers",new { customerId=item.Id})" title="Update User">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </a>*@
+                            <button type="button" class="btn btn-xs btn-primary" onclick="ShowPassowordResetPasswordPopup('@item.Id')" title="Reset Password">
+                                <i class="fa fa-undo" aria-hidden="true"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs" type="button" title="Delete User" onclick="DeleteUser('@item.Id')">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>

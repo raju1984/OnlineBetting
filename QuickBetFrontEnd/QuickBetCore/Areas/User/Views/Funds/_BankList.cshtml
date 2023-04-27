@@ -1,0 +1,52 @@
+﻿@model IEnumerable<QuickBetCore.Models.BankdetailViewModel>
+@using QuickBetCore.Models;
+
+@{
+    Layout = null;
+}
+
+<div class="col-md-12" style="padding:0;position: relative;top: 50px;">
+    <div class="card" style="box-shadow: #cccaca 2px 2px 5px;">
+        <div class="card-header no-border">
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Account Number</th>
+                            <th>Bank Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Count() > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.accountname</td>
+                                    <td>@item.accountnumer</td>
+                                    <td>@item.bankname</td>
+                                    <td>
+                                        @if (!item.isdefault)
+                                        {
+                                            <a class="btn btn-danger btn-xs" href="javascript:" title="unlock" onclick="BankDetailAction('@item.Id','0')">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="btn btn-primary btn-xs" href="javascript:" title="unlock" onclick="BankDetailAction('@item.Id','1')">
+                                                <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

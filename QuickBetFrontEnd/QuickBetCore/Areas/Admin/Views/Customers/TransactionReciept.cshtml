@@ -1,0 +1,51 @@
+﻿@model QuickBetCore.Models.FundTransferModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "TransactionReciept";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Transaction Reciept</div>
+                <span class="pull-left">
+                    <a class="btn btn-sm btn-warning" href="@Url.Action("Index","Customers")">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>Back
+                    </a>
+                </span>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active" href="@Url.Action("Index","Customers")">Customers</li>
+            </ol>
+            
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12" style="text-align: center;" id="divcontent">
+                <div class="alert alert-success" style="margin-top:5%;margin-bottom:10%">
+                    <i class="fa fa-smile-o text-success fa-2x" aria-hidden="true"></i>
+                    <span class="text-success">Payment Successful</span> <br />
+                    Beneficiary Name:<b> @Model.BeneficiaryName</b><br />
+                    TransactionId:<b> @Model.transactionId</b><br />
+                    Amount: @ApplicationVariable.currencysymbol @Model.Amount 
+                    @if(Model.TypeOfTransfer==(int)TransType.Credit)
+                    {
+                        <span>Credit to @Model.BeneficiaryName wallet</span>
+                    }
+                    else
+                    {
+                        <span>Debited from @Model.BeneficiaryName wallet</span>
+                    }
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

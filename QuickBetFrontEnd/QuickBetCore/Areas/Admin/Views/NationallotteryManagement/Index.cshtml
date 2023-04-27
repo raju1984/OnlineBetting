@@ -1,0 +1,189 @@
+﻿@model QuickBetCore.Models.AdminDashboardViewModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .tablabel {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    .tabactive {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+</style>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" />
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                      href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Nationallottery </li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <br />
+        <div class="col-xl-3 col-md-6 col-12">
+            <a style="color:white" href="javascript:;" onclick="FetchData('active')">
+                <div class="info-box bg-blue">
+                    <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Active Nationallottery User </span>
+
+                    </div>
+                    <span class="info-box-number">@Model.TotalActiveNationallotteryUser</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-xl-3 col-md-6 col-12">
+            <a style="color:white" href="javascript:;" onclick="FetchData('0')">
+                <div class="info-box bg-danger">
+                    <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Blocked Nationallottery User </span>
+
+                    </div>
+                    <span class="info-box-number">@Model.BlockedNationallotteryUser</span>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" style="width:100%">
+                        Nationallottery
+                        <a href="@Url.Action("CreateNationallottery","NationallotteryManagement")"
+                           class="btn btn-sm btn-primary float-end"><i class="fa fa-plus" aria-hidden="true"></i>Add Nationallottery User</a>
+                    </h4>
+                </div>
+
+                <div class="card-body" id="divagents">
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade"
+     id="exampleModal"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 900px">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row" id="divcontent">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="ClosePassowordResetPasswordPopup()"
+                        class="btn btn-secondary">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}
+
+<script type="text/javascript">
+    var status = 'active';
+    $(document).ready(function () {
+        $("#Nationallottery").addClass("active");
+        loadNationallottery()
+    });
+    function FetchData(statusToFetch) {
+        status = statusToFetch;
+        loadNationallottery()
+    }
+    function ClosePassowordResetPasswordPopup() {
+
+        $('#exampleModal').modal('hide');
+    }
+    function ShowPassowordResetPasswordPopup(UserId) {
+        Loader(true);
+        $.ajax({
+            url: '/User/UserManagement/PasswordRest?UserId=' + UserId,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#exampleModal').modal('show');
+                $('#divcontent').html(result);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+    function loadNationallottery() {
+        var url = '/Admin/NationallotteryManagement/GetNationallotterylist';
+        if (status && status != '') {
+            url = url + "?status=" + status;
+        }
+        if (!url) {
+            return;
+        }
+        Loader(true);
+        $.ajax({
+            url: url,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divagents').val("")
+                $('#divagents').html(result);
+                $('#datatable').DataTable({
+                    responsive: true
+                });
+                $('[data-toggle="tooltip"]').tooltip();
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>

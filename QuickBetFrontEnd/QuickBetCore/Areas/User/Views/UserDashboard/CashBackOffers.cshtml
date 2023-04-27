@@ -1,0 +1,324 @@
+﻿@model IEnumerable<QuickBetCore.DatabaseEntity.CashBackOffersTransaction>
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "BetHistory";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    var h = ViewData["history"] != null ? ViewData["history"].ToString() : "";
+}
+<style type="text/css">
+    /*.dt-button {
+            width: 70px;
+            padding: 0 !important;
+        }*/
+
+    .card-header .next {
+        position: absolute;
+        right: 20px;
+        border: 1px solid #efb30b;
+        background: #efb30b;
+        color: #fff !important;
+        padding: 3px;
+        border-radius: 4px;
+    }
+
+        .card-header .next a {
+            color: #fff !important;
+        }
+
+    .card-header .previous a {
+        color: #fff !important;
+    }
+
+    .card-header .previous {
+        position: absolute;
+        right: 60px;
+        border: 1px solid #323584;
+        background: #323584;
+        color: #fff !important;
+        padding: 3px;
+        border-radius: 4px;
+    }
+
+    .card-header .dataTables_paginate .active {
+        position: absolute;
+        right: 25px;
+        border: 1px solid #efb30b;
+        background: #efb30b;
+        color: #fff !important;
+        padding: 3px;
+        border-radius: 4px;
+    }
+
+    .card-header .tabactive {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+</style>
+<style>
+    .btn-chat {
+        background-color: #5b4e84;
+        font-size: 18px;
+    }
+
+    .card {
+        padding: 15px 10px;
+    }
+
+    *,
+    *:after,
+    *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    section#content4 {
+        border-bottom: none;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        content: " ";
+        display: table;
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    body {
+        font-family: sans-serif;
+        background: #f6f9fa;
+    }
+
+    h1 {
+        color: #ccc;
+        text-align: center;
+    }
+
+    a {
+        color: #ccc;
+        text-decoration: none;
+        outline: none;
+    }
+
+    /*Fun begins*/
+    .tab_container {
+        width: 100%;
+        margin: 0 auto;
+        padding-top: 0;
+        position: relative;
+    }
+
+    input, section {
+        clear: both;
+        padding-top: 10px;
+        display: none;
+    }
+
+    label {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    #tab1:checked ~ #content1,
+    #tab2:checked ~ #content2,
+    #tab3:checked ~ #content3,
+    #tab4:checked ~ #content4,
+    #tab5:checked ~ #content5 {
+        display: block;
+        padding: 20px;
+        background: #fff;
+        color: #999;
+    }
+
+    .tab_container .tab-content p,
+    .tab_container .tab-content h3 {
+        -webkit-animation: fadeInScale 0.7s ease-in-out;
+        -moz-animation: fadeInScale 0.7s ease-in-out;
+        animation: fadeInScale 0.7s ease-in-out;
+    }
+
+    .tab_container .tab-content h3 {
+        text-align: left;
+    }
+
+    .tab_container [id^="tab"]:checked + label {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+
+        .tab_container [id^="tab"]:checked + label .fa {
+            color: #0CE;
+        }
+
+    label .fa {
+        font-size: 1.3em;
+        margin: 0 0.4em 0 0;
+    }
+
+    /*Media query*/
+    @@media only screen and (max-width: 930px) {
+        label span {
+            font-size: 14px;
+        }
+
+        label .fa {
+            font-size: 14px;
+        }
+    }
+
+    @@media only screen and (max-width: 768px) {
+        label span {
+            display: none;
+        }
+
+        label .fa {
+            font-size: 16px;
+        }
+
+        .tab_container {
+            width: 98%;
+        }
+    }
+
+    /*Content Animation*/
+    @@keyframes fadeInScale {
+        0% {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="tab_container">
+                    @if (!string.IsNullOrEmpty(h))
+                    {
+                        <label for="tab1"><a href="@Url.Action("CashBackOffers","UserDashboard")"><span>Incoming Cashback</span></a></label>
+                        <label for="tab2" class="tabactive"><a href="@Url.Action("CashBackHistory","UserDashboard",new { type="h" })">Cashback History</a> <span></span></label>
+
+
+                    }
+                    else
+                    {
+                        <label for="tab1" class="tabactive"><a href="@Url.Action("CashBackOffers","UserDashboard")"><span>Incoming Cashback</span></a></label>
+                        <label for="tab2"><a href="@Url.Action("CashBackHistory","UserDashboard",new { type="h" })">Cashback History</a> <span></span></label>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    @if (!string.IsNullOrEmpty(h))
+                    {
+                        <table class="table display" id="datatable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th><strong>S.NO</strong></th>
+                                    <th><strong>Date</strong></th>
+                                    <th><strong>CashBack Amount</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Count() > 0)
+                                {
+                                    int count = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        var leftAmount = item.AmountToUnlockCashback - item.AmountSpendToUnlock;
+                                        <tr>
+                                            <td>
+                                                @count
+                                            </td>
+                                            <td>
+                                                @item.RedeemAt
+                                            </td>
+                                            <td>₦ @item.CashBackAmount</td>
+                                        </tr>
+                                        count = count + 1;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <table class="table display" id="datatable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th><strong>S.NO</strong></th>
+                                    <th><strong>Threshold amount <i class="fa fa-info-circle info" title="Amount need to spend for cashback amount" aria-hidden="true"></i></strong></th>
+                                    <th><strong>Amount left to Threshold amount <i class="fa fa-info-circle info" title="Spend that amount to get the cashback" aria-hidden="true"></i></strong></th>
+                                    <th><strong>CashBack Amount</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Count() > 0)
+                                {
+                                    int count = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        var leftAmount = item.AmountToUnlockCashback - item.AmountSpendToUnlock;
+                                        <tr>
+                                            <td>
+                                                Level-@count
+                                            </td>
+                                            <td>₦ @item.AmountToUnlockCashback</td>
+                                            <td>₦@leftAmount</td>
+                                            <td>₦ @item.CashBackAmount</td>
+                                        </tr>
+                                        count = count + 1;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.print.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            dom: 'Bfrtip',
+            searching: false,
+            buttons: [
+                'csv', 'excel'
+            ]
+        });
+    });
+    function ReloadViewType() {
+        var ddlviewType = $("#ddlviewType").val();
+        window.location = "/User/CardsPlayed/BetHistory?viewType=" + ddlviewType;
+    }
+</script>
+

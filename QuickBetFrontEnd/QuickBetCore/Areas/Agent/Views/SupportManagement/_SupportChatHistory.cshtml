@@ -1,0 +1,63 @@
+﻿@model QuickBetCore.Models.SupportTicketViewModel
+@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    UserSession agentSession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+@{
+    Layout = null;
+}
+<style>
+    .received_withd_msg p {
+        word-break: break-all;
+    }
+</style>
+<div class="modal-header">
+    <h2 class="modal-title sn-title">@Model.Title</></h2>
+    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+    </button>
+</div>
+<input type="hidden" value="@Model.Id" id="hfsupportTicket" />
+<div class="msg_history">
+    <h3 class="header-title">@Model.Description</h3>
+    @if (Model != null && Model.Chats != null && Model.Chats.Count() > 0)
+    {
+        foreach (var item in Model.Chats)
+        {
+            if (item.GeneratedById == agentSession.Id)
+            {
+                <div class="incoming_msg">
+                    <div class="incoming_msg_img">
+                        <img src="@item.profile"
+                             alt="@item.GenerateByName" />
+                    </div>
+                    <div class="received_msg">
+                        <div class="received_withd_msg">
+                            <p>
+                                @item.Message
+                            </p>
+                            <span class="time_date"> @item.Created.ToString("hh:mm") | @item.Created.ToString("MMMM dd") | @item.GenerateByName</span>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="outgoing_msg">
+                    <div class="sent_msg">
+                        <p>
+                            @item.Message
+                        </p>
+                        <span class="time_date"> @item.Created.ToString("hh:mm") | @item.Created.ToString("MMMM dd") | @item.GenerateByName</span>
+                    </div>
+                    <div class="outgoing_msg_img">
+                        <img src="@item.profile"
+                             alt="@item.GenerateByName" />
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>

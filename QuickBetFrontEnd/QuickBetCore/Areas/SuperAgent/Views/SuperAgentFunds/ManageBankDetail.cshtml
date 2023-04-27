@@ -1,0 +1,177 @@
+﻿
+@{
+    ViewData["Title"] = "ManageBankDetail";
+    Layout = "~/Areas/SuperAgent/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="align-items-center">
+                    <br />
+                    <a class="btn btn-default" href="@Url.Action("Index","SuperAgentFunds",new { area="SuperAgent" })">
+                        Withdraw Funds from account
+                    </a>
+                    <a class="btn btn-success" href="@Url.Action("ManageBankDetail","SuperAgentFunds",new { area="SuperAgent" })">
+                        Manage Bank Detail
+                    </a>
+                    <br />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title" style="width:100%">
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" style="overflow: scroll;">
+                            <div class="col-md-8 offset-2">
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-12" style="background: none;font-size: 18px;padding-left: 0; text-align: left;">Account name * </label>
+                                    <div class="col-md-12" style="padding-left: 0;">
+                                        <input type="text" onchange="ValidateForm()" class="form-control" id="txtaccountname" placeholder="Enter Here">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-12" style="background: none;font-size: 18px;padding-left: 0; text-align: left;">Account number * </label>
+                                    <div class="col-md-12" style="padding-left: 0;">
+                                        <input type="text" onchange="ValidateForm()" class="form-control" id="txtaccountnumber" placeholder="Enter Here">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-12" style="background: none;font-size: 18px;padding-left: 0; text-align: left;">Bank name * </label>
+                                    <div class="col-md-12" style="padding-left: 0;">
+                                        <input type="text" onchange="ValidateForm()" class="form-control" id="txtbankname" placeholder="Enter Here">
+                                    </div>
+                                </div>
+                                <button onclick="SaveAccount()" class="btn btn-primary" style="display: inline;
+                          position: relative;left: -15px; padding: 15px 50px;top: 15px;">
+                                    Save
+                                </button>
+                                <div class="row" id="divbanklist">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Funds").addClass("active");
+        GetBankList();
+    })
+    function GetBankList() {
+        Loader(true);
+        $.ajax({
+            url: '/SuperAgent/SuperAgentFunds/GetBankList',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divbanklist').html(result);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+
+    function BankDetailAction(bnkid, type) {
+        var res = true;
+        if (res) {
+            Loader(true);
+            $.ajax({
+                type: "POST",
+                url: "/SuperAgent/SuperAgentFunds/UpdateBankDetail",
+                data: '{bnkId: "' + bnkid + '",type: "' + type + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    if (result && result.Data) {
+                        GetBankList();
+                    }
+                    Loader(false);
+                },
+                error: function (err) {
+                    Loader(false);
+                }
+            });
+        }
+    }
+
+    function SaveAccount() {
+        var res = ValidateForm();
+        if (res == false) {
+            return false;
+        }
+        if (res) {
+            Loader(true);
+            $.ajax({
+                type: "POST",
+                url: "/SuperAgent/SuperAgentFunds/AddBankDetail",
+                data: '{accoutname: "' + $('#txtaccountname').val().trim() + '",accountnumber: "' + $('#txtaccountnumber').val().trim() + '",bankname: "' + $('#txtbankname').val().trim() + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    Loader(false);
+                    clearformdata();
+                    if (result && result.Data) {
+                        alertify.alert("Bank addedd successfully!");
+                        $("#alertify").css('display', 'block')
+                        $("#divbanklist").focus();
+                        GetBankList();
+                    }
+
+                },
+                error: function (err) {
+                    Loader(false);
+                }
+            });
+        }
+    }
+
+    function ValidateForm() {
+        var isValid = true;
+        if ($('#txtaccountname').val().trim() == "") {
+            $('#txtaccountname').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#txtaccountname').css('border-color', 'lightgrey');
+        }
+        if ($('#txtaccountnumber').val().trim() == "") {
+            $('#txtaccountnumber').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#txtaccountnumber').css('border-color', 'lightgrey');
+        }
+        if ($('#txtbankname').val().trim() == "") {
+            $('#txtbankname').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#txtbankname').css('border-color', 'lightgrey');
+        }
+        return isValid;
+    }
+
+    function clearformdata() {
+        $('#txtaccountname').val("");
+        $('#txtaccountnumber').val("");
+        $('#txtbankname').val("");
+    }
+</script>
+

@@ -1,0 +1,336 @@
+﻿@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = null;
+    UserSession superagentSession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/SuperAgent/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .card {
+        padding: 15px 10px;
+    }
+
+    *,
+    *:after,
+    *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    section#content4 {
+        border-bottom: none;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        content: " ";
+        display: table;
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    body {
+        font-family: sans-serif;
+        background: #f6f9fa;
+    }
+
+    h1 {
+        color: #ccc;
+        text-align: center;
+    }
+
+    a {
+        color: #ccc;
+        text-decoration: none;
+        outline: none;
+    }
+
+    /*Fun begins*/
+    .tab_container {
+        width: 100%;
+        margin: 0 auto;
+        padding-top: 0;
+        position: relative;
+    }
+
+    input, section {
+        clear: both;
+        padding-top: 10px;
+        display: none;
+    }
+
+    .tablabel {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    #tab1:checked ~ #content1,
+    #tab2:checked ~ #content2,
+    #tab3:checked ~ #content3,
+    #tab4:checked ~ #content4,
+    #tab5:checked ~ #content5 {
+        display: block;
+        padding: 20px;
+        background: #fff;
+        color: #999;
+    }
+
+    .tab_container .tab-content p,
+    .tab_container .tab-content h3 {
+        -webkit-animation: fadeInScale 0.7s ease-in-out;
+        -moz-animation: fadeInScale 0.7s ease-in-out;
+        animation: fadeInScale 0.7s ease-in-out;
+    }
+
+    .tab_container .tab-content h3 {
+        text-align: left;
+    }
+
+    .tab_container [id^="tab"]:checked + label {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+
+        .tab_container [id^="tab"]:checked + label .fa {
+            color: #0CE;
+        }
+
+    /*Media query*/
+    @@media only screen and (max-width: 930px) {
+        .tablabel span {
+            font-size: 14px;
+        }
+
+        .tablabel .fa {
+            font-size: 14px;
+        }
+    }
+
+    @@media only screen and (max-width: 768px) {
+        .tablabel span {
+            display: none;
+        }
+
+        .tablabel .fa {
+            font-size: 16px;
+        }
+
+        .tab_container {
+            width: 98%;
+        }
+    }
+
+    /*Content Animation*/
+    @@keyframes fadeInScale {
+        0% {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .tabactive {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+
+    .mt-80 {
+        margin-top: 80px;
+    }
+</style>
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-80">
+                <div class="card-header">
+                    <div class="tab_container">
+                        <label for="tab2" class="tablabel tabactive"><a href="@Url.Action("Index","SuperAgentProfileSettings",new { area="SuperAgent"})">Update Profile</a> <span></span></label>
+                        <label for="tab1" class="tablabel"><a href="@Url.Action("PasswordChange","SuperAgentProfileSettings",new { area="SuperAgent"})"><span>Password change</span></a></label>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("UpdateUserProfile", "SuperAgentProfileSettings", FormMethod.Post, new { @class = "log-form", area = "SuperAgent", enctype = "multipart/form-data" }))
+                    {
+                        <input type="hidden" name="CountryCode" id="CountryCode" />
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Full Name * </label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" value="@superagentSession.name" required name="fullname" id="fullname" placeholder="Enter Here">
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+                                <label class="col-form-label col-md-2">Display Name* </label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" value="@superagentSession.displayname" required name="displayname" id="displayname" placeholder="Enter Here">
+                                    <p style="color: #9a9999;padding-top: 5px;">This will be how your name will be displayed in the account section.</p>
+                                </div>
+                            </div>*@
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Email Address * </label>
+                            <div class="col-md-10">
+                                <input type="email" required name="emailaddress" value="@superagentSession.email" id="emailaddress" class="form-control" placeholder="Enter Here">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Phone Number * </label>
+                            <div class="col-md-10">
+                                <input type="tel" name="PhoneNumber" oninput="this.value=this.value.replace(/[^0-9.]/g, '').replace(/(\\..*?)\\..*/g, '$1').replace(/^0[^.]/, '0');" placeholder="Enter Here"
+                                       value="@superagentSession.phone" id="PhoneNumber" class="form-control PhoneNumber"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Upload Photo * </label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="file" name="file" id="file">
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"
+        integrity="sha512-DNeDhsl+FWnx5B1EQzsayHMyP6Xl/Mg+vcnFPXGNjUZrW28hQaa1+A4qL9M+AiOMmkAhKAWYHh1a+t6qxthzUw=="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"
+      integrity="sha512-yye/u0ehQsrVrfSd6biT17t39Rg9kNc+vENcCXZuMz2a+LWFGvXUnYuWUW6pbfYj1jcBb/C39UZw2ciQvwDDvg=="
+      crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        integrity="sha512-BNZ1x39RMH+UYylOW419beaGO0wqdSkO7pi1rYDYco9OL3uvXaC/GTqA5O4CVK2j4K9ZkoDNSSHVkEQKkgwdiw=="
+        crossorigin="anonymous"></script>
+@*@{
+        if (ViewData["error"] != null)
+        {
+        <script type="text/javascript">
+                $(document).ready(function () {
+
+                    swal({
+                        title: "success",
+                        text: "@ViewData["error"]",
+                        icon: "success",
+                    });
+                   // alertify.alert("@ViewData["error"]");
+                })
+        </script>
+        }
+    }*@
+
+@if (ViewBag.response != null)
+{
+
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+
+    if (response.Code == 200)
+    {
+        <script>
+            debugger;
+            $(document).ready(function () {
+                swal({
+                    title: "Welcome",
+                    text:"@response.Msg",
+                    icon: "success"
+                });
+            });
+        </script>
+
+    }
+    else if (response.Code == 201)
+    {
+        <script>
+            $(document).ready(function () {
+                swal({
+                    title: "Welcome",
+                    text: "@response.Msg",
+                    icon: "error"
+                });
+            });
+        </script>
+
+    }
+}
+<script type="text/javascript">
+    var input = document.querySelector(".PhoneNumber");
+    if (input) {
+        window.intlTelInput(input, {
+            initialCountry: "ng",
+            separateDialCode: true,
+            customPlaceholder: function (
+                selectedCountryPlaceholder,
+                selectedCountryData
+            ) {
+                var nolenght = selectedCountryPlaceholder.replace(/\s/g, '').length;
+                var no = "";
+                if (nolenght == 6) {
+                    no = "326541";
+                } else if (nolenght == 7) {
+                    no = "3265419";
+                }
+                else if (nolenght == 8) {
+                    no = "32654321";
+                }
+                else if (nolenght == 9) {
+                    no = "326541968";
+                }
+                else if (nolenght == 10) {
+                    no = "3265416510";
+                }
+                else if (nolenght == 11) {
+                    no = "32654165109";
+                }
+                else if (nolenght == 12) {
+                    no = "326541651092";
+                }
+                else if (nolenght == 15) {
+                    no = "3265416510912654";
+                } else {
+                    no = "96857";
+                }
+                return "e.g. " + no;
+            },
+        });
+    }
+    $(document).ready(function () {
+        debugger;
+        var phone = $('#PhoneNumber').val();
+
+        if (phone) {
+            var newstr = phone.replace(new RegExp(" ", "g"), "");
+            $('#PhoneNumber').val(newstr);
+        }
+        $('#PhoneNumber').on("countrychange", function (e, countryData) {
+            $('#CountryCode').val($('.iti__selected-dial-code').text());
+        });
+
+        $('#CountryCode').val($('.iti__selected-dial-code').text());
+    })
+</script>

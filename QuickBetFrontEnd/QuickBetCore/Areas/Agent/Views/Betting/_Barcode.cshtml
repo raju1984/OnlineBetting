@@ -1,0 +1,19 @@
+﻿@model QuickBetCore.Areas.Agent.Data.BarCodeViewModel
+@using QuickBetCore.Models;
+@if (Model != null && string.IsNullOrEmpty(Model.msg) && Model.barcode.Length > 0)
+{
+    string barcodename = Model.wincode+".png";
+    @*<img src="assets/img/default-preview-qr.svg">*@
+    <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.barcode))" />
+    <p>@ApplicationVariable.currencysymbol @ApplicatiopnCommonFunction.FormatStringCurrency(Model.amount)</p>
+    <div class="btn-group-center">
+        <button  class="btn btn-round btn-primary" onclick="PayLottery(@Model.Id)" >Cash Withdrawal</button>
+        <a download="@barcodename" href="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.barcode))" class="btn btn-round btn-info">Download</a>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">
+        Right now ,we are not able genrate barcode,please try again later!
+    </div>
+}

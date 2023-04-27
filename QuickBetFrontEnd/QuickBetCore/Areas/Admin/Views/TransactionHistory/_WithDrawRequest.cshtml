@@ -1,0 +1,49 @@
+﻿@model IEnumerable<QuickBetCore.Models.FundTransferVModel>
+
+<table class="table display product-overview mb-30"
+       id="datatable">
+    <thead>
+        <tr>
+            <th>Transaction Id</th>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Account Name</th>
+            <th>Bank Name</th>
+            <th>Account Number</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+
+            foreach (var item in Model)
+            {
+                string txtid = "txtremark" + item.Id;
+                <tr>
+                    <td>#@item.transactionid</td>
+                    <td>@item.name</td>
+                    <td>₦ @item.amount</td>
+                    <td>@item.Transferdate</td>
+                    <td>@item.accountname</td>
+                    <td>@item.bankname</td>
+                    <td>@item.accountnumber</td>
+                    <td>
+                        <button onclick="AcceptPayment('@item.Id')" class="label label-sm"
+                                style="background-color: #198754 !important">
+                            Approve
+                        </button>
+                        <button class="label label-sm label-danger"
+                                style="color: #333" onclick="RejectPayment('@item.Id','@txtid')">
+                            Reject
+                        </button>
+                        <br />
+                        <br />
+                        <input style="display:none" type="text" placeholder="please enter remark.." id="@txtid" />
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

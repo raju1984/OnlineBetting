@@ -1,0 +1,275 @@
+﻿@model QuickBetCore.Models.LoginViewModel
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Login page</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/img/logo/favicon.ico" />
+    <!-- all css here -->
+    <!-- bootstrap v3.3.6 css -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <!-- font-awesome css -->
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <!-- style css -->
+    <link rel="stylesheet" href="/css/style.css" />
+    <!-- responsive css -->
+    <link rel="stylesheet" href="/css/responsive.css" />
+    <!-- modernizr css -->
+    <script src="/js/vendor/modernizr-2.8.3.min.js"></script>
+    <script src="/js/vendor/modernizr-2.8.3.min.js"></script>
+    <link href="~/css/alertify.core.css" rel="stylesheet" />
+    <link href="~/css/alertify.default.css" rel="stylesheet" />
+     <!-- Google tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-237628863-1">
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-237628863-1');
+    </script>
+</head>
+<style>
+    @@media (min-width: 320px) and (max-width: 480px) {
+        .logo {
+            height: inherit;
+            left: 10px;
+            padding: 0;
+            position: absolute;
+            top: 0px;
+            z-index: 999999;
+            position: relative;
+            top: -50% !important;
+            max-width: 100%;
+        }
+    }
+
+    .login-area.fix {
+        height: 100%;
+        padding: 15px 0;
+        background: #f3fafd;
+    }
+
+    .acc-not {
+        font-size: 14px;
+        margin-top: 0;
+        font-weight: 600;
+    }
+
+    .error {
+        color: red;
+        padding: 5px 10px;
+    }
+
+    .login-form .form-control {
+        margin-bottom: 0px;
+    }
+
+    .login-title {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .login-form {
+        box-shadow: none;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+    }
+    .iti {
+        width: 100%;
+    }
+</style>
+<body data-spy="scroll" data-target="#navbar-example">
+    <div class="login-area  fix">
+        <div class="">
+            <div class="table-cell">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-7 hidden-xs">
+                            <img src="~/img/main.svg" class="img-responsive" />
+                        </div>
+                        <div class="col-md-5 col-xs-12">
+
+                            <div class="login-form">
+                                <a href="/">
+                                    <img src="/assets/images/logo.png" class="img-responsive" style="margin:auto; max-width:200px" />
+                                </a>
+                                <h4 class="login-title text-center">Login to your account</h4>
+                                @*<p class="text-center">Thank you for get back to Quickbet, Lets access our the best recommendation for you.</pclass="login-title>*@
+                                <div class="row">
+
+                                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "log-form" }))
+                                    {
+
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        @Html.Hidden("hfparam", Context.Request.Query["param"])
+                                        @Html.HiddenFor(m => m.CountryCode)
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            @Html.ValidationMessageFor(m => m.email, "", new { @class = "error" })
+                                            @Html.TextBoxFor(m => m.email, new { @class = "form-control", placeholder = "Email" })
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12" style="text-align: center;">
+                                            <b>OR</b>
+                                            @Html.ValidationMessageFor(m => m.phone, "", new { @class = "error" })
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            @Html.TextBoxFor(m => m.phone, new { @class = "form-control", placeholder = "phone" })
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            @Html.ValidationMessageFor(m => m.password, "", new { @class = "error" })
+                                            @Html.PasswordFor(m => m.password, new { @class = "form-control", placeholder = "Password" })
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                                            <div class="check-group flexbox">
+                                                <label class="check-box">
+                                                    <input type="checkbox"
+                                                           class="check-box-input"
+                                                           checked />
+                                                    <span class="remember-text">Remember me</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                                            <button type="submit"
+                                                    id="submit"
+                                                    class="slide-btn login-btn">
+                                                Login
+                                            </button>
+                                            <p style="text-align: center;padding :10px 0;font-weight: 600;margin-bottom :0; ">
+                                                <a class="forgot-link" href="@Url.Action("ForgetPassword","Account")">Forgot Password ?</a>
+                                            </p>
+                                            <div id="msgSubmit" class="h3 text-center hidden"></div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                                            <div class="clear"></div>
+                                            <div class="sign-icon">
+                                                <div class="acc-not">
+                                                    Don't have an account
+                                                    <a href="@Url.Action("SignUp","Account")">Sign up</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Slider Area -->
+    <!-- all js here -->
+    <!-- jquery latest version -->
+    @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
+    <script src="/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="~/scripts/alertify.js"></script>
+    <!-- bootstrap js -->
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- Form validator js -->
+    @*<script src="/js/form-validator.min.js"></script>*@
+    <!-- plugins js -->
+    <script src="/js/plugins.js"></script>
+    <script src="~/scripts/jquery.validate.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"
+            integrity="sha512-DNeDhsl+FWnx5B1EQzsayHMyP6Xl/Mg+vcnFPXGNjUZrW28hQaa1+A4qL9M+AiOMmkAhKAWYHh1a+t6qxthzUw=="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"
+          integrity="sha512-yye/u0ehQsrVrfSd6biT17t39Rg9kNc+vENcCXZuMz2a+LWFGvXUnYuWUW6pbfYj1jcBb/C39UZw2ciQvwDDvg=="
+          crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            integrity="sha512-BNZ1x39RMH+UYylOW419beaGO0wqdSkO7pi1rYDYco9OL3uvXaC/GTqA5O4CVK2j4K9ZkoDNSSHVkEQKkgwdiw=="
+            crossorigin="anonymous"></script>
+
+    @{
+        if (Model != null && Model.ErrorMessage != null && Model.ErrorMessage.ErrorCode == (int)ReturnCode.Failed)
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    alertify.alert("@Model.ErrorMessage.ErrorMessage");
+                })
+            </script>
+        }
+        if (ViewData["Registration"]!=null)
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    alertify.alert("@ViewData["Registration"].ToString()");
+                })
+            </script>
+        }
+    }
+    <script type="text/javascript">
+        var input = document.querySelector("#phone");
+        if (input) {
+            window.intlTelInput(input, {
+                initialCountry: "ng",
+                separateDialCode: true,
+                customPlaceholder: function (
+                    selectedCountryPlaceholder,
+                    selectedCountryData
+                ) {
+                    var nolenght = selectedCountryPlaceholder.replace(/\s/g, '').length;
+                    var no = "";
+                    if (nolenght == 6) {
+                        no = "326541";
+                    } else if (nolenght == 7) {
+                        no = "3265419";
+                    }
+                    else if (nolenght == 8) {
+                        no = "32654321";
+                    }
+                    else if (nolenght == 9) {
+                        no = "326541968";
+                    }
+                    else if (nolenght == 10) {
+                        no = "3265416510";
+                    }
+                    else if (nolenght == 11) {
+                        no = "32654165109";
+                    }
+                    else if (nolenght == 12) {
+                        no = "326541651092";
+                    }
+                    else if (nolenght == 15) {
+                        no = "3265416510912654";
+                    } else {
+                        no = "96857";
+                    }
+                    return "e.g. " + no;
+                },
+            });
+        }
+        $(document).ready(function () {
+            debugger;
+            var phone = $('#phone').val();
+            if (phone) {
+                var newstr = phone.replace(new RegExp(" ", "g"), "");
+                $('#phone').val(newstr);
+            }
+            $('#phone').on("countrychange", function (e, countryData) {
+                $('#CountryCode').val($('.iti__selected-dial-code').text());
+            });
+
+            $('#CountryCode').val($('.iti__selected-dial-code').text());
+        })
+    </script>
+</body>
+</html>

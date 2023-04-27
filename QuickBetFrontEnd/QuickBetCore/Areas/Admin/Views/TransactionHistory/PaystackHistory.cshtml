@@ -1,0 +1,105 @@
+﻿@model IEnumerable<QuickBetCore.Models.TransactionHistoryViewModel>
+@using QuickBetCore.Models;
+
+@{
+    ViewBag.Title = "PaystackHistory";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var viewtype = CommonMetadata.GetviewType();
+}
+
+
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Paystack  Transactions</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Paystack  Transactions</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <h4>TRANSACTION HISTORY</h4>
+                    <a class="btn btn-default" href="@Url.Action("History","TransactionHistory",new { area="Admin" })">
+                        Wallet Transactions
+                    </a>
+                    <a class="btn btn-success" href="@Url.Action("PaystackHistory","TransactionHistory",new { area="Admin" })">
+                        Paystack  Transactions
+                    </a>
+                    <a class="btn btn-default" href="@Url.Action("WithDrawRequest","TransactionHistory",new { area="Admin" })">
+                        Transfer approve/reject list
+                    </a>
+                    <br />
+                    <div class="dropdown" data-toggle="dropdown" style="margin-left: 15px;">
+                        View Type:
+                        <select onchange="ReloadViewType()" class="form-control" id="ddlviewType" style="width: 250px;">
+                            @foreach (var item in viewtype)
+                            {
+                                if (item.value == Context.Request.Query["viewType"])
+                                {
+                                    <option selected value="@item.value">@item.key</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.value">@item.key</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <div class="table-responsive" id="divtransactionhistory">
+                         
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        loadTransactionHistory();
+        $("#PaystackHistory").addClass("active");
+    });
+
+    function ReloadViewType() {
+        loadTransactionHistory();
+    }
+    function loadTransactionHistory() {
+        Loader(true);
+        var ddlviewType = $("#ddlviewType").val();
+        var TransactionType = $("#ddlTransactionType").val();
+        $.ajax({
+            url: '/Admin/TransactionHistory/GetPaystackHistory?viewType=' + ddlviewType,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divtransactionhistory').val("")
+                $('#divtransactionhistory').html(result);
+                $('#datatable').DataTable({
+                    responsive: true,
+                    "aaSorting": []
+                });
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>

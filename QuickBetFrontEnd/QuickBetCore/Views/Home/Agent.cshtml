@@ -1,0 +1,237 @@
+﻿@{
+    ViewBag.Title = "Register for free and become an agent.";
+    ViewBag.Description = "Register your account for free on Quickbet as an agent and earn massive commission on every bet. Every account you create pays you a commission for a year.";
+    ViewBag.Keywords = "Digital scratch-off card, Instant win games in Nigeria, play scratch card casino games.";
+    ViewBag.Conical = "https://quickbetng.com/Home/Agent";
+}
+
+<style>
+    .bg-1 {
+        background: #fdc13f;
+        padding: 20px 0;
+    }
+
+
+    .flex-d {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .flex-d h1 {
+            font-size: 25px;
+            color: #000;
+            margin-bottom: 0;
+        }
+
+        .flex-d a {
+            display: inline-block;
+            background: #ec1379;
+            padding: 10px 30px;
+            border-radius: 60px;
+            color: #FFF;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+            box-shadow: 0px 5px 0px 0px rgb(151 8 75);
+        }
+
+    .bg-whitec {
+        background: #fff;
+        box-shadow: 0px 30px 15px 0px rgb(0 0 0 / 35%);
+        padding: 5%;
+    }
+
+    .nav-tabs {
+        background: #f2f0ff;
+        border: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .nav-tabs .nav-item {
+            margin-bottom: 0;
+            padding: 0;
+            border: 0px;
+            border-radius: 0px;
+        }
+
+            .nav-tabs .nav-item a {
+                border: 0px;
+                border-radius: 0px;
+                font-weight: 700;
+                letter-spacing: 1px;
+                padding: 15px 25px;
+            }
+
+            .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+                background-color: #5949b3;
+                color: #FFF;
+            }
+
+    .inner-box {
+        box-shadow: rgb(0 0 0 / 4%) 0 0 30px 0px;
+        background-color: rgb(255,255,255) !important;
+        border-radius: 25px;
+        text-align: center;
+        padding: 35px;
+        margin-bottom: 50px;
+    }
+
+        .inner-box h4 {
+            margin-top: 20px;
+            color: #000;
+        }
+
+        .inner-box p {
+            color: #000;
+            font-size: 14px;
+            letter-spacing: 1px;
+            padding: 0 0px;
+            font-weight: 500;
+        }
+
+    .icon-box {
+        background: #ec1379;
+        width: 100px;
+        height: 100px;
+        margin: auto;
+        border-radius: 50px;
+        text-align: center;
+        line-height: 100px;
+    }
+
+        .icon-box svg {
+            width: 40px;
+            fill: #FFF;
+            margin: auto;
+        }
+
+    .tab-content h1 {
+        text-align: center;
+        font-size: 35px;
+        color: #000;
+    }
+
+    .tab-content p {
+        text-align: center;
+        padding: 0 10%;
+        margin-bottom: 40px;
+    }
+
+    .check-icon li {
+        position: relative;
+        padding-left: 35px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #000;
+        margin-bottom: 10px;
+    }
+
+        .check-icon li:before {
+            content: '';
+            background-image: url('../../assets/images/check.svg');
+            width: 25px;
+            position: absolute;
+            height: 25px;
+            background-size: contain;
+            left: 0;
+            top: 5px;
+        }
+
+    .mb-50 {
+        margin-bottom: 50px;
+    }
+</style>
+
+
+
+<section class="">
+    <img src="~/assets/images/agent.png" />
+</section>
+
+<section class="bg-1">
+    <div class="container">
+        <div class="flex-d">
+            <h1>Are You ready to start earning?</h1>
+            @*<a href="#/">Register Now!</a>*@
+            <a href="@Url.Action("AgentSignUp", "Account")" class="elements">
+                <span>Register Now!</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container bg-whitec">
+        <div class="row justify-content-center">
+            <div class="col-sm-10">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="become-agent-tab" data-toggle="tab" href="#become-agent" role="tab" aria-controls="become-agent" aria-selected="true">BECOME AN AGENT</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="benefits-tab" data-toggle="tab" href="#benefits" role="tab" aria-controls="benefits" aria-selected="false">BENEFITS</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="requirements-tab" data-toggle="tab" href="#requirements" role="tab" aria-controls="requirements" aria-selected="false">REQUIREMENTS</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="become-agent" role="tabpanel" aria-labelledby="become-agent-tab">
+                        <h1>BECOME A QUICKBET AGENT</h1>
+                        <ul class="check-icon">
+                            <li>Quickbet offers you the chance to explore your entrepreneurial spirit by becoming one of our sales agents and promoting our line of lotto scratch cards and lotto Igaming.</li>
+                            <li>Our line of products, guided training and support team will offer a unique opportunity for everything an ambitious and self-starting person needs to start, whether you own a shop or not by becoming a virtual or shop agent.</li>
+                            <li>By offering customers an array of lotto scratch cards and Igaming options with the highest jackpots we make starting your business as easy as ever.</li>
+                            <li>For further information please call us @@@@@@ or fill in and submit the registration form and a Quickbet representative will contact you shortly.</li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="benefits" role="tabpanel" aria-labelledby="benefits-tab">
+                        <h1 class="mb-50">Benefits of a Quickbet Agent</h1>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5>Competitive Benefits:</h5>
+                                <ul class="check-icon">
+                                    <li>Commission rates based on turnover. Signup customers and earn for every scratch card played by your customers for a year.</li>
+                                    <li>Zero risk or liability for winning bets.</li>
+                                    <li>State of the art lotto Igaming platform software.</li>
+                                    <li>New and exciting scratch cards and lotto gaming with the biggest instant win jackpots.</li>
+                                    <li>Fast and easy withdrawal of earned commissions.</li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6">
+                                <h5>Support:</h5>
+                                <ul class="check-icon">
+                                    <li>Easy Set-up support.</li>
+                                    <li>Technical support on-site and via telephone.</li>
+                                    <li>Guided training course to prepare you for setting up your business.</li>
+                                    <li>Creative Quickbet branded marketing materials.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="requirements" role="tabpanel" aria-labelledby="requirements-tab">
+                        <h1 class="mb-50">Steps to Becoming A Quickbet Agent</h1>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <ul class="check-icon">
+                                    <li>Submit required documents to Quickbet.</li>
+                                    <li>Review of documents and location where applicable. </li>
+                                    <li> Friendly in person interview with a Quickbet representative.</li>
+                                    <li>Signing of the agent contract.</li>
+                                    <li>Get your business ready to go with help from our professional support.</li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6">
+                                <img src="~/assets/images/benefits.svg" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

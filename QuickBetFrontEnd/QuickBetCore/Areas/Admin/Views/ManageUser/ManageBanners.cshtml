@@ -1,0 +1,76 @@
+﻿@model QuickBetCore.Models.ManagePagesModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "ManageBanners";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <br />
+                    <br />
+                    <header style="margin-left:5px">Manage Banners Page</header>
+                    <br />
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            @using (Html.BeginForm("UpdateBanner", "ManageUser", FormMethod.Post, new { @class = "log-form", enctype = "multipart/form-data" }))
+                            {
+
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Apple Store Link * </label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" value="@Model.AppleStoreLink" required name="AppleStoreLink" id="AppleStoreLink" placeholder="Enter Here" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-2">Google Pay Link * </label>
+                                    <div class="col-md-10">
+                                        <input type="text" name="GooglePlayLink" placeholder="Enter Here" value="@Model.GooglePlayLink" id="GooglePlayLink" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-success"
+                                        style="margin: 15px 0">
+                                    Save
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#ManageBanners").addClass("active");
+    })
+</script>
+
+
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}

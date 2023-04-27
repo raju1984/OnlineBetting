@@ -1,0 +1,676 @@
+﻿@model QuickBetCore.Models.CarouselViewModel
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "ManageCarousel";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .main_view img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .table-scrollable {
+        border: none !important;
+    }
+
+    img.card-img-top {
+        height: 100px !important;
+        border: 1px solid #ede9e9;
+        padding: 10px;
+        cursor: pointer;
+        object-fit: cover;
+    }
+
+    .card {
+        height: 450px !important;
+    }
+
+    .sidemenu-container .sidemenu > li.active > a,
+    .sidemenu-closed.sidemenu-container-fixed .sidemenu-container:hover .sidemenu > li.active > a {
+        border: none;
+        text-shadow: none;
+        font-size: 13px;
+    }
+
+    .admin-logo {
+        position: relative;
+        top: -6px;
+        left: -25px;
+    }
+
+    table.dataTable tbody td.patient-img {
+        padding: 2px;
+        max-width: 100% !important;
+        text-align: left;
+    }
+
+    label {
+        display: -webkit-inline-box;
+    }
+
+    select.form-control.form-control-sm {
+        height: 30px !important;
+        margin: 0 15px;
+    }
+
+    .label.label-sm {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 6px;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 1170px;
+        margin: auto;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .inbox_people {
+        background: #f8f8f8 none repeat scroll 0 0;
+        float: left;
+        overflow: hidden;
+        width: 40%;
+        border-right: 1px solid #c4c4c4;
+    }
+
+    .inbox_msg {
+        border: 1px solid #c4c4c4;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .top_spac {
+        margin: 20px 0 0;
+    }
+
+    .recent_heading {
+        float: left;
+        width: 40%;
+    }
+
+    .srch_bar {
+        display: inline-block;
+        text-align: right;
+        width: 60%;
+    }
+
+    .headind_srch {
+        padding: 10px 29px 10px 20px;
+        overflow: hidden;
+        border-bottom: 1px solid #c4c4c4;
+    }
+
+    .recent_heading h4 {
+        color: #05728f;
+        font-size: 21px;
+        margin: auto;
+    }
+
+    .srch_bar input {
+        border: 1px solid #cdcdcd;
+        border-width: 0 0 1px 0;
+        width: 80%;
+        padding: 2px 0 4px 6px;
+        background: none;
+    }
+
+    .srch_bar .input-group-addon button {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        padding: 0;
+        color: #707070;
+        font-size: 18px;
+    }
+
+    .srch_bar .input-group-addon {
+        margin: 0 0 0 -27px;
+    }
+
+    .chat_ib h5 {
+        font-size: 15px;
+        color: #464646;
+        margin: 0 0 8px 0;
+    }
+
+        .chat_ib h5 span {
+            font-size: 13px;
+            float: right;
+        }
+
+    .chat_ib p {
+        font-size: 14px;
+        color: #989898;
+        margin: auto;
+    }
+
+    .chat_img {
+        float: left;
+        width: 11%;
+    }
+
+    .chat_ib {
+        float: left;
+        padding: 0 0 0 15px;
+        width: 88%;
+    }
+
+    .chat_people {
+        overflow: hidden;
+        clear: both;
+    }
+
+    .chat_list {
+        border-bottom: 1px solid #c4c4c4;
+        margin: 0;
+        padding: 18px 16px 10px;
+    }
+
+    .inbox_chat {
+        height: 550px;
+        overflow-y: scroll;
+    }
+
+    .active_chat {
+        background: #ebebeb;
+    }
+
+    .incoming_msg_img {
+        display: inline-block;
+        width: 6%;
+    }
+
+    .received_msg {
+        display: inline-block;
+        padding: 0 0 0 10px;
+        vertical-align: top;
+        width: 92%;
+    }
+
+    .received_withd_msg p {
+        background: #ebebeb none repeat scroll 0 0;
+        border-radius: 3px;
+        color: #646464;
+        font-size: 14px;
+        margin: 0;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .time_date {
+        color: #747474;
+        display: block;
+        font-size: 12px;
+        margin: 8px 0 0;
+    }
+
+    .received_withd_msg {
+        width: 57%;
+    }
+
+    .mesgs {
+        float: left;
+        padding: 30px 15px 0 25px;
+        width: 100%;
+    }
+
+    .sent_msg p {
+        background: #05728f none repeat scroll 0 0;
+        border-radius: 3px;
+        font-size: 14px;
+        margin: 0;
+        color: #fff;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .outgoing_msg {
+        overflow: hidden;
+        margin: 26px 0 26px;
+    }
+
+    .sent_msg {
+        float: right;
+        width: 46%;
+    }
+
+    .input_msg_write input {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        color: #4c4c4c;
+        font-size: 15px;
+        min-height: 48px;
+        width: 100%;
+    }
+
+    .type_msg {
+        border-top: 1px solid #c4c4c4;
+        position: relative;
+    }
+
+    .msg_send_btn {
+        background: #05728f none repeat scroll 0 0;
+        border: medium none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        font-size: 17px;
+        height: 33px;
+        position: absolute;
+        right: 0;
+        top: 11px;
+        width: 33px;
+    }
+
+    .messaging {
+        padding: 0 0 0px 0;
+    }
+
+    .msg_history {
+        height: 516px;
+        overflow-y: auto;
+    }
+</style>
+<style>
+    .imgbiding {
+        padding: 6px;
+        border-radius: 18px !important;
+        border-color: solid red;
+        border: 2px solid #d0d0d0;
+        margin: 2px;
+    }
+</style>
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .sliderchk {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .sliderchk:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .sliderchk {
+        background-color: #2196F3;
+    }
+
+    input:focus + .sliderchk {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .sliderchk:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .sliderchk.round {
+        border-radius: 34px;
+    }
+
+        .sliderchk.round:before {
+            border-radius: 50%;
+        }
+
+    .scroll-ui {
+        max-height: 100%;
+        overflow-y: auto;
+    }
+
+        .scroll-ui p {
+            margin-bottom: 5px;
+        }
+</style>
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">HomePage</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="/Admin/AdminDashboard">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Manage HomePage</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Manage HomePage</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("ImageUpload", "SiteSetting", FormMethod.Post, new { @class = "log-form", enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <input type="hidden" id="hfrowId" name="hfrowId" value="@Context.Request.Query["carouselId"]" />
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Heading* </label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" value="@Model.Title" required name="txtHeading" id="Heading" placeholder="Enter Here">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Description* </label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" required name="txtDescription" id="Description"
+                                      placeholder="Enter Here">
+                                    @Model.Description
+                                                </textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Button Name * </label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" value="@Model.ButtonName" required name="ButtonName" id="ButtonName" placeholder="Enter Here">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Button Link * </label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" value="@Model.ButtonLink" required name="ButtonLink" id="ButtonLink" placeholder="Enter Here">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Select Image* </label>
+                            <div class="col-md-10">
+                                <input type="file" accept="image/*"
+                                   class="form-control"
+                                   name="imgfile"
+                                   id="imgfile" />
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group justify-content-center d-flex">
+                            <button onclick="return CheckDimension()" type="submit"
+                                class="btn btn-success"
+                                style="margin: 15px 0">
+                                Save
+                            </button>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+            <h2>Manage Pictures</h2>
+
+            <div class="row">
+
+
+                @if (Model != null && Model.pictures.Count() > 0)
+                {
+
+                    foreach (var item in Model.pictures)
+                    {
+                        <div class="col-md-3">
+                            <div class="card">
+                                <img class="card-img-top" src="@item.PictureUrl" alt="@item.Title" onclick="change(this.src)" title="Click to preview Image" />
+                                <div class="card-body scroll-ui">
+                                    <p><b>Heading:</b></p>
+                                    <p>@item.Title</p>
+                                    <p><b>Description:</b></p>
+                                    <p> @item.Description</p>
+                                    <p><b>Button Name:</b></p>
+                                    <p> @item.ButtonName</p>
+                                    <p><b>Button Link:</b></p>
+                                    <p> @item.ButtonLink</p>
+                                </div>
+                                <div class="card-footer justify-content-center d-flex">
+                                    <button class="btn btn-sm btn-danger btn-delete m-1" onclick="DeleteMedia('@item.Id');" type="button"><i class="fa fa-trash"></i></button>
+                                    <a href="@Url.Action("ManageCarousel","SiteSetting",new { area="Admin",carouselId=item.Id})" class="btn btn-sm btn-primary m-1"><i class="fa fa-pencil fa-4x" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+            <h2>Manage Logo</h2>
+            <div>
+                <div class="col-md-12">
+                    <div class="card" style="height: auto !important;">
+                        <img style="width: 300px;" class="card-img-top" src="/assets/images/logo.png?@DateTime.UtcNow.Ticks" onclick="change(this.src)" title="Click to preview Image" />
+                        @using (Html.BeginForm("ImageLogo", "SiteSetting", FormMethod.Post, new { @class = "log-form", enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            <div class="card-footer justify-content-center d-flex">
+                                 <input type="file" accept="image/*"
+                                   name="imgfile"
+                                   id="imgfile" required />
+                                <button type="submit" onclick="return CheckDimensionLogo()"  class="btn btn-sm btn-primary m-1">Upload logo</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Image Preview</h5>
+                <button type="button" onclick="HidePreview();" style="background: #fff; color: red; border: 1px solid red; border-radius: 4px; ">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="main_view">
+                    <img src="one.jpg" id="main" alt="IMAGE">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const change = src => {
+        document.getElementById('main').src = src
+        $('#exampleModal').modal('show');
+    }
+
+    function HidePreview() {
+        $('#exampleModal').modal('hide');
+    }
+
+    $(document).ready(function () {
+        $("#ManageHomePage").addClass("active");
+    })
+    function CheckDimensionLogo()
+    {
+         var resp = true;
+        debugger;
+        var fileUpload = document.getElementById("imgfile");
+        var file = $("#imgfile").val();
+        if (file) {
+            //Check whether the file is valid Image.
+            var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+            if (regex.test(fileUpload.value.toLowerCase())) {
+
+                //Check whether HTML5 is supported.
+                if (typeof (fileUpload.files) != "undefined") {
+                    //Initiate the FileReader object.
+                    var reader = new FileReader();
+                    //Read the contents of Image File.
+                    reader.readAsDataURL(fileUpload.files[0]);
+                    reader.onload = function (e) {
+                        //Initiate the JavaScript Image object.
+                        var image = new Image();
+
+                        //Set the Base64 string return from FileReader as source.
+                        image.src = e.target.result;
+
+                        //Validate the File Height and Width.
+                        image.onload = function () {
+                            var height = this.height;
+                            var width = this.width;
+                            if (width < 250) {
+
+                                //show width and height to user
+                                //document.getElementById("width").innerHTML=width;
+                                //document.getElementById("height").innerHTML=height;
+                                $("#imgfile").val("");
+                                alert("Width must shoule be atleast 250px.");
+                                resp = false;
+                            }
+                            else {
+                                //alert("Uploaded image has valid Height and Width.");
+                                resp = true;
+                            }
+
+                        };
+
+                    }
+                } else {
+                    alert("This browser does not support HTML5.");
+                    resp = false;
+                }
+            } else {
+                alert("Please select a valid Image file.");
+                resp = false;
+            }
+        }
+
+        return resp;
+    }
+
+    function CheckDimension() {
+        //Get reference of File.
+        var resp = true;
+        debugger;
+        var fileUpload = document.getElementById("imgfile");
+        var file = $("#imgfile").val();
+        if (file) {
+            //Check whether the file is valid Image.
+            var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(.jpg|.png|.gif)$");
+            if (regex.test(fileUpload.value.toLowerCase())) {
+
+                //Check whether HTML5 is supported.
+                if (typeof (fileUpload.files) != "undefined") {
+                    //Initiate the FileReader object.
+                    var reader = new FileReader();
+                    //Read the contents of Image File.
+                    reader.readAsDataURL(fileUpload.files[0]);
+                    reader.onload = function (e) {
+                        //Initiate the JavaScript Image object.
+                        var image = new Image();
+
+                        //Set the Base64 string return from FileReader as source.
+                        image.src = e.target.result;
+
+                        //Validate the File Height and Width.
+                        image.onload = function () {
+                            var height = this.height;
+                            var width = this.width;
+                            if (width < 1900) {
+
+                                //show width and height to user
+                                //document.getElementById("width").innerHTML=width;
+                                //document.getElementById("height").innerHTML=height;
+                                $("#imgfile").val("");
+                                alert("Width must shoule be atleast 1900px.");
+                                resp = false;
+                            }
+                            else {
+                                //alert("Uploaded image has valid Height and Width.");
+                                resp = true;
+                            }
+
+                        };
+
+                    }
+                } else {
+                    alert("This browser does not support HTML5.");
+                    resp = false;
+                }
+            } else {
+                alert("Please select a valid Image file.");
+                resp = false;
+            }
+        }
+
+        return resp;
+    }
+
+    function DeleteMedia(ImgId) {
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "/admin/SiteSetting/DeleteMedia?MulMediaId=" + ImgId,
+            //data: { MulMediaId: parseInt(ImgId) },
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                location.reload(true);
+                //alertify.alert(response.Msg);
+            },
+            failure: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

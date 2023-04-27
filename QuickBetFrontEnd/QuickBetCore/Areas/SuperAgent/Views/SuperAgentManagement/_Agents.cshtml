@@ -1,0 +1,146 @@
+﻿@model IEnumerable<QuickBetCore.Models.UserListViewModel>
+@using QuickBetCore.Models;
+<div class="table-responsive">
+    <table class="table" id="datatable">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    E-mail
+                </th>
+                <th>
+                    Phone
+                </th>
+                @*<th>
+                        Agent Commision
+                        <i class="fa fa-info-circle" data-toggle="tooltip" title="Agent Commision on each bet!" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                        Agent Cashback <br />
+                        <i class="fa fa-info-circle" data-toggle="tooltip" title="Cashback to agent ,if he/she make the payment
+                          to the customer instead of giving barcode!" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                        Customer Retention Period(Days)
+                    </th>*@
+                <th>Agent Type</th>
+                <th>
+                    Agent Earning
+                </th>
+
+                <th>
+                    Status
+                </th>
+                @*<th>
+                        Action
+                    </th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    string phone = item.countrycode + item.phone;
+                    string backclr = "";
+                    if (item.status == (int)UserStatus.active)
+                    {
+                        backclr = "#ffffff";
+                    }
+                    else if (item.status == (int)UserStatus.Pending_for_approval)
+                    {
+                        backclr = "#cb9e5f";
+                    }
+                    else
+                    {
+                        backclr = "grey;";
+                    }
+                    string trid = "tr" + item.Id;
+                    string blckId = "blck" + item.Id;
+                    string unblck = "unblck" + item.Id;
+                    <tr id="@trid" style="background-color:@backclr">
+                        <td style="background-color:@backclr">
+                            @if (!string.IsNullOrEmpty(item.profile))
+                            {
+                                <img src="@item.profile" class="imgtable"
+                                     alt="" />
+                            }
+                            else
+                            {
+                                <img src="~/img/nouser.jpg" class="imgtable" />
+                            }
+                            @item.name
+                        </td>
+                        <td>
+                            @item.email
+                        </td>
+                        <td>
+                            @item.phone
+                        </td>
+                        @if (item.UserType == (int)UserType.MobileAgent)
+                        {
+                            <td>Mobile Agent</td>
+                        }
+                        else if (item.UserType == (int)UserType.Agent)
+                        {
+                            <td>Shop Agent</td>
+                        }
+                        @*<td>
+                                <input type="number" onchange="UpdateCommision('@item.Id',this,'qbc')" value="@item.quickbetcommision" min="0" step="any" style="width:60px" />%
+                            </td>
+                            <td>
+                                <input type="number" onchange="UpdateCommision('@item.Id',this,'cashback')" min="0" value="@item.cashback" step="any" style="width:60px" />%
+                            </td>
+                            <td>
+                                <input type="number" onchange="UpdateCommision('@item.Id',this,'retention')" min="0" value="@item.CustomerRetentionPeriod" style="width:60px" />Days
+                            </td>*@
+                        <td>
+                            ₦  @item.AgentsEarnings
+                        </td>
+
+
+                        <td>
+                            @if (item.status == (int)UserStatus.active)
+                            {
+                                <button class="btn btn-success btn-xs">
+                                    Active
+                                </button>
+                            }
+                            else if (item.status == (int)UserStatus.Pending_for_approval)
+                            {
+                                <button class="btn btn-warning btn-xs">
+                                    Pending for
+                                    approval
+                                </button>
+                                @*<a href="javascript:" class="btn btn-success btn-xs"
+                                       id="@unblck" onclick="BlockCUpdate('uuser','@item.Id')" title="Approve">
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="javascript:" class="btn btn-danger btn-xs"
+                                       id="@blckId" onclick="BlockCUpdate('buser','@item.Id')" title="Reject">
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </a>*@
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary btn-xs">
+                                    Blocked
+                                </button>
+                                //blocked
+                            }
+                            <a href="@Url.Action("AgentCustomers","SuperAgentManagement",new { area="SuperAgent",AgentId=item.Id })" class="btn btn-success btn-xs"
+                               id="@unblck"  title="View Customers">
+                                <i class="fa fa-eye" aria-hidden="true"></i> View Customers
+                            </a>
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>
+
+

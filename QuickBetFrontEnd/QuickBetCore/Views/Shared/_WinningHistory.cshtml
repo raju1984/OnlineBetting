@@ -1,0 +1,90 @@
+﻿@model IEnumerable<QuickBetCore.Models.WinViewModel>
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<table class="table display" id="datatable" style="width:100%">
+    <thead>
+        <tr>
+            <th><strong>Winning History</strong></th>
+            @*<th><strong>TransactionId</strong></th>
+                <th><strong>Name</strong></th>
+                <th><strong>Email</strong></th>
+                <th><strong>Bet Amount</strong></th>
+                <th><strong>Win Amount</strong></th>
+                <th><strong>Game</strong></th>
+                <th><strong>Date</strong></th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            //var results = from p in Model
+            //              group p.transactionId by p.transactionId into g
+            //              Select(r => new Result { PersonID = r.Key, Cars = r.ToList() });
+
+
+            var results = Model
+                        .GroupBy(n => n.transactionId)
+                        .Select(r => new { transactionId = r.Key, Wins = r.ToList() })
+                        .ToList();
+            int sn = 1;
+            foreach (var item in results)
+            {
+
+                string PlayerName = item.Wins.FirstOrDefault().PlayerName;
+                string PlayerEmail = item.Wins.FirstOrDefault().PlayerEmail;
+                decimal betamount = item.Wins.FirstOrDefault().betamount;
+                string gameName = item.Wins.FirstOrDefault().GameName;
+                string insertdate = item.Wins.FirstOrDefault().Insertdate.ToString("dd/MM/yyyy");
+                string strclass = "collapseExample" + sn;
+                <tr>
+                    <td>
+                        <p>
+                            <button class="btn btn-primary" style="width: 100%; text-align: left; background: #338b47 " type="button" onclick="ShowPanel('@strclass')"
+                                    aria-expanded="false"
+                                    aria-controls="@strclass">
+                                TransactionId:@item.transactionId<br />
+                                PlayerName: @PlayerName<br />
+                                PlayerEmail: @PlayerEmail<br />
+                                betamount:₦ @betamount<br />
+                                GameName: @gameName<br />
+                                <span><i class="fa fa-expand" aria-hidden="true"></i></span>
+                            </button>
+                        </p>
+                        <div class="collapse transactionhistory" id="@strclass">
+                            <div class="card card-body">
+                                @foreach (var win in item.Wins)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-6"> Winamount:<b> ₦ @win.winamount</b></div>
+                                        <div class="col-lg-6"> Insertdate:<b>@insertdate</b></div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                sn = sn + 1;
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    function ShowPanel(showObject) {
+        $(".transactionhistory").each(function (index) {
+            $(this).hide();
+        });
+        $("#" + showObject).show();
+    }
+</script>
+@*<td>
+        @sn
+    </td>
+    <td>#@item.transactionId</td>
+    <td>@item.PlayerName</td>
+    <td>@item.PlayerEmail</td>
+    <td>₦ @item.betamount</td>
+    <td>₦ @item.winamount</td>
+    <td>@item.GameName</td>
+    <td>@item.Insertdate.ToString("dd/MM/yyyy")</td>*@

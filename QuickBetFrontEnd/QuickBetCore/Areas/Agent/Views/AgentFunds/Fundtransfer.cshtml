@@ -1,0 +1,181 @@
+﻿@model QuickBetCore.Areas.Agent.Data.FundTransferModelUser
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Fundtransfer";
+    Layout = "~/Areas/Agent/Views/Shared/_Layout.cshtml";
+    decimal balacne = 0;
+    if (ViewData["balance"] != null)
+    {
+        var amount = ViewData["balance"].ToString();
+        balacne = Convert.ToDecimal(amount);
+    }
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Transfer funds to Customer</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;
+                    <a class="parent-item"
+                       href="@Url.Action("Index", "Dashboard",new { area="Agent"})">Home</a>
+                    &nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Games</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" style="width:100%">
+                        Account balance: ₦ @balacne
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="row">
+                            @using (Html.BeginForm("FundtransferToPlayer", "AgentFunds", FormMethod.Post, new { @class = "log-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-12">Recipient email* <span class="text-holder" style="color:red"></span></label>
+                                    <div class="col-md-12">
+                                        @Html.ValidationMessageFor(m => m.email, "", new { @class = "error" })
+                                        @Html.TextBoxFor(m => m.email, new { @class = "form-control", type = "email", placeholder = "Enter recipient email" })
+                                    </div>
+                                </div>
+                                <div class="form-group row" style="margin: 0px;">
+                                    <label class="col-form-label col-md-12" style="text-align: center;"><b>Or</b></label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-12">Recipient phone * <span class="text-holder" style="color:red"></span></label>
+                                    <div class="col-md-12">
+                                        <br />
+                                        @Html.TextBoxFor(m => m.phone, new
+                                        {
+                                            @class = "form-control",
+                                            placeholder = "Phone",
+                                       oninput = "this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\\..*?)\\..*/g, '$1').replace(/^0[^.]/, '0');"
+                                   })
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-12">Amount * </label>
+                                    <div class="col-md-12">
+                                        @Html.ValidationMessageFor(m => m.amount, "", new { @class = "error" })
+                                        @Html.TextBoxFor(m => m.amount, new { @class = "form-control", type = "number", placeholder = "Enter amount" })
+                                        *Minimum:100
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-form-label col-md-12">Note * </label>
+                                    <div class="col-md-12">
+                                        @Html.ValidationMessageFor(m => m.message, "", new { @class = "error" })
+                                        @Html.TextBoxFor(m => m.message, new { @class = "form-control", type = "text", placeholder = "Enter note.." })
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-chat" style="display: inline;">Transfer</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"
+        integrity="sha512-DNeDhsl+FWnx5B1EQzsayHMyP6Xl/Mg+vcnFPXGNjUZrW28hQaa1+A4qL9M+AiOMmkAhKAWYHh1a+t6qxthzUw=="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"
+      integrity="sha512-yye/u0ehQsrVrfSd6biT17t39Rg9kNc+vENcCXZuMz2a+LWFGvXUnYuWUW6pbfYj1jcBb/C39UZw2ciQvwDDvg=="
+      crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        integrity="sha512-BNZ1x39RMH+UYylOW419beaGO0wqdSkO7pi1rYDYco9OL3uvXaC/GTqA5O4CVK2j4K9ZkoDNSSHVkEQKkgwdiw=="
+        crossorigin="anonymous"></script>
+
+@{
+    if (Model != null && Model.ErrorMessage != null)
+    {
+        if (Model.ErrorMessage.ErrorCode == (int)ReturnCode.Success)
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    alertify.success("@Model.ErrorMessage.ErrorMessage");
+                })
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    alertify.error("@Model.ErrorMessage.ErrorMessage");
+                })
+            </script>
+        }
+
+    }
+}
+<script type="text/javascript">
+    var input = document.querySelector("#phone");
+    if (input) {
+        window.intlTelInput(input, {
+            initialCountry: "ng",
+            separateDialCode: true,
+            customPlaceholder: function (
+                selectedCountryPlaceholder,
+                selectedCountryData
+            ) {
+                var nolenght = selectedCountryPlaceholder.replace(/\s/g, '').length;
+                var no = "";
+                if (nolenght == 6) {
+                    no = "326541";
+                } else if (nolenght == 7) {
+                    no = "3265419";
+                }
+                else if (nolenght == 8) {
+                    no = "32654321";
+                }
+                else if (nolenght == 9) {
+                    no = "326541968";
+                }
+                else if (nolenght == 10) {
+                    no = "3265416510";
+                }
+                else if (nolenght == 11) {
+                    no = "32654165109";
+                }
+                else if (nolenght == 12) {
+                    no = "326541651092";
+                }
+                else if (nolenght == 15) {
+                    no = "3265416510912654";
+                } else {
+                    no = "96857";
+                }
+                return "e.g. " + no;
+            },
+        });
+    }
+    $(document).ready(function () {
+        debugger;
+        $("#Funds").addClass("active");
+        var phone = $('#phone').val();
+        if (phone) {
+            var newstr = phone.replace(new RegExp(" ", "g"), "");
+            $('#phone').val(newstr);
+        }
+        $('#phone').on("countrychange", function (e, countryData) {
+            $('#CountryCode').val($('.iti__selected-dial-code').text());
+        });
+
+        $('#CountryCode').val($('.iti__selected-dial-code').text());
+    })
+</script>

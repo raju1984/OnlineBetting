@@ -1,0 +1,88 @@
+﻿@model IEnumerable<QuickBetCore.Areas.Agent.Data.BettingViewModel>
+@using QuickBetCore.Models;
+<table class="table data-tables" id="datatable" style="width:100%">
+    <thead>
+        <tr>
+            <th>Winning List</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-sm-12" style="padding: 10px;">
+                                <b>Customer Name:</b> @item.customername<br />
+                                <b>Agent Name:</b>@item.agentname<br />
+                                <b>Game Name:</b> @item.gamename<br />
+                                <b>Date:</b> @item.datetime<br />
+                                <b>Jackpotamount Amount:</b>@ApplicationVariable.currencysymbol @item.jackpotamount<br />
+                                <b>Withdraw request Amount:</b>@ApplicationVariable.currencysymbol @item.WithdrawrequestAmount
+                            </div>
+                            <div class="col-sm-12" style="padding: 10px;">
+                                Status:
+                                @if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.NotPaid)
+                                {
+                                    <span class="label label-sm label-default">
+                                        Not Paid
+                                    </span>
+                                }
+                                else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_Request_Initiated)
+                                {
+
+                                    <span class="label-sm label-warning">
+                                        Request Initiated for Payment
+                                    </span>
+
+                                }
+                                else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_By_Agent_Waiting_User_Aproval)
+                                {
+                                    <span class="label label-sm label-info">
+                                        Paid By Agent Waiting User Aproval
+                                    </span>
+                                }
+                                else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_By_Agent_Aproved_By_User)
+                                {
+                                    <span class="label-sm label-success">
+                                        Paid By Agent
+                                    </span>
+                                }
+                                else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_By_Quickbet)
+                                {
+                                    <span class="label-sm label-success">
+                                        Paid By Quickbet
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="label label-sm label-danger">
+                                        Unknown
+                                    </span>
+
+                                }
+                            </div>
+                            @*<div class="col-sm-12" style="padding: 10px;">
+                                Action:
+                                @if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.NotPaid)
+                                {
+                                    <button onclick="loadBarcode(@item.Id)" class="btn btn-info waves-effect waves-light qr-code">
+                                        <i class="fa fa-qrcode fa-2" aria-hidden="true"></i> Scan
+                                    </button>
+
+                                    <button onclick="PayLottery(@item.Id)" class="btn btn-success">
+                                        <i class="fa fa-credit-card-alt" aria-hidden="true"></i>Change Status to Pay
+                                    </button>
+                                }
+                            </div>*@
+                        </div>
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

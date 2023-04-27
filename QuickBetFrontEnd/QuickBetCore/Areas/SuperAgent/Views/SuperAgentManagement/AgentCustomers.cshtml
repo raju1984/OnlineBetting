@@ -1,0 +1,69 @@
+﻿@{
+    ViewData["Title"] = "AgentCustomers";
+    Layout = "~/Areas/SuperAgent/Views/Shared/_Layout.cshtml";
+    int AgentId = 0;
+    if (ViewData["AgentId"] != null)
+    {
+        AgentId = Convert.ToInt32(ViewData["AgentId"]);
+    }
+}
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Agent Customers</div>
+                <span class="pull-left">
+                    <a class="btn btn-sm btn-warning" href="@Url.Action("Index","SuperAgentManagement",new { area="SuperAgent"})">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>Back
+                    </a>
+                </span>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "SuperAgentManagement",new { area="SuperAgent"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Customers</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body" id="divagents">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Agents").addClass("active");
+        loadCustomers();
+    });
+    function loadCustomers() {
+        Loader(true);
+        $.ajax({
+            url: '/SuperAgent/SuperAgentManagement/GetAgentCustomerlist?AgentId=' + '@AgentId',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divagents').val("")
+                $('#divagents').html(result);
+                $('#datatable').DataTable({
+                    responsive: true
+                });
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>
+

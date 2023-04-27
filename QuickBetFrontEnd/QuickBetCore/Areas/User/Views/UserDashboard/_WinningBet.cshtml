@@ -1,0 +1,137 @@
+﻿@using QuickBetCore.Models;
+<style>
+    .label-warning {
+        background: linear-gradient(45deg, #ffb64d, #ffcb80) !important;
+    }
+
+    .label-primary {
+        background: #3abaf4 !important;
+    }
+
+    .label-default {
+        background: #eaeef3 !important;
+    }
+</style>
+@if (ViewBag.models != null)
+{
+    <div class="card-header">
+        <div class="d-flex align-items-center">
+            <a style="padding: 10px;" href="@Url.Action("WinningHistory","CardsPlayed",new { area="User"})"> <i class='fa fa-exchange' aria-hidden="true"></i> See all Winnings History</a>
+            <br />
+            <button class="btn btn-info" onclick="LoadTransaction(true)"><i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <div class="table-wrap">
+            <div class="table-responsive">
+                <table class="table display" id="datatable1" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th><strong>WithDraw Request</strong></th>
+                        </tr>
+                        @foreach (var item in ViewBag.models)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-sm-12" style="padding: 10px;">
+                                            <b>Agent Name:</b> @item.RequestedBy<br />
+
+                                            <b>Transaction Id:</b> @item.TransactionId<br />
+                                            <b>Date:</b> @item.RequestedDate<br />
+                                            <b>Withdraw request Amount:</b>@ApplicationVariable.currencysymbol @item.Amount <br />
+                                            <b>Remarks:</b> Amount @ApplicationVariable.currencysymbol @item.Amount Requested to withdraw <br />
+                                        </div>
+                                        <div class="col-sm-12" style="padding: 10px;">
+                                            Status:
+                                            @if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionPending)
+                                            {
+                                                <span class="label-primary">
+                                                    Amount ₦ @ApplicatiopnCommonFunction.FormatStringCurrency(@item.Amount)
+                                                    Paid By Agent Waiting For Your approval
+                                                </span>
+                                            }
+                                            else if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionInitiated)
+                                            {
+                                                <span class="label-primary">
+                                                    Amount ₦ @ApplicatiopnCommonFunction.FormatStringCurrency(@item.Amount)
+                                                    Pending for approval
+                                                </span>
+                                            }
+
+                                            else
+                                            {
+                                                <span class="label label-sm label-danger">
+                                                    Unknown
+                                                </span>
+
+                                            }
+                                        </div>
+                                        <div class="col-sm-12" style="padding: 10px;">
+                                            Action:
+                                            @if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionPending)
+                                            {
+                                                <button class="btn btn-info btn-xs" onclick="AproveDenyPayment(@item.Id, 1)" title="Aprove Request"><i class="fa fa-check" aria-hidden="true"></i></button>
+                                                <button class="btn btn-danger btn-xs" onclick="AproveDenyPayment(@item.Id,0)" title="Deny Request"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                            }
+                                            else if (item.ApprovalStatus == (int)WalletTransactionStatusType.TransactionInitiated)
+                                            {
+                                                <button class="btn btn-danger btn-xs" onclick="AproveDenyPayment(@item.Id,2)" title="Deny Request"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                            }
+                                        </div>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        }
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+      
+        function AproveDenyPayment(WalletId, Action)
+        {
+            //console.table("coming");
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AproveDenyPayment", "UserDashboard")",
+            data: '{WalletId: "' + WalletId + '",Action:"' + Action+'"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                if (response.Code == 200)
+                {
+                    //$('#datatable1').dataTable({
+                    //    responsive: true,
+                    //    "aaSorting": []
+                    //});
+                    LoadTransaction(true);
+                    alertify.success(response.Msg);
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+                loadwinbet(url)
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            }
+        });
+    }
+
+    </script>
+}
+

@@ -1,0 +1,99 @@
+﻿@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/SuperAgent/Views/Shared/_Layout.cshtml";
+    var viewtype = CommonMetadata.GetviewType();
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">TRANSACTION HISTORY</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;
+                    <a class="parent-item"
+                       href="@Url.Action("Index", "SuperDashboard",new { area="Agent"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">TRANSACTION HISTORY</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" style="width:100%">
+                        TRANSACTION HISTORY
+                    </h4>
+                    <div class="dropdown" data-toggle="dropdown" style="margin-left: 15px;">
+                        View Type:
+                        <select onchange="ReloadViewType()" class="form-control" id="ddlviewType" style="width: 250px;">
+                            @foreach (var item in viewtype)
+                            {
+                                if (item.value == Context.Request.Query["viewType"])
+                                {
+                                    <option selected value="@item.value">@item.key</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.value">@item.key</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="dropdown" data-toggle="dropdown" style="margin-left: 15px;">
+                        TransactionType:
+                        <select onchange="ReloadViewType()" class="form-control" id="ddlTransactionType" style="width: 250px;">
+                            <option value="pending">Pedning</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body" id="divtransactionhistory">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Transactions").addClass("active");
+        loadTransactionHistory()
+    });
+    function ReloadViewType() {
+        loadTransactionHistory();
+    }
+    function loadTransactionHistory() {
+        Loader(true);
+        var ddlviewType = $("#ddlviewType").val();
+        var TransactionType = $("#ddlTransactionType").val();
+        $.ajax({
+            url: '/SuperAgent/SuperAgentTransactionsHistory/GetTransactionHistory?viewType=' + ddlviewType + "&TransactionType=" + TransactionType,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divtransactionhistory').val("")
+                $('#divtransactionhistory').html(result);
+                $('#datatable').DataTable({
+                    responsive: true,
+                    "aaSorting": []
+                });
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>
+

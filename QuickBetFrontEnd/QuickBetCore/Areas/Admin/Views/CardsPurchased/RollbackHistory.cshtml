@@ -1,0 +1,142 @@
+﻿@model IEnumerable<QuickBetCore.Models.BetViewModel>
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "RollbackHistory";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var viewtype = CommonMetadata.GetviewType();
+}
+
+<style>
+    .label.label-sm {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 6px 6px;
+        margin-right: 5px;
+    }
+
+    .label-warning {
+        background: linear-gradient( 45deg, #ffb64d, #ffcb80) !important;
+    }
+
+    .label-success {
+        background-color: #198754 !important
+    }
+
+    .label-danger {
+        background: linear-gradient( 45deg, #ff5370, #ff869a) !important;
+    }
+
+    .dt-button {
+        width: 70px;
+        padding: 0 !important;
+    }
+</style>
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Cards History</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="#">Cards History</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Rollback History</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <br />
+                    <header style="margin-left:5px">ROLLBACK HISTORY</header>
+
+                </div>
+                <div class="card-body">
+                    <div class="dropdown" data-toggle="dropdown" style="margin-left: 15px;">
+                        viewType:
+                        <select onchange="ReloadViewType()" class="form-control" id="ddlviewType" style="width: 250px;">
+                            @foreach (var item in viewtype)
+                            {
+                                if (item.value == Context.Request.Query["viewType"])
+                                {
+                                    <option selected value="@item.value">@item.key</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.value">@item.key</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <br />
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table display" id="datatable" style="width:100%" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th><strong>S.NO</strong></th>
+                                        <th><strong>TransactionId</strong></th>
+                                        <th><strong>Name</strong></th>
+                                        <th><strong>Email</strong></th>
+                                        <th><strong>Amount</strong></th>
+                                        <th><strong>Currency</strong></th>
+                                        <th><strong>Game</strong></th>
+                                        <th><strong>Date</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count() > 0)
+                                    {
+                                        var sn = 1;
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @sn
+                                                </td>
+                                                <td>#@item.transactionId</td>
+                                                <td>@item.PlayerName</td>
+                                                <td>@item.PlayerEmail</td>
+                                                <td>₦ @item.amount</td>
+                                                <td>@item.currency</td>
+                                                <td>@item.GameName</td>
+                                                <td>@item.Insertdate.ToString("dd/MM/yyyy")</td>
+                                            </tr>
+                                            sn++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.print.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'csv', 'excel'
+            ]
+        });
+        $("#CardsHistory").addClass("active");
+    });
+    function ReloadViewType() {
+        var ddlviewType = $("#ddlviewType").val();
+        window.location = "/Admin/CardsPurchased/RollbackHistory?viewType=" + ddlviewType;
+    }
+</script>
+

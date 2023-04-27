@@ -1,0 +1,170 @@
+﻿@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    UserSession lotterySession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Nationallottery/Views/Shared/_Layout.cshtml";
+}
+
+
+<style type="text/css">
+    .tablabel {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    .tabactive {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+</style>
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <a class="parent-item tablabel tabactive" href="@Url.Action("Index","ProfileSetting",new { area="Nationallottery"})">
+                <i class="fa fa-user" aria-hidden="true"></i> Update Profile
+            </a>
+            <a class="parent-item tablabel" id="btnbet" href="@Url.Action("Setting","ProfileSetting",new { area="Nationallottery"})">
+                <i class="fa fa-cog" aria-hidden="true"></i> Password change
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <div class="card-body">
+                    @using (Html.BeginForm("UpdateUserProfile", "ProfileSetting", FormMethod.Post, new { @class = "log-form", area = "Nationallottery", enctype = "multipart/form-data" }))
+                    {
+                        <input type="hidden" name="CountryCode" id="CountryCode" />
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Full Name * </label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" value="@lotterySession.name" required name="fullname" id="fullname" placeholder="Enter Here">
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+                                <label class="col-form-label col-md-2">Display Name* </label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" value="@lotterySession.displayname" required name="displayname" id="displayname" placeholder="Enter Here">
+                                    <p style="color: #9a9999;padding-top: 5px;">This will be how your name will be displayed in the account section.</p>
+                                </div>
+                            </div>*@
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Email Address * </label>
+                            <div class="col-md-10">
+                                <input type="email" required name="emailaddress" value="@lotterySession.email" id="emailaddress" class="form-control" placeholder="Enter Here">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Phone Number * </label>
+                            <div class="col-md-10">
+                                <input type="tel" name="PhoneNumber" oninput="this.value=this.value.replace(/[^0-9.]/g, '').replace(/(\\..*?)\\..*/g, '$1').replace(/^0[^.]/, '0');"
+                                       placeholder="Enter Here" value="@lotterySession.phone" id="PhoneNumber" class="form-control PhoneNumber"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Upload Photo * </label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="file" name="file" id="file">
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"
+        integrity="sha512-DNeDhsl+FWnx5B1EQzsayHMyP6Xl/Mg+vcnFPXGNjUZrW28hQaa1+A4qL9M+AiOMmkAhKAWYHh1a+t6qxthzUw=="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css"
+      integrity="sha512-yye/u0ehQsrVrfSd6biT17t39Rg9kNc+vENcCXZuMz2a+LWFGvXUnYuWUW6pbfYj1jcBb/C39UZw2ciQvwDDvg=="
+      crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        integrity="sha512-BNZ1x39RMH+UYylOW419beaGO0wqdSkO7pi1rYDYco9OL3uvXaC/GTqA5O4CVK2j4K9ZkoDNSSHVkEQKkgwdiw=="
+        crossorigin="anonymous"></script>
+@{
+    if (ViewData["error"] != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                alertify.alert("@ViewData["error"]");
+            })
+        </script>
+    }
+}
+
+<script type="text/javascript">
+    var input = document.querySelector(".PhoneNumber");
+    if (input) {
+        window.intlTelInput(input, {
+            initialCountry: "ng",
+            separateDialCode: true,
+            customPlaceholder: function (
+                selectedCountryPlaceholder,
+                selectedCountryData
+            ) {
+                var nolenght = selectedCountryPlaceholder.replace(/\s/g, '').length;
+                var no = "";
+                if (nolenght == 6) {
+                    no = "326541";
+                } else if (nolenght == 7) {
+                    no = "3265419";
+                }
+                else if (nolenght == 8) {
+                    no = "32654321";
+                }
+                else if (nolenght == 9) {
+                    no = "326541968";
+                }
+                else if (nolenght == 10) {
+                    no = "3265416510";
+                }
+                else if (nolenght == 11) {
+                    no = "32654165109";
+                }
+                else if (nolenght == 12) {
+                    no = "326541651092";
+                }
+                else if (nolenght == 15) {
+                    no = "3265416510912654";
+                } else {
+                    no = "96857";
+                }
+                return "e.g. " + no;
+            },
+        });
+    }
+    $(document).ready(function () {
+        debugger;
+        var phone = $('#PhoneNumber').val();
+        if (phone) {
+            var newstr = phone.replace(new RegExp(" ", "g"), "");
+            $('#PhoneNumber').val(newstr);
+        }
+        $('#PhoneNumber').on("countrychange", function (e, countryData) {
+            $('#CountryCode').val($('.iti__selected-dial-code').text());
+        });
+
+        $('#CountryCode').val($('.iti__selected-dial-code').text());
+    })
+</script>
+

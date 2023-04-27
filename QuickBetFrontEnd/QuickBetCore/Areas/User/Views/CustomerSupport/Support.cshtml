@@ -1,0 +1,759 @@
+﻿@model IEnumerable<QuickBetCore.Models.SupportTicketViewModel>
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Support";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table-scrollable {
+        border: none !important;
+    }
+
+    .sidemenu-container .sidemenu > li.active > a,
+    .sidemenu-closed.sidemenu-container-fixed .sidemenu-container:hover .sidemenu > li.active > a {
+        border: none;
+        text-shadow: none;
+        font-size: 13px;
+    }
+
+    .admin-logo {
+        position: relative;
+        top: -6px;
+        left: -25px;
+    }
+
+    table.dataTable tbody td.patient-img {
+        padding: 2px;
+        max-width: 100% !important;
+        text-align: left;
+    }
+
+    label {
+        display: -webkit-inline-box;
+    }
+
+    select.form-control.form-control-sm {
+        height: 30px !important;
+        margin: 0 15px;
+    }
+
+    .label.label-sm {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 6px;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 1170px;
+        margin: auto;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .inbox_people {
+        background: #f8f8f8 none repeat scroll 0 0;
+        float: left;
+        overflow: hidden;
+        width: 40%;
+        border-right: 1px solid #c4c4c4;
+    }
+
+    .inbox_msg {
+        border: 0;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .top_spac {
+        margin: 20px 0 0;
+    }
+
+    .recent_heading {
+        float: left;
+        width: 40%;
+    }
+
+    .srch_bar {
+        display: inline-block;
+        text-align: right;
+        width: 60%;
+    }
+
+    .headind_srch {
+        padding: 10px 29px 10px 20px;
+        overflow: hidden;
+        border-bottom: 1px solid #c4c4c4;
+    }
+
+    .recent_heading h4 {
+        color: #05728f;
+        font-size: 21px;
+        margin: auto;
+    }
+
+    .srch_bar input {
+        border: 1px solid #cdcdcd;
+        border-width: 0 0 1px 0;
+        width: 80%;
+        padding: 2px 0 4px 6px;
+        background: none;
+    }
+
+    .srch_bar .input-group-addon button {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        padding: 0;
+        color: #707070;
+        font-size: 18px;
+    }
+
+    .srch_bar .input-group-addon {
+        margin: 0 0 0 -27px;
+    }
+
+    .chat_ib h5 {
+        font-size: 15px;
+        color: #464646;
+        margin: 0 0 8px 0;
+    }
+
+        .chat_ib h5 span {
+            font-size: 13px;
+            float: right;
+        }
+
+    .chat_ib p {
+        font-size: 14px;
+        color: #989898;
+        margin: auto;
+    }
+
+    .chat_img {
+        float: left;
+        width: 11%;
+    }
+
+    .chat_ib {
+        float: left;
+        padding: 0 0 0 15px;
+        width: 88%;
+    }
+
+    .chat_people {
+        overflow: hidden;
+        clear: both;
+    }
+
+    .chat_list {
+        border-bottom: 1px solid #c4c4c4;
+        margin: 0;
+        padding: 18px 16px 10px;
+    }
+
+    .inbox_chat {
+        height: 550px;
+        overflow-y: scroll;
+    }
+
+    .active_chat {
+        background: #ebebeb;
+    }
+
+    .incoming_msg_img {
+        display: inline-block;
+        width: 6%;
+    }
+
+    .received_msg {
+        display: inline-block;
+        padding: 0 0 0 10px;
+        vertical-align: top;
+        width: 92%;
+    }
+
+    .received_withd_msg p {
+        background: #ebebeb none repeat scroll 0 0;
+        border-radius: 3px;
+        color: #646464;
+        font-size: 14px;
+        margin: 0;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+        word-break: break-all;
+    }
+
+    .time_date {
+        color: #747474;
+        display: block;
+        font-size: 12px;
+        margin: 8px 0 0;
+    }
+
+    .received_withd_msg {
+        width: 57%;
+    }
+
+    .mesgs {
+        float: left;
+        padding: 0;
+        width: 100%;
+    }
+
+    .sent_msg p {
+        background: #05728f none repeat scroll 0 0;
+        border-radius: 3px;
+        font-size: 14px;
+        margin: 0;
+        color: #fff;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+        word-break: break-all;
+    }
+
+    .outgoing_msg {
+        overflow: hidden;
+        margin: 26px 0 26px;
+    }
+
+    .sent_msg {
+        float: right;
+        width: 46%;
+    }
+
+    .input_msg_write input {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: 1px solid #cfcfcf;
+        color: #4c4c4c;
+        font-size: 15px;
+        min-height: 48px;
+        width: 100%;
+        border-radius: 5px;
+        padding: 0px 50px 0 15px;
+    }
+
+    .type_msg {
+        border-top: 0px;
+        position: relative;
+    }
+
+    .msg_send_btn {
+        background: #05728f none repeat scroll 0 0;
+        border: medium none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        font-size: 17px;
+        height: 33px;
+        position: absolute;
+        right: 10px;
+        top: 9px;
+        width: 33px;
+    }
+
+    .messaging {
+        padding: 0 0 0px 0;
+    }
+
+    .msg_history {
+        height: 516px;
+        overflow-y: auto;
+    }
+
+    .incoming_msg_img, .outgoing_msg_img {
+        border-radius: 50px;
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+    }
+
+    .close {
+        display: inline-block;
+        margin-top: 0;
+        margin-right: 0;
+        width: 9px;
+        height: 9px;
+        background-repeat: no-repeat !important;
+        text-indent: -10000px;
+        outline: 0;
+        background-image: url('../../../../assets/images/remove-icon-small.png') !important;
+    }
+
+    .modal .modal-header .close {
+        margin-top: 0 !important;
+    }
+
+    .modal-header .close {
+        border: 0px;
+        background: transparent;
+        width: 15px;
+        height: 15px;
+        background-position: center;
+        margin: 0px;
+    }
+
+    .header-title {
+        margin: 0px 0 15px;
+        padding: 5px 15px;
+        background: #ededed;
+        border-radius: 5px;
+        font-weight: 500;
+    }
+
+    .outgoing_msg_img img {
+        object-fit: cover;
+        height: 100%;
+    }
+
+    .img {
+        max-width: 100%;
+    }
+
+    .outgoing_msg {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+    }
+
+    header {
+        display: inline-block;
+        padding: 11px 20px;
+        vertical-align: middle;
+        line-height: 17px;
+        font-size: 20px;
+    }
+
+    .card-head {
+        padding: 15px 0;
+        display: flex;
+        align-items: center;
+    }
+
+        .card-head button {
+            margin-left: auto;
+            margin-right: 20px;
+        }
+
+    td.description {
+        word-break: break-all;
+        white-space: break-spaces;
+    }
+
+    .sn-title {
+        margin-top: 0px;
+        font-size: 18px !important;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    #divmessagehistory .modal-header {
+        border-bottom: 1px solid #efefef;
+        background: #ededed;
+        border-radius: 10px;
+    }
+
+    #divmessagehistory .header-title {
+        margin: 10px 0 15px;
+        padding: 5px 0;
+        background: transparent;
+        border-radius: 0;
+        font-weight: 400;
+        font-size: 15px !important;
+        word-break: break-all;
+        line-height: normal;
+        border-bottom: 1px solid #bbb;
+    }
+</style>
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <header>Support Management</header>
+
+                    <button class="btn btn-success" onclick="openform()">
+                        <i class="fa fa-plus" aria-hidden="true"></i> Add Ticket
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row" style="display:none" id="divaddsupporticked">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Please fill in detail, we will contact you soon..</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-md-12">Title * </label>
+                                        <div class="col-md-12">
+                                            <input type="email" onchange="validateformdata()" id="txttitle" class="form-control" placeholder="Enter Here">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-md-12">Message * </label>
+                                        <div class="col-md-12">
+                                            <textarea cols="4" class="form-control" id="txtMessage" placeholder="Enter Here"></textarea>
+                                        </div>
+                                    </div>
+                                    <button onclick="AddSupportTicket()" class="btn-chat" style="display: inline;">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table display product-overview mb-30"
+                                   id="support_table">
+                                <thead>
+                                    <tr>
+                                        <th>Ticket Name</th>
+                                        <th>Description</th>
+                                        <th>My Chats</th>
+                                        <th>Created Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count() > 0)
+                                    {
+
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.Title</td>
+                                                <td class="description">@item.Description</td>
+                                                <td>
+                                                    <a href="javascript:" onclick="OpenChatHistory('@item.Id')">View Chat</a>
+                                                </td>
+                                                <td>@item.CreatedDate</td>
+                                                <td>
+                                                    @if (item.Status == (int)supportTicketStatus.Open)
+                                                    {
+                                                        <span class="label label-sm"
+                                                              style="background-color: orange !important">
+                                                            Open
+                                                        </span>
+                                                        <button onclick="CloseSupportTicket('@item.Id')" class="label label-sm">
+                                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                                            Close Ticket
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="label label-sm"
+                                                              style="background-color: #198754 !important">
+                                                            Resolved
+                                                        </span>
+                                                    }
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+
+                                    @*<tr>
+                                            <td>Cash vault</td>
+                                            <td>
+                                                <a data-bs-toggle="modal"
+                                                   data-bs-target="#exampleModal">View Attraction</a>
+                                            </td>
+                                            <td>June 1, 2020</td>
+                                            <td>
+                                                <span class="label label-sm label-warning"
+                                                      style="color: #333">
+                                                    Pending
+                                                </span>
+                                            </td>
+                                        </tr>*@
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade"
+     id="exampleModal"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 900px">
+        <div class="modal-content">
+            @*<div class="modal-header">
+                <h5 class="modal-title">My Chats</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>*@
+            <div class="modal-body">
+
+                <div class="messaging">
+                    <div class="inbox_msg">
+                        @*<div class="inbox_people">
+                                <div class="headind_srch">
+                                    <div class="recent_heading">
+                                        <h4>Recent</h4>
+                                    </div>
+                                    <div class="srch_bar">
+                                        <div class="stylish-input-group">
+                                            <input type="text"
+                                                   class="search-bar"
+                                                   placeholder="Search" />
+                                            <span class="input-group-addon">
+                                                <button type="button">
+                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inbox_chat">
+                                    <div class="chat_list active_chat">
+                                        <div class="chat_people">
+                                            <div class="chat_img">
+                                                <img src="https://ptetutorials.com/images/user-profile.png"
+                                                     alt="sunil" />
+                                            </div>
+                                            <div class="chat_ib">
+                                                <h5>
+                                                    Sunil Rajput
+                                                    <span class="chat_date">Dec 25</span>
+                                                </h5>
+                                                <p>
+                                                    Test, which is a new approach to have all
+                                                    solutions astrology under one roof.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chat_list">
+                                        <div class="chat_people">
+                                            <div class="chat_img">
+                                                <img src="https://ptetutorials.com/images/user-profile.png"
+                                                     alt="sunil" />
+                                            </div>
+                                            <div class="chat_ib">
+                                                <h5>
+                                                    Sunil Rajput
+                                                    <span class="chat_date">Dec 25</span>
+                                                </h5>
+                                                <p>
+                                                    Test, which is a new approach to have all
+                                                    solutions astrology under one roof.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chat_list">
+                                        <div class="chat_people">
+                                            <div class="chat_img">
+                                                <img src="https://ptetutorials.com/images/user-profile.png"
+                                                     alt="sunil" />
+                                            </div>
+                                            <div class="chat_ib">
+                                                <h5>
+                                                    Sunil Rajput
+                                                    <span class="chat_date">Dec 25</span>
+                                                </h5>
+                                                <p>
+                                                    Test, which is a new approach to have all
+                                                    solutions astrology under one roof.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="mesgs">
+                            <div id="divmessagehistory">
+
+                            </div>
+                            <div class="type_msg">
+                                <div class="input_msg_write">
+                                    <input type="text" id="txtchatmeesage"
+                                           class="write_msg"
+                                           placeholder="Type a message" />
+                                    <button class="msg_send_btn" type="button" onclick="AddChat()">
+                                        <i class="fa fa-paper-plane-o"
+                                           aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" onclick="CloseChatHistory()"
+                            class="btn btn-secondary"
+                            >
+                        Close
+                    </button>*@
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('#datatable').DataTable({
+        //    responsive: true,
+        //    "aaSorting": []
+        //});
+        //$('#exampleModal').modal('show');
+        $("#support").addClass("active");
+    });
+    function validateformdata() {
+        var isValid = true;
+        if ($('#txttitle').val().trim() == "") {
+            $('#txttitle').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#txttitle').css('border-color', 'lightgrey');
+        }
+        if ($('#txtMessage').val().trim() == "") {
+            $('#txtMessage').css('border-color', 'Red');
+            isValid = false;
+        }
+        else {
+            $('#txtMessage').css('border-color', 'lightgrey');
+        }
+        return isValid;
+    }
+    function openform() {
+        $("#divaddsupporticked").css("display", "block");
+    }
+    function closeform() {
+        $("#divaddsupporticked").css("display", "none");
+    }
+
+    function AddSupportTicket() {
+        debugger;
+        var res = validateformdata();
+        if (res == false) {
+            return false;
+        }
+        if (res) {
+            Loader(true);
+            $.ajax({
+                type: "POST",
+                url: "/User/CustomerSupport/AddSupportTicket/",
+                data: '{title: "' + $('#txttitle').val().trim() + '",message: "' + $('#txtMessage').val().trim() + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    swal({
+                        title: "success",
+                        text: "Successfully done",
+                        icon: "success",
+                    }).then(function () {
+                        Loader(false);
+                        location.reload(true);
+                    });
+
+                },
+                error: function (err) {
+                    Loader(false);
+                }
+            });
+        }
+        else {
+            alertify.alert("Validation failed");
+        }
+    }
+
+    function CloseSupportTicket(SupportTicketId) {
+        debugger;
+        if (SupportTicketId > 0) {
+            Loader(true);
+            $.ajax({
+                titempIdIdIde: "POST",
+                url: "/User/CustomerSupport/CloseSupportTicket?SupportTicketId=" + SupportTicketId,
+                //data: '{SupportTicketId: "' + SupportTicketId + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    Loader(false);
+                    location.reload(true);
+                },
+                error: function (err) {
+                    Loader(false);
+                }
+            });
+        }
+        else {
+            alertify.alert("Validation failed");
+        }
+    }
+    function OpenChatHistory(SupportTicketId) {
+        $('#exampleModal').modal('show');
+        loadchat(SupportTicketId)
+
+    }
+    function loadchat(SupportTicketId) {
+        Loader(true);
+        $.ajax({
+            url: '/User/CustomerSupport/GetSupportChatHistory?SupportTicketId=' + SupportTicketId,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#txtchatmeesage').val("")
+                $('#divmessagehistory').html(result);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+    function CloseChatHistory() {
+
+        $('#exampleModal').modal('hide');
+    }
+    //function AddChat()
+    //{
+    //    $("#divmessagehistory").html("hesldslds");
+    //}
+
+    function AddChat() {
+        debugger;
+        var supportTicketId = $("#hfsupportTicket").val();
+        var message = $('#txtchatmeesage').val().trim();
+        if ($('#txtchatmeesage').val().trim() == "") {
+            alertify.alert("input message");
+            $("#alertify").css('display', 'block')
+            return false;
+        }
+        if (supportTicketId > 0 && message) {
+            Loader(true);
+            $.ajax({
+                titempIdIdIde: "POST",
+                url: "/User/CustomerSupport/AddChatToSupportTicket?SupportTicketId=" + supportTicketId + "&message=" + message,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    loadchat(supportTicketId);
+                },
+                error: function (err) {
+                    Loader(false);
+                }
+            });
+        }
+        else {
+            alertify.alert("Validation failed");
+            $("#alertify").css('display', 'block')
+        }
+    }
+</script>
+
+

@@ -1,0 +1,104 @@
+﻿@model QuickBetCore.Models.AddresViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .addreslist {
+        min-height: 1px;
+        padding: 1.25rem;
+        border: 1px solid;
+        border-style: solid;
+    }
+</style>
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-12">
+            <div class="d-flex align-items-center">
+                <h5 class="page-title">Addresses</h5>
+                <ul class="breadcrumb ml-2">
+                    <li class="breadcrumb-item">
+                        <a href="#"><i class="fa fa-map-marker"></i></a>
+                    </li>
+
+                    <li class="breadcrumb-item active">The following addresses will be used on the checkout page by default.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-xl-6 d-flex flex-wrap">
+        <div class="card">
+            <div class="card-body">
+                <div class="general-details">
+
+                    <h4>
+                        Billing Address
+                        @if (Model.billingaddress == null || Model.billingaddress.Count() == 0)
+                        {
+                            <a href="@Url.Action("Billingaddress","Addresses",new {area="user" })" class="btn-chat" style="display: inline;">Add</a>
+                        }
+
+                    </h4>
+                    @if (Model.billingaddress != null && Model.billingaddress.Count() > 0)
+                    {
+
+                        foreach (var item in Model.billingaddress)
+                        {
+                            <fieldset class="addreslist">
+                                <legend>@item.fullname</legend>
+                                <a style="float:right;cursor:pointer" href="@Url.Action("EditBillingaddress","Addresses",new {area="user",AddreesId=item.Id })"><i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i></a>
+                                <div>
+                                    <p>@item.Street,@item.StreetNO</p>
+                                    <p> @item.City</p>
+                                    <p>@item.ZipCode</p>
+                                    <p>@item.CountryCode </p>
+                                </div>
+                            </fieldset>
+                        }
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-6 d-flex flex-wrap">
+        <div class="card">
+            <div class="card-body">
+                <div class="general-details">
+                    <h4>
+                        Shipping Address
+                        @if (Model.shippingaddress == null || Model.shippingaddress.Count() == 0)
+                        {
+                            <a href="@Url.Action("Shippingaddress","Addresses",new {area="user" })" class="btn-chat" style="display: inline;">Add</a>
+                        }
+                    </h4>
+                    @if (Model.shippingaddress != null && Model.shippingaddress.Count() > 0)
+                    {
+                        foreach (var item in Model.shippingaddress)
+                        {
+                            <fieldset class="addreslist">
+                                <legend>@item.fullname</legend>
+                                <a style="float:right;cursor:pointer" href="@Url.Action("EditShippingaddress","Addresses",new {area="user",AddreesId=item.Id })"><i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i></a>
+                                <div>
+
+                                    <p>@item.Street,@item.StreetNO</p>
+                                    <p> @item.City</p>
+                                    <p>@item.ZipCode</p>
+                                    <p>@item.CountryCode </p>
+                                </div>
+                            </fieldset>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#Addresses").addClass("active");
+    })
+</script>

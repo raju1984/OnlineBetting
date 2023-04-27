@@ -1,0 +1,172 @@
+﻿@model QuickBetCore.Models.FundTransferModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "TransferFunds";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Fund Transfer To Agent</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li>
+                    <i class="fa fa-arrow-right"></i>&nbsp;<a class="parent-item" href="@Url.Action("Index", "AgentManagement",new { area="Admin"})">All Agents</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+                <li class="active">Fund Transfer</li>
+            </ol>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title" style="width:100%;">Debit / Credit Funds</h4>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("FundTrsansferToAgent", "AgentManagement", FormMethod.Post, new { id = "TransferFunds", enctype = "multipart/form-data", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(m => m.UserId)
+                    <div class="form-group row">
+                        <label class="text-black font-w500 col-md-4 control-label">Select Transaction Type @Html.ValidationMessageFor(m => m.TypeOfTransfer, "", new { @class = "text-danger" })</label>
+                        <div class="col-md-8">
+                            @Html.DropDownListFor(m => m.TypeOfTransfer, new List<SelectListItem>()
+{
+    new SelectListItem(){ Text= TransType.Debit.ToString(), Value = ((int)TransType.Debit).ToString()},
+    new SelectListItem(){ Text= TransType.Credit.ToString(), Value = ((int)TransType.Credit).ToString()}
+}, "Select Transaction Type", new { @class = "form-control" })
+
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        @Html.LabelFor(m => m.Amount, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(m => m.Amount, new { htmlAttributes = new { @class = "form-control", type = "Number", step = "any", placeholder = "Enter Amount", autocomplete = "off" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        @Html.LabelFor(m => m.BeneficiaryName, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(m => m.BeneficiaryName, new { htmlAttributes = new { @class = "form-control", @readonly = "true", placeholder = "Beneficiary Name", autocomplete = "off" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        @Html.LabelFor(m => m.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Description", autocomplete = "off" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-offset-2 col-md-12 justify-content-center d-flex">
+                            <button type="submit" id="submit" class="btn btn-sm btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>
+
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        $("#Customers").addClass("active");
+
+        $('#TransferFunds').submit(function () {
+            //  alert('Fir:'+ $('#TypeOfTransfer').val() + 'Sec:' + $('#Amount').val() +'Third :'+ parseFloat($('#Amount').val()) + 'Fourth:'+ $('#UserId').val());
+            if ($('#TypeOfTransfer').val() !== "" && $('#Amount').val() !== "" && parseFloat($('#Amount').val()) > 0 && $('#UserId').val() !== "" && $('#BeneficiaryName').val() !== "" && $('#Description').val() != "") {
+                $('#submit').attr("disabled", true);
+                $('#submit').html('Please wait..');
+            }
+
+        });
+
+        $('#Amount').on('keydown keypress keyup paste input', function () {
+
+            // allows 123. or .123 which are fine for entering on a MySQL decimal() or float() field
+            // if more than one dot is detected then erase (or slice) the string till we detect just one dot
+            // this is likely the case of a paste with the right click mouse button and then a paste (probably others too), the other situations are handled with keydown, keypress, keyup, etc
+
+            while (($(this).val().split(".").length - 1) > 1) {
+
+                $(this).val($(this).val().slice(0, -1));
+
+                if (($(this).val().split(".").length - 1) > 1) {
+                    continue;
+                } else {
+                    return false;
+                }
+
+            }
+
+            // replace any character that's not a digit or a dot
+
+            $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+
+            // now cut the string with the allowed number for the integer and float parts
+            // integer part controlled with the int_num_allow variable
+            // float (or decimal) part controlled with the float_num_allow variable
+
+            var int_num_allow = 10;
+            var float_num_allow = 2;
+
+            var iof = $(this).val().indexOf(".");
+
+            if (iof != -1) {
+
+                // this case is a mouse paste (probably also other events) with more numbers before the dot than is allowed
+                // the number can't be "sanitized" because we can't "cut" the integer part, so we just empty the element and optionally change the placeholder attribute to something meaningful
+
+                if ($(this).val().substring(0, iof).length > int_num_allow) {
+                    $(this).val('');
+                    // you can remove the placeholder modification if you like
+                    $(this).attr('placeholder', 'invalid number');
+                }
+
+                // cut the decimal part
+
+                $(this).val($(this).val().substring(0, iof + float_num_allow + 1));
+
+            } else {
+
+                $(this).val($(this).val().substring(0, int_num_allow));
+
+            }
+
+            return true;
+
+        });
+
+    });
+</script>
+

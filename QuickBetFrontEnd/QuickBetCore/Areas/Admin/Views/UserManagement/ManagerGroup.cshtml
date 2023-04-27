@@ -1,0 +1,445 @@
+﻿@model QuickBetCore.Models.ManageAccountGroupViewModel
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "ManagerGroup";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table-scrollable {
+        border: none !important;
+    }
+
+    .sidemenu-container .sidemenu > li.active > a,
+    .sidemenu-closed.sidemenu-container-fixed .sidemenu-container:hover .sidemenu > li.active > a {
+        border: none;
+        text-shadow: none;
+        font-size: 13px;
+    }
+
+    .admin-logo {
+        position: relative;
+        top: -6px;
+        left: -25px;
+    }
+
+    table.dataTable tbody td.patient-img {
+        padding: 2px;
+        max-width: 100% !important;
+        text-align: left;
+    }
+
+    label {
+        display: -webkit-inline-box;
+    }
+
+    select.form-control.form-control-sm {
+        height: 30px !important;
+        margin: 0 15px;
+    }
+
+    .label.label-sm {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 6px;
+        margin-right: 5px;
+    }
+
+    .container {
+        max-width: 1170px;
+        margin: auto;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .inbox_people {
+        background: #f8f8f8 none repeat scroll 0 0;
+        float: left;
+        overflow: hidden;
+        width: 40%;
+        border-right: 1px solid #c4c4c4;
+    }
+
+    .inbox_msg {
+        border: 1px solid #c4c4c4;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .top_spac {
+        margin: 20px 0 0;
+    }
+
+    .recent_heading {
+        float: left;
+        width: 40%;
+    }
+
+    .srch_bar {
+        display: inline-block;
+        text-align: right;
+        width: 60%;
+    }
+
+    .headind_srch {
+        padding: 10px 29px 10px 20px;
+        overflow: hidden;
+        border-bottom: 1px solid #c4c4c4;
+    }
+
+    .recent_heading h4 {
+        color: #05728f;
+        font-size: 21px;
+        margin: auto;
+    }
+
+    .srch_bar input {
+        border: 1px solid #cdcdcd;
+        border-width: 0 0 1px 0;
+        width: 80%;
+        padding: 2px 0 4px 6px;
+        background: none;
+    }
+
+    .srch_bar .input-group-addon button {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        padding: 0;
+        color: #707070;
+        font-size: 18px;
+    }
+
+    .srch_bar .input-group-addon {
+        margin: 0 0 0 -27px;
+    }
+
+    .chat_ib h5 {
+        font-size: 15px;
+        color: #464646;
+        margin: 0 0 8px 0;
+    }
+
+        .chat_ib h5 span {
+            font-size: 13px;
+            float: right;
+        }
+
+    .chat_ib p {
+        font-size: 14px;
+        color: #989898;
+        margin: auto;
+    }
+
+    .chat_img {
+        float: left;
+        width: 11%;
+    }
+
+    .chat_ib {
+        float: left;
+        padding: 0 0 0 15px;
+        width: 88%;
+    }
+
+    .chat_people {
+        overflow: hidden;
+        clear: both;
+    }
+
+    .chat_list {
+        border-bottom: 1px solid #c4c4c4;
+        margin: 0;
+        padding: 18px 16px 10px;
+    }
+
+    .inbox_chat {
+        height: 550px;
+        overflow-y: scroll;
+    }
+
+    .active_chat {
+        background: #ebebeb;
+    }
+
+    .incoming_msg_img {
+        display: inline-block;
+        width: 6%;
+    }
+
+    .received_msg {
+        display: inline-block;
+        padding: 0 0 0 10px;
+        vertical-align: top;
+        width: 92%;
+    }
+
+    .received_withd_msg p {
+        background: #ebebeb none repeat scroll 0 0;
+        border-radius: 3px;
+        color: #646464;
+        font-size: 14px;
+        margin: 0;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .time_date {
+        color: #747474;
+        display: block;
+        font-size: 12px;
+        margin: 8px 0 0;
+    }
+
+    .received_withd_msg {
+        width: 57%;
+    }
+
+    .mesgs {
+        float: left;
+        padding: 30px 15px 0 25px;
+        width: 100%;
+    }
+
+    .sent_msg p {
+        background: #05728f none repeat scroll 0 0;
+        border-radius: 3px;
+        font-size: 14px;
+        margin: 0;
+        color: #fff;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .outgoing_msg {
+        overflow: hidden;
+        margin: 26px 0 26px;
+    }
+
+    .sent_msg {
+        float: right;
+        width: 46%;
+    }
+
+    .input_msg_write input {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        color: #4c4c4c;
+        font-size: 15px;
+        min-height: 48px;
+        width: 100%;
+    }
+
+    .type_msg {
+        border-top: 1px solid #c4c4c4;
+        position: relative;
+    }
+
+    .msg_send_btn {
+        background: #05728f none repeat scroll 0 0;
+        border: medium none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        font-size: 17px;
+        height: 33px;
+        position: absolute;
+        right: 0;
+        top: 11px;
+        width: 33px;
+    }
+
+    .messaging {
+        padding: 0 0 0px 0;
+    }
+
+    .msg_history {
+        height: 516px;
+        overflow-y: auto;
+    }
+</style>
+<div class="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <br />
+                    <br />
+                    <header style="margin-left:5px">Management Account Type</header>
+                    <br />
+
+                </div>
+                <div class="card-body">
+                    <a class="btn btn-danger" href="@Url.Action("Index","UserManagement",new {area="Admin" })" style="margin-left:5px">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+                    </a>
+                    <h2>Account Permission</h2>
+                    <div class="table-wrap">
+
+                        <div class="table-responsive">
+                            <div class="row" id="divaddsupporticked">
+                                <div class="col-md-12">
+                                    <div>
+                                        <div class="card-header">
+                                            <h6 class="card-title">Account Name</h6>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-md-12">Name * </label>
+                                            <div class="col-md-12">
+                                                <input type="text" value="@Model.Name" id="txtgpname" class="form-control" placeholder="Enter Here">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-header">
+                                <h6 class="card-title">Set Permissions</h6>
+                            </div>
+                            <table class="table display product-overview mb-30"
+                                   id="support_table">
+                                <thead>
+                                    <tr>
+                                        <th>Module Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Pages != null && Model.Pages.Count() > 0)
+                                    {
+
+                                        foreach (var item in Model.Pages)
+                                        {
+                                            int count = 0;
+                                            if (Model.UserPermissonPages != null && Model.UserPermissonPages.Count() > 0)
+                                            {
+                                                count = Model.UserPermissonPages.Where(a => a.Id == item.Id).Count();
+                                            }
+                                            <tr>
+                                                <td>@item.Name</td>
+                                                @if (count == 0)
+                                                {
+                                                    <td>
+                                                        <input type="checkbox" id="@item.Id" class="accountgp">
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        <input checked type="checkbox" id="@item.Id" class="accountgp">
+                                                    </td>
+                                                }
+                                            </tr>
+                                            if (item.ChildSubPage != null && item.ChildSubPage.Count() > 0)
+                                            {
+                                                foreach (var itemChild in item.ChildSubPage)
+                                                {
+                                                    <tr></tr>
+                                                    if (itemChild.ChildSubPage != null && itemChild.ChildSubPage.Count() > 0)
+                                                    {
+                                                        foreach (var itemChildSub in itemChild.ChildSubPage)
+                                                        {
+                                                            <tr></tr>
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                            <br />
+                            <button onclick="AddGroup()" class="btn btn-info" style="display: inline;">Save</button>
+                            <br />
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('#datatable').DataTable({
+        //    responsive: true,
+        //    "aaSorting": []
+        //});
+        //$('#exampleModal').modal('show');
+        $("#UserManagement").addClass("active");
+    });
+    function AddGroup() {
+        debugger;
+        Loader(true);
+        var Pages = [];
+        var isvalid = true;
+        $(".accountgp").each(function (index) {
+            if (this.checked) {
+                var page = new Object();
+                page.Id = this.id;
+                if (page.Id > 0) {
+                    Pages.push(page);
+                }
+            }
+        });
+        var gpmodel = new Object();
+        gpmodel.Name = $("#txtgpname").val();
+        gpmodel.Pages = Pages;
+        var gpid = '@Context.Request.Query["GpId"]';
+        if (gpid && gpid != '') {
+             gpmodel.Id = gpid;
+        }
+        if (gpmodel.Name) {
+            $.ajax({
+                type: "POST",
+                url: "/Admin/UserManagement/AddAccountGroup",
+                data: JSON.stringify(gpmodel),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Message) {
+                    Loader(false);
+                    debugger;
+                    if (gpid && gpid != '')
+                    {
+                      //  alertify.alert("updated successfully!");
+                    //    $("#alertify").css('display', 'block')
+                        swal({
+                            title: "success",
+                            text: "Successfully Updated",
+                            icon: "success",
+                        }).then(function () {
+                             window.location.href = "/Admin/UserManagement/Index";
+                        });
+
+                    }
+                    else {
+                        //alertify.error("updated successfully!");
+                        if (Message && Message.Data.Code == 200)
+                        {
+                            swal({
+                                title: "success",
+                                text: "Added Successfully",
+                                icon: "success",
+                            }).then(function () {
+                                window.location.href = "/Admin/UserManagement/Index";
+                            });
+                        }
+                        else {
+                            alertify.error("Something went wrong");
+                        }
+
+                    }
+
+                },
+
+            });
+        }
+        else {
+            alertify.alert("Name is required field!");
+            $("#alertify").css('display', 'block')
+            Loader(false);
+        }
+    }
+</script>

@@ -1,0 +1,369 @@
+﻿@model QuickBetCore.Areas.Agent.Data.WithdrawModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Withdrawfund";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    decimal balacne = 0;
+    if (ViewData["balance"] != null)
+    {
+        var amount = ViewData["balance"].ToString();
+        balacne = Convert.ToDecimal(amount);
+    }
+    decimal minimmumAmount = ApplicationVariable.DefaultMininumBalanceToWithdraw;
+    if (ViewData["minumumAmount"] != null)
+    {
+        var amount = ViewData["minumumAmount"].ToString();
+        minimmumAmount = Convert.ToDecimal(amount);
+    }
+}
+<style>
+    @@media (min-width: 320px) and (max-width: 480px) {
+
+        .header .header-left .logo {
+            display: inline-block;
+        }
+
+        #tab1:checked ~ #content1, #tab2:checked ~ #content2, #tab3:checked ~ #content3, #tab4:checked ~ #content4, #tab5:checked ~ #content5 {
+            display: block;
+            padding: 20px 0 !important;
+            background: #fff;
+            color: #999;
+        }
+
+        .col-lg-12.padding0 {
+            padding: 0 !important;
+        }
+
+        label {
+            font-weight: 700;
+            font-size: 18px;
+            display: block;
+            float: left;
+            width: 100% !important;
+        }
+
+            label span {
+                display: block !important;
+            }
+
+        a.btn.btn-success {
+            position: relative !important;
+            top: -8px !important;
+        }
+
+        .mobile_btn {
+            color: #000 !important;
+        }
+    }
+</style>
+<style>
+    .btn-chat {
+        background-color: #5b4e84;
+        font-size: 18px;
+    }
+
+    .card {
+        padding: 15px 10px;
+    }
+
+    *,
+    *:after,
+    *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    section#content4 {
+        border-bottom: none;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        content: " ";
+        display: table;
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    body {
+        font-family: sans-serif;
+        background: #f6f9fa;
+    }
+
+    h1 {
+        color: #ccc;
+        text-align: center;
+    }
+
+    a {
+        color: #ccc;
+        text-decoration: none;
+        outline: none;
+    }
+
+    /*Fun begins*/
+    .tab_container {
+        width: 100%;
+        margin: 0 auto;
+        padding-top: 0;
+        position: relative;
+    }
+
+    input, section {
+        clear: both;
+        padding-top: 10px;
+        display: none;
+    }
+
+    label {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    #tab1:checked ~ #content1,
+    #tab2:checked ~ #content1,
+    #tab3:checked ~ #content1,
+    #tab4:checked ~ #content1,
+    #tab5:checked ~ #content1 {
+        display: block;
+        padding: 20px;
+        background: #fff;
+        color: #999;
+    }
+
+    .tab_container .tab-content p,
+    .tab_container .tab-content h3 {
+        -webkit-animation: fadeInScale 0.7s ease-in-out;
+        -moz-animation: fadeInScale 0.7s ease-in-out;
+        animation: fadeInScale 0.7s ease-in-out;
+    }
+
+    .tab_container .tab-content h3 {
+        text-align: left;
+    }
+
+    .tab_container [id^="tab"]:checked + label {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+
+        .tab_container [id^="tab"]:checked + label .fa {
+            color: #0CE;
+        }
+
+    label .fa {
+        font-size: 1.3em;
+        margin: 0 0.4em 0 0;
+    }
+
+    /*Media query*/
+    @@media only screen and (max-width: 930px) {
+        label span {
+            font-size: 14px;
+        }
+
+        label .fa {
+            font-size: 14px;
+        }
+    }
+
+    @@media only screen and (max-width: 768px) {
+        label span {
+            display: none;
+        }
+
+        label .fa {
+            font-size: 16px;
+        }
+
+        .tab_container {
+            width: 98%;
+        }
+    }
+
+    /*Content Animation*/
+    @@keyframes fadeInScale {
+        0% {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                    <h5 class="page-title">Account Balance: ₦ @balacne</h5>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Withdraw Funds from account</h5>
+                </div>
+                <div class="card-body">
+                    <div class="tab_container">
+                        <input id="tab1" type="radio" name="tabs" checked onclick="LoadWithdrawAmount()">
+                        <label for="tab1"><span>Withdraw Request</span></label>
+
+                        <input id="tab2" type="radio" name="tabs" onclick="LoadTransactionRequest('pending')">
+                        <label for="tab2"><span>Pending Requests</span></label>
+
+                        <input id="tab3" type="radio" name="tabs" onclick="LoadTransactionRequest('aproved')">
+                        <label for="tab3"><span>Approved Requests</span></label>
+
+                        <input id="tab4" type="radio" name="tabs" onclick="LoadTransactionRequest('cancelled')">
+                        <label for="tab4"><span>Cancelled Requests</span></label>
+
+                        <input id="tab5" type="radio" name="tabs" onclick="LoadBankDetail()">
+                        <label for="tab5"><span>Bank Detail</span></label>
+                        <section id="content1" class="tab-content">
+                            @using (Html.BeginForm("WithdrawfundToAccount", "Funds", FormMethod.Post, new { @class = "log-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @if (balacne >= minimmumAmount)
+                                {
+                                    <div class="form-group row">
+                                        <label class="col-form-label col-md-12" style="background: none;padding-left: 0; text-align: left;">Withdraw Naira value * </label>
+                                        <div class="col-md-12" style="padding-left: 0;">
+                                            @Html.ValidationMessageFor(m => m.amount, "", new { @class = "error" })
+                                            @Html.TextBoxFor(m => m.amount, new { @class = "form-control", type = "number", required = "true", @min = minimmumAmount, placeholder = "Enter amount" })
+                                            <p>Minimum Amount: @minimmumAmount</p>
+                                        </div>
+                                        <button type="submit" class="btn-chat" style="display: inline;width: auto;">Submit Request</button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="label btn-danger">
+                                        Insufficient funds to withdraw ,
+                                        minimum amount to withdraw:@minimmumAmount
+                                    </span>
+                                }
+                            }
+                        </section>
+                        @* Pending payment request *@
+                        @* Aproved payment request *@
+                        @* Cancelled payment request *@
+                        @* Bank Detail *@
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == 200)
+    {
+        <script>
+            $(document).ready(function () {
+                swal({
+                    title: "",
+                    text:"@response.Msg",
+                    icon: "success"
+                }).then(function () {
+                    $("#tab2").trigger("click");
+                });
+            });
+        </script>
+    }
+    else if (response.Code == 201)
+    {
+        <script>
+            $(document).ready(function () {
+                swal({
+                    title: "",
+                    text: "@response.Msg",
+                    icon: "error"
+                });
+            });
+        </script>
+
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Funds").addClass("active");
+    })
+    function LoadBankDetail() {
+        Loader(true);
+        $.ajax({
+            url: '/User/Funds/GetAddBankDetail',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#content1').html(result);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+    function LoadTransactionRequest(Type) {
+        Loader(true);
+        $.ajax({
+            url: '/User/Funds/GetTransactionRequest?Type=' + Type,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#content1').html(result);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+    function LoadWithdrawAmount() {
+        Loader(true);
+        $.ajax({
+            url: '/User/Funds/LoadWithdrawAmount',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#content1').html(result);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+</script>

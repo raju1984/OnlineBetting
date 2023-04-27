@@ -1,0 +1,40 @@
+﻿@model IEnumerable<QuickBetCore.Models.BetViewModel>
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<table class="table display product-overview mb-30" id="datatable" style="width:100%" width="100%">
+    <thead>
+        <tr>
+            <th><strong>S.NO</strong></th>
+            <th><strong>Transaction Id</strong></th>
+            <th><strong>Name</strong></th>
+            <th><strong>Email</strong></th>
+            <th><strong>Amount</strong></th>
+            <th><strong>Currency</strong></th>
+            <th><strong>Game</strong></th>
+            <th><strong>Date</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            var sn = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @sn
+                    </td>
+                    <td>#@item.transactionId</td>
+                    <td>@item.PlayerName</td>
+                    <td>@item.PlayerEmail</td>
+                    <td>₦ @item.amount</td>
+                    <td>@item.currency</td>
+                    <td>@item.GameName</td>
+                    <td>@item.Insertdate.ToString("dd/MM/yyyy")</td>
+                </tr>
+                sn++;
+            }
+        }
+    </tbody>
+</table>

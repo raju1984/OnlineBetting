@@ -1,0 +1,144 @@
+﻿@model QuickBetCore.Models.RefundMoneyViewModel
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "RefundTransaction";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Manage Refund Transaction</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Refund Tranaction History</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <header>Refund Money</header>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        @using (Html.BeginForm("RefundMoneyToPlayer", "AdminCommisonRefund", FormMethod.Post, new { @class = "log-form" }))
+                        {
+                            <label class="col-form-label col-md-12">User * </label>
+                            <div class="col-md-6">
+                               <select name="ToUserId" class="form-control">
+                                   @if(Model.Users!=null && Model.Users.Count()>0)
+                                   {
+                                       foreach(var item in Model.Users)
+                                       {
+                                           <option value="@item.Id">@item.Name</option>
+                                       }
+                                   }
+                               </select>
+                            </div>
+                            <label class="col-form-label col-md-12">Amount * </label>
+                            <div class="col-md-6">
+                                <input type="number" required step="any" value="" name="amount" id="amount" class="form-control" placeholder="Enter Here">
+                            </div>
+                            <label class="col-form-label col-md-12">Remark * </label>
+                            <div class="col-md-6">
+                                <input type="text" name="Message" id="Message"  class="form-control" placeholder="Enter Here">
+                            </div>
+                            <br />
+                            <button type="submit" class="btn btn-info" style="display: inline;">Save</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-box">
+                <div class="card-head">
+                    <header>Refund Tranaction History</header>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table display product-overview mb-30"
+                                   id="datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction Id</th>
+                                        <th>Date</th>
+                                        <th>User</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @if (Model != null && Model.Refundtransaction != null && Model.Refundtransaction.Count() > 0)
+                                    {
+                                        foreach (var item in Model.Refundtransaction)
+                                        {
+                                            <tr>
+                                                <td>#@item.TransactionId</td>
+                                                <td>@item.Date</td>
+                                                <td>@item.Name</td>
+                                                <td>
+                                                    <div>
+                                                        <span class="me-2 oi-icon bgl-danger">
+                                                            <svg width="18"
+                                                                 height="18"
+                                                                 viewBox="0 0 18 17"
+                                                                 fill="none"
+                                                                 xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6.57624 0.769646C6.77936 1.18944 6.59993 1.69725 6.18014 1.90038C5.01217 2.46236 4.02363 3.33579 3.31947 4.42928C2.59837 5.54986 2.21582 6.84986 2.21582 8.19048C2.21582 12.0363 5.34394 15.1644 9.18978 15.1644C13.0356 15.1644 16.1637 12.0363 16.1637 8.19048C16.1637 6.84986 15.7812 5.54985 15.0635 4.4259C14.3627 3.33241 13.3708 2.45897 12.2028 1.89699C11.783 1.69387 11.6036 1.18944 11.8067 0.766262C12.0098 0.34647 12.5143 0.167042 12.9374 0.370167C14.3898 1.06756 15.6187 2.1509 16.4887 3.51183C17.3825 4.90663 17.8564 6.52486 17.8564 8.19048C17.8564 10.5061 16.9559 12.6829 15.3174 14.3181C13.6822 15.9566 11.5054 16.8571 9.18978 16.8571C6.87415 16.8571 4.69733 15.9566 3.06217 14.3181C1.42363 12.6795 0.523111 10.5061 0.523111 8.19048C0.523111 6.52486 0.99707 4.90663 1.89421 3.51183C2.76764 2.15428 3.99655 1.06756 5.44551 0.370167C5.86868 0.170427 6.37311 0.34647 6.57624 0.769646Z"
+                                                                      fill="#FF2E2E"></path>
+                                                                <path d="M5.89551 7.7402C5.72962 7.57431 5.64837 7.35765 5.64837 7.14098C5.64837 6.92431 5.72962 6.70765 5.89551 6.54176L8.02493 4.41233C8.33639 4.10088 8.74941 3.93161 9.18613 3.93161C9.62285 3.93161 10.0393 4.10426 10.3473 4.41233L12.4768 6.54176C12.8085 6.87353 12.8085 7.40843 12.4768 7.7402C12.145 8.07197 11.6101 8.07197 11.2783 7.7402L10.0291 6.49098L10.0291 11.3017C10.0291 11.7688 9.64993 12.148 9.18275 12.148C8.71556 12.148 8.33639 11.7688 8.33639 11.3017L8.33639 6.4876L7.08717 7.73681C6.76217 8.06858 6.22728 8.06858 5.89551 7.7402Z"
+                                                                      fill="#FF2E2E"></path>
+                                                            </svg>
+                                                        </span>
+                                                        Outcome
+                                                    </div>
+                                                </td>
+                                                <td>₦ @item.Amount</td>
+                                                <td>@item.Remark</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    if (ViewData["fundtranfermessage"] != null)
+    {
+        <script type="text/javascript">
+                $(document).ready(function () {
+                    alertify.alert("@ViewData["fundtranfermessage"].ToString()");
+                })
+        </script>
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            responsive: true,
+            "aaSorting": []
+        });
+        $("#ManageRefund").addClass("active");
+    });
+</script>
+

@@ -1,0 +1,115 @@
+﻿@model QuickBetCore.DatabaseEntity.ContactDetail
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Contact us to play and earn real money.";
+    ViewBag.Description = "Quickbet is the best betting game in Nigeria to win real money. You can contact Quickbet for queries, feedback, suggestions, and complaints.";
+    ViewBag.Keywords = "Betting games in Nigeria, real money scratch off, free scratch card win real money.";
+    ViewBag.Conical = "https://quickbetng.com/Home/Contact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- ==========Breadcrumb-Section========== -->
+<section class="breadcrumb-area">
+    <div class="container">
+        <div class="content">
+            <h2 class="title">Contact</h2>
+            <ul class="breadcrumb-list extra-padding">
+                <li>
+                    <a href="/"> Home </a>
+                </li>
+
+                <li>
+                    <a href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- ==========Breadcrumb-Section========== -->
+<!-- ==========Contact-Section========== -->
+
+<section class="contact">
+    <div class="container">
+        <div class="row justify-content-around">
+            <div class="col-lg-7">
+                <div class="contact-box">
+                    <h4 class="title">Get In Touch</h4>
+                    <form action="/Home/Contact" method="post">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input required type="text" name="name" placeholder="Enter Your Name" />
+                        </div>
+                        <div class="form-group">
+                            <label>Your Email</label>
+                            <input type="email" name="EmailAddress" required placeholder="Enter Your Email " />
+                        </div>
+                        <div class="form-group last">
+                            <label>Your Message</label>
+                            <textarea name="message" required placeholder="Enter Your Message"></textarea>
+                        </div>
+                        <button type="submit" class="custom-button1">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @if (Model != null)
+            {
+                <div class="col-lg-4">
+                    <div class="right-area">
+                        <div class="contact-info">
+                            <div class="single-info">
+                                <img src="/assets/images/eicom.png" alt="" />
+                                <div class="content">
+                                    <h4>Email Us</h4>
+                                    <p>@Model.ContactEmail</p>
+                                </div>
+                            </div>
+                            <div class="single-info">
+                                <img src="/assets/images/picon.png" alt="" />
+                                <div class="content">
+                                    <h4>Call Us</h4>
+                                    <p>@Model.ContactPhone1</p>
+                                    <p>@Model.ContactPhone2</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            { <div class="col-lg-4">
+                    <div class="right-area">
+                        <div class="contact-info">
+                            <div class="single-info">
+                                <img src="/assets/images/eicom.png" alt="" />
+                                <div class="content">
+                                    <h4>Email Us</h4>
+
+                                </div>
+                            </div>
+                            <div class="single-info">
+                                <img src="/assets/images/picon.png" alt="" />
+                                <div class="content">
+                                    <h4>Call Us</h4>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>}
+        </div>
+    </div>
+</section>
+
+@{
+    if (ViewData["error"] != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                alertify.alert("@ViewData["error"]");
+                $("#EmailAddress").val("");
+            })
+        </script>
+    }
+}

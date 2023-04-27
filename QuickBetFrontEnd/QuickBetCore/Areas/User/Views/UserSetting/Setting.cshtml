@@ -1,0 +1,246 @@
+﻿@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Setting";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .card {
+        padding: 15px 10px;
+    }
+
+    *,
+    *:after,
+    *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    section#content4 {
+        border-bottom: none;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        content: " ";
+        display: table;
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    body {
+        font-family: sans-serif;
+        background: #f6f9fa;
+    }
+
+    h1 {
+        color: #ccc;
+        text-align: center;
+    }
+
+    a {
+        color: #ccc;
+        text-decoration: none;
+        outline: none;
+    }
+
+    /*Fun begins*/
+    .tab_container {
+        width: 100%;
+        margin: 0 auto;
+        padding-top: 0;
+        position: relative;
+    }
+
+    input, section {
+        clear: both;
+        padding-top: 10px;
+        display: none;
+    }
+
+    .tablabel {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    #tab1:checked ~ #content1,
+    #tab2:checked ~ #content2,
+    #tab3:checked ~ #content3,
+    #tab4:checked ~ #content4,
+    #tab5:checked ~ #content5 {
+        display: block;
+        padding: 20px;
+        background: #fff;
+        color: #999;
+    }
+
+    .tab_container .tab-content p,
+    .tab_container .tab-content h3 {
+        -webkit-animation: fadeInScale 0.7s ease-in-out;
+        -moz-animation: fadeInScale 0.7s ease-in-out;
+        animation: fadeInScale 0.7s ease-in-out;
+    }
+
+    .tab_container .tab-content h3 {
+        text-align: left;
+    }
+
+    .tab_container [id^="tab"]:checked + label {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+
+        .tab_container [id^="tab"]:checked + label .fa {
+            color: #0CE;
+        }
+
+    /*Media query*/
+    @@media only screen and (max-width: 930px) {
+        .tablabel span {
+            font-size: 14px;
+        }
+
+        .tablabel .fa {
+            font-size: 14px;
+        }
+    }
+
+    @@media only screen and (max-width: 768px) {
+        .tablabel span {
+            display: none;
+        }
+
+        .tablabel .fa {
+            font-size: 16px;
+        }
+
+        .tab_container {
+            width: 98%;
+        }
+    }
+
+    /*Content Animation*/
+    @@keyframes fadeInScale {
+        0% {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .tabactive {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="tab_container">
+                    <label for="tab2" class="tablabel"><a href="@Url.Action("Myprofile","UserSetting")">Update Profile</a> <span></span></label>
+                    <label for="tab1" class="tablabel tabactive"><a href="@Url.Action("Setting","UserSetting")"><span>Password change</span></a></label>
+                </div>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("UpdatePassword", "UserSetting", FormMethod.Post, new { @class = "log-form", area = "user" }))
+                {
+
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-12">Current password (leave blank to leave unchanged) * </label>
+                        <div class="col-md-12">
+                            <input type="password" required minlength="6" name="cuurentpassword" id="cuurentpassword" class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-12">New password (leave blank to leave unchanged) * </label>
+                        <div class="col-md-12">
+                            <input type="password" required minlength="6" name="newpassword" id="newpassword" class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-12">Confirm new password * </label>
+                        <div class="col-md-12">
+                            <input type="password" required minlength="6" name="repeatpassword" id="repeatpassword" class="form-control" placeholder="Enter Here">
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <button type="submit" onclick="return validate()" class="btn btn-primary">Save Changes</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@{
+        if (ViewData["error"] != null)
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    if()
+                    swal({
+                        title: "success",
+                        text: "@ViewData["error"]",
+                        icon: "success",
+                    });
+                   // alertify.alert("@ViewData["error"]");
+                })
+            </script>
+        }
+    }*@
+@if (ViewBag.response != null)
+{
+
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+
+    if (response.Code == 200)
+    {
+        <script>
+            debugger;
+            $(document).ready(function () {
+                swal({
+                    title: "Welcome",
+                    text:"@response.Msg",
+                    icon: "success"
+                });
+            });
+        </script>
+
+    }
+    else if (response.Code == 201)
+    {
+        <script>
+            $(document).ready(function () {
+                swal({
+                    title: "Welcome",
+                    text: "@response.Msg",
+                    icon: "error"
+                });
+            });
+        </script>
+
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Setting").addClass("active");
+    })
+</script>

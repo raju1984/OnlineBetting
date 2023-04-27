@@ -1,0 +1,46 @@
+﻿@model QuickBetCore.Models.BillingShippingAddressViewModel
+@using QuickBetCore.Models;
+
+<div class="table-responsive">
+    @if (Model != null && Model.Id > 0)
+    {
+    <table class="table table-bordered">
+        <tr>
+            <td><strong>Shop Name</strong> : @Model.fullname</td>
+
+        </tr>
+        <tr>   <td><strong>Country Code</strong> : @Model.CountryCode</td></tr>
+        <tr>
+            <td><strong>Street</strong> : @Model.Street</td>
+        </tr>
+        <tr>  <td><strong>StreetNo</strong> : @Model.StreetNO</td></tr>
+
+        <tr>
+            <td>
+                <strong>Town/City</strong> : @Model.City
+
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Shop Phone No</strong> : @Model.PhoneNumber</td>
+        </tr>
+        <tr>
+            <td><strong>Pin Code</strong> : @Model.ZipCode</td>
+        </tr>
+        <tr>   <td><strong>Shop Email Address</strong> : @Model.BillingEmail</td></tr>
+
+
+    </table>
+    }
+    else
+    {<table class="table table-bordered">
+    <tr>
+        <td><strong>No Data Found</strong> </td>
+    </tr>
+ 
+
+</table>
+
+    }
+</div>
+

@@ -1,0 +1,149 @@
+﻿@model QuickBetCore.Models.ManageReferalModal
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Customer Referal Commission</div>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="/Admin/AdminDashboard">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Manage Customer Referal Commission</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Manage Customer Referal Commission</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("ReferalComission", "CustomerRefer", FormMethod.Post, new { @class = "log-form", enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        // <input type="hidden" id="hfrowId" name="hfrowId" value="@Request.QueryString["carouselId"]" />
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Refer Percentage * </label>
+                            <div class="col-md-10">
+                                <input type="number" class="form-control" value="@Model.ReferalPercentage" required name="ReferalPercentage" id="ReferalPercentage" placeholder="Enter Here">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2">Commission Time Period* </label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" value="@Model.ReferalDays" required name="ReferalDays" id="ReferalDays" onkeypress="return isNumberKey(event)" placeholder="Enter Here">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group justify-content-center d-flex">
+                            <button onclick="return CheckDimension()" type="submit"
+                                    class="btn btn-success"
+                                    style="margin: 15px 0">
+                                Save
+                            </button>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Manage Customer Referal Commission</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table display product-overview mb-30"
+                                   id="datatable" style="width:100%" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>UserName</th>
+                                        <th>Email Id</th>
+                                        <th>Commission</th>
+                                        <th>Registered date</th>
+                                        <th>Refered By</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Refer != null && Model.Refer.Count > 0)
+                                    {
+                                        foreach (var item in Model.Refer)
+                                        {
+                                            <tr>
+                                                <td>@item.ReferedUsername</td>
+                                                <td>@item.Email</td>
+                                                <td>@item.Commission %</td>
+                                                <td>@item.ReferedDate</td>
+                                                <td>@item.ReferedFromName</td>
+
+                                            </tr>
+                                        }
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            responsive: true,
+            "aaSorting": []
+        });
+        $("#CustomerRefer").addClass("active");
+    })
+
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
+
+
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}

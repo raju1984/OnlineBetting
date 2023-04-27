@@ -1,0 +1,107 @@
+﻿@model IEnumerable<QuickBetCore.DatabaseEntity.Offer>
+@using QuickBetCore.Models;
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <span class="pull-left">
+                    <a class="btn btn-sm btn-warning" href="@Url.Action("Index","AdminDashboard")">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>Back
+                    </a>
+                </span>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Manage minimum customer withdrawal</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="datatable">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>
+                                        Action
+                                    </th>
+                                    <th>
+                                        Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                Set minimum customer 
+                                                withdrawal Amount
+                                            </td>
+                                            <td>
+                                                <input type="number" class="from-control" onchange="UpdateCommision(this,'@Convert.ToString(CashBackType.minimumwithdraw_amount)')" 
+                                                       value="@item.CashBackPercent"
+                                                       min="0" step="any" />
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+     function UpdateCommision(txtobj,type)
+    {
+        debugger;
+        var value = $(txtobj).val();
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("UpdateCommison", "AdminDashboard")",
+            data: '{value:"' + value + '",type:"' + type + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                if (response.Code == 200) {
+                    alertify.success(response.Msg);
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.Msg);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.Msg);
+            }
+        });
+    }
+</script>
+

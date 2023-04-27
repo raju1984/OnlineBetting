@@ -1,0 +1,181 @@
+﻿@model QuickBetCore.Areas.Agent.Data.FundTransferModelUser
+@using QuickBetCore.Models;
+@{
+    ViewBag.Title = "FundtransferToPlayerConfirmation";
+    Layout = "~/Areas/Agent/Views/Shared/_Layout.cshtml";
+}
+@{
+    if (Model != null && Model.ErrorMessage != null)
+    {
+        if (Model.ErrorMessage.ErrorCode == (int)ReturnCode.Success)
+        {
+            <div class="page-content">
+                <div class="page-bar">
+                    <div class="page-title-breadcrumb">
+                        <div class="pull-left">
+                            <div class="page-title">Transfer funds to Customer</div>
+                        </div>
+                        <ol class="breadcrumb page-breadcrumb pull-right">
+                            <li>
+                                <i class="fa fa-home"></i>&nbsp;
+                                <a class="parent-item"
+                                   href="@Url.Action("Index", "Dashboard",new { area="Agent"})">Home</a>
+                                &nbsp;<i class="fa fa-angle-right"></i>
+                            </li>
+                            <li class="active">Customers</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        @using (Html.BeginForm("FundtransferToPlayerConfirmation", "AgentFunds", FormMethod.Post, new { @class = "log-form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                            @Html.HiddenFor(m => m.UserId)
+                                            @Html.HiddenFor(m => m.email)
+                                            @Html.HiddenFor(m => m.phone)
+                                            @Html.HiddenFor(m => m.countryCode)
+                                            @Html.HiddenFor(m => m.message)
+                                            @Html.HiddenFor(m => m.name)
+                                            @Html.HiddenFor(m => m.amount)
+                                            <fieldset>
+                                                <legend>Payment Infarmation </legend>
+                                                <div class="form-group row">
+                                                    <div class="col-md-6">
+                                                        Payment Data:
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @DateTime.UtcNow.ToShortDateString()
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-6">
+                                                        Recipient Name:
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Model.name
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-6">
+                                                        Recipient Email:
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Model.email
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-6">
+                                                        Recipient Phone:
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Model.countryCode @Model.phone
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-6">
+                                                        Amount:
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Model.amount
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                            <button type="submit" class="btn-chat" style="display: inline;">Transfer</button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="page-content">
+                <div class="page-bar">
+                    <div class="page-title-breadcrumb">
+                        <div class="pull-left">
+                            <div class="page-title">Transfer funds to Customer</div>
+                        </div>
+                        <ol class="breadcrumb page-breadcrumb pull-right">
+                            <li>
+                                <i class="fa fa-home"></i>&nbsp;
+                                <a class="parent-item"
+                                   href="@Url.Action("Index", "Dashboard",new { area="Agent"})">Home</a>
+                                &nbsp;<i class="fa fa-angle-right"></i>
+                            </li>
+                            <li class="active">Customers</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="alert alert-danger" style="margin-top:5%;margin-bottom:10%">
+                                        <i class="fa fa-frown-o text-warning fa-2x" aria-hidden="true"></i>
+                                        <span class="text-success">@Model.ErrorMessage.ErrorMessage; </span> <br />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="page-content">
+            <div class="page-bar">
+                <div class="page-title-breadcrumb">
+                    <div class="pull-left">
+                        <div class="page-title">Transfer funds to Customer</div>
+                    </div>
+                    <ol class="breadcrumb page-breadcrumb pull-right">
+                        <li>
+                            <i class="fa fa-home"></i>&nbsp;
+                            <a class="parent-item"
+                               href="@Url.Action("Index", "Dashboard",new { area="Agent"})">Home</a>
+                            &nbsp;<i class="fa fa-angle-right"></i>
+                        </li>
+                        <li class="active">Customers</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="alert alert-danger" style="margin-top:5%;margin-bottom:10%">
+                                    <i class="fa fa-frown-o text-danger fa-2x" aria-hidden="true"></i>
+                                    <span class="text-danger">Sorry, your payment failed.</span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    }
+
+}
+
+

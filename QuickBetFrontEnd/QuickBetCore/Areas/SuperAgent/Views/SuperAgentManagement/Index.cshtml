@@ -1,0 +1,323 @@
+﻿@model QuickBetCore.Models.AdminDashboardViewModel
+@using QuickBetCore.Models;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/SuperAgent/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .tablabel {
+        font-weight: 700;
+        font-size: 18px;
+        display: block;
+        float: left;
+        width: 25%;
+        padding: 1rem 1em;
+        color: #757575;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        background: #f0f0f0;
+    }
+
+    .tabactive {
+        background: #323584;
+        box-shadow: inset 0 3px #0ce;
+        color: #fff;
+    }
+</style>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" />
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <a class="parent-item tablabel tabactive" href="@Url.Action("Index", "SuperAgentManagement",new { area="SuperAgent"})">
+                <i class="fa fa-users" aria-hidden="true"></i> Agents
+            </a>
+            @*<a class="parent-item tablabel" href="@Url.Action("Bettinglist", "SuperAgentManagement",new { tabtype="win", area="SuperAgent"})">
+                    <i class="fa fa-gamepad" aria-hidden="true"></i> WinList
+                </a>
+                <a class="parent-item tablabel" id="btnbet" href="@Url.Action("Bettinglist", "SuperAgentManagement",new {tabtype="bet", area="SuperAgent"})">
+                    <i class="fa fa-gamepad" aria-hidden="true"></i> Bet List
+                </a>*@
+        </div>
+        <div class="page-title-breadcrumb">
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "SuperDashboard",new { area="SuperAgent"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Agents</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <br />
+        <div class="col-xl-3 col-md-6 col-12">
+            <a style="color:white" href="javascript:;" onclick="FetchData(1)">
+                <div class="info-box bg-blue">
+                    <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Active Agents </span>
+
+                    </div>
+                    <span class="info-box-number one">@Model.TotalAgents</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6 col-12">
+            <a style="color:white" href="javascript:;" onclick="FetchData(2)">
+                <div class="info-box bg-yellow">
+                    <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Agents Pending</span>
+
+                    </div>
+                    <span class="info-box-number two">@Model.Agents</span>
+                </div>
+            </a>
+        </div>
+        @*<div class="col-xl-3 col-md-6 col-12">
+                <a style="color:white" href="javascript:;" onclick="FetchData('0')">
+                    <div class="info-box bg-danger">
+                        <span class="info-box-icon push-bottom"><i class="material-icons">group</i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Agents Blocked</span>
+                            <span class="info-box-number three">@Model.BlockedAgent</span>
+                        </div>
+                    </div>
+                </a>
+            </div>*@
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" style="width:100%">
+                        Agents
+                        <a href="@Url.Action("CreateAgent","SuperAgentManagement")"
+                           class="btn btn-sm btn-primary float-end"><i class="fa fa-plus" aria-hidden="true"></i>Add Agents</a>
+                    </h4>
+                </div>
+
+                <div class="card-body" id="divagents">
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as QuickBetCore.Models.ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            alertify.error("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            alertify.success("@response.Msg");
+        </script>
+    }
+}
+<script type="text/javascript">
+    var status ='@Context.Request.Query["status"]';
+    $(document).ready(function () {
+     //   console.log('Load:');
+        $("#Agents").addClass("active");
+        loadAgents()
+    });
+
+    function FetchData(statusToFetch)
+    {
+        status = statusToFetch;
+        loadAgents()
+    }
+
+    function loadAgents()
+    {
+        debugger;
+       // console.log('coming'+status);
+        var url = '/SuperAgent/SuperAgentManagement/GetAgentlist';
+        if (status && status != '') {
+            url = url + "?status=" + status;
+        }
+        if (!url)
+        {
+            return;
+        }
+        Loader(true);
+        $.ajax({
+            url: url,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divagents').val("")
+                $('#divagents').html(result);
+                $('#datatable').DataTable({
+                    responsive: true
+                });
+                $('[data-toggle="tooltip"]').tooltip();
+
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+
+    function UpdateCommision(UserId,txtobj,type)
+    {
+        debugger;
+        var value = $(txtobj).val();
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("UpdateCommison", "SuperAgentManagement")",
+            data: '{Id: "' + UserId + '",value:"' + value + '",type:"' + type + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                if (response.Code == 200) {
+                    alertify.success(response.Msg);
+                    loadAgents()
+
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.Msg);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.Msg);
+            }
+        });
+    }
+
+    function DeleteUser(user) {
+        debugger;
+        alertify.confirm('Are you sure? you want to delete this user',
+            function () {
+                Loader(true);
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("DeleteCustomer", "SuperAgentManagement")",
+                    data: '{Id: "' + parseInt(user) + '"}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        Loader(false);
+                        console.log("Response:" + response.BlockUser);
+                        if (response.Code == 200) {
+
+                            alertify.success(response.Msg);
+                            debugger;
+                            $('.three').text(response.BlockUser);
+                            $('.one').text(response.ActiveUser);
+                            loadAgents()
+
+                        }
+                        else {
+                            alertify.error(response.Msg);
+                        }
+                    },
+                    failure: function (response) {
+                        Loader(false);
+                        alertify.error(response.responseText);
+                    },
+                    error: function (response) {
+                        Loader(false);
+                        alertify.error(response.responseText);
+                    }
+                });
+            }
+            , function () { alertify.error('Cancelled') });
+    }
+
+    function ResetPass(user) {
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("ResetCustomerPassword","Customers")",
+            data: '{Id: "' + parseInt(user) + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                if (response.Code == 200) {
+                    alertify.alert(response.Msg);
+                    loadAgents()
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            }
+        });
+    }
+
+    function BlockCUpdate(Type, Id) {
+        debugger;
+        if (!Type) {
+            return false;
+        }
+        if (!Id) {
+            return false;
+        }
+        var trid = "#tr" + Id;
+        var blckId = "#blck" + Id;
+        var unblck = "#unblck" + Id;
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "/SuperAgent/SuperAgentManagement/BlockUser",
+            data: '{type: "' + Type + '",Id: "' + Id + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                debugger;
+                $('.three').text(response.BlockUser);
+                $('.one').text(response.ActiveUser);
+                Loader(false);
+                loadAgents()
+
+               // FetchData();
+                //alertify.alert(response.Msg);
+            },
+            failure: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            }
+        });
+    }
+
+
+</script>
+
+

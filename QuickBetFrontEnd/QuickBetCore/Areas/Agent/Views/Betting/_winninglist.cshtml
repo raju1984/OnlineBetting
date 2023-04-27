@@ -1,0 +1,127 @@
+﻿@model IEnumerable<QuickBetCore.Areas.Agent.Data.BettingViewModel>
+@using QuickBetCore.Models;
+<table class="table data-tables" id="datatable" style="width:100%">
+    <thead>
+        <tr>
+            <th>Customer Name</th>
+            <th>Game Name</th>
+            <th>Win Amount</th>
+            <th>Date</th>
+            <th>Staus</th>
+            @*<th>Action</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.customername</td>
+                    <td>
+                        @item.gamename
+                    </td>
+                    <td>@ApplicationVariable.currencysymbol @item.jackpotamount</td>
+                    <td>@item.datetime</td>
+                    <td>
+                        @if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.NotPaid)
+                        {
+                            <span class="label label-default">NotPaid</span>
+                        }
+                        else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_Request_Initiated)
+                        {
+                            <span class="label label-default">Request Initiated by User</span>
+                        }
+                        else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_By_Agent_Waiting_User_Aproval)
+                        {
+                            <span class="label label-warning">Waiting User Aproval of Payment</span>
+                        }
+                        else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_By_Agent_Aproved_By_User)
+                        {
+                            <span class="label label-success">Payment compeleted</span>
+                        }
+                        else
+                        {
+                            <span class="label label-default"></span>
+                        }
+                    </td>
+                    @*@if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_Request_Initiated)
+                    {
+
+                        <td>
+                            <button onclick="loadBarcode(@item.Id)" class="btn btn-info waves-effect waves-light qr-code">
+                                <i class="fa fa-qrcode fa-5" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    }
+                    else if (item.PaidMoneyStatus == (int)WinPaidMoneyStatus.Paid_By_Agent_Waiting_User_Aproval)
+                    {
+
+                        <td>
+                            <span class="label label-warning">Waiting User Aproval of Payment</span>
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }*@
+
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    function loadBarcode(WinId) {
+        Loader(true);
+        $.ajax({
+            url: "/Agent/Betting/GetBarcode?WinId=" + WinId,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#barcode').val("")
+                $('#barcode').html(result);
+                $("#qrcode").modal("show");
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+     function PayLottery(LotteryId)
+    {
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("PayLottery", "Betting")",
+            data: '{WinId: "' + LotteryId + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                $("#qrcode").modal("hide");
+                if (response.Code == 200)
+                {
+                    alertify.success(response.Msg);
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+                loadwinbet(url)
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.responseText);
+            }
+        });
+    }
+</script>

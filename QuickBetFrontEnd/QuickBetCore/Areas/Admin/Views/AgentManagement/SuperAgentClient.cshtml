@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "AgentCustomers";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    int AgentId = 0;
+    if (ViewData["AgentId"] != null)
+    {
+        AgentId = Convert.ToInt32(ViewData["AgentId"]);
+    }
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <div class="page-title">Agent Customers</div>
+                <span class="pull-left">
+                    <a class="btn btn-sm btn-warning" href="@Url.Action("SuperAgents","AgentManagement")">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>Back
+                    </a>
+                </span>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Customers</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body" id="divagents">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Agents").addClass("active");
+        loadCustomers();
+    });
+    function ClosePassowordResetPasswordPopup() {
+
+        $('#exampleModal').modal('hide');
+    }
+    function ShowPassowordResetPasswordPopup(UserId) {
+        Loader(true);
+        $.ajax({
+            url: '/User/UserManagement/PasswordRest?UserId=' + UserId,
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#exampleModal').modal('show');
+                $('#divcontent').html(result);
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+
+    function loadCustomers() {
+        Loader(true);
+        $.ajax({
+            url: '/Admin/AgentManagement/GetSuperAgentClientlist?AgentId=' + '@AgentId',
+            contentType: 'application/html; charset=utf-8',
+            type: 'GET',
+            dataType: 'html',
+            success: function (result) {
+                Loader(false);
+                $('#divagents').val("")
+                $('#divagents').html(result);
+                $('#datatable').DataTable({
+                    responsive: true
+                });
+            },
+            error: function (xhr, status) {
+                Loader(false);
+                alert(status);
+            }
+        })
+    }
+
+    function DeleteUser(user) {
+        debugger;
+        alertify.confirm('Are you sure? you want to delete this user',
+            function () {
+                Loader(true);
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/Customers/DeleteCustomerAgentIdId=" + parseInt(user),
+                    //data: '{Id: "' + parseInt(user) + '"}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        Loader(false);
+                        if (response.Code == 200) {
+                            alertify.success(response.Msg);
+                            loadCustomers();
+                        }
+                        else {
+                            alertify.error(response.Msg);
+                        }
+                    },
+                    failure: function (response) {
+                        Loader(false);
+                        alertify.error(response.responseText);
+                    },
+                    error: function (response) {
+                        Loader(false);
+                        alertify.error(response.responseText);
+                    }
+                });
+            }
+            , function () { alertify.error('Cancelled') });
+    }
+    function BlockCUpdate(Type, Id) {
+        debugger;
+        if (!Type) {
+            return false;
+        }
+        if (!Id) {
+            return false;
+        }
+        var trid = "#tr" + Id;
+        var blckId = "#blck" + Id;
+        var unblck = "#unblck" + Id;
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Customers/BlockUser",
+            data: '{type: "' + Type + '",Id: "' + Id + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                debugger;
+                Loader(false);
+                loadCustomers();
+                //alertify.alert(response.Msg);
+            },
+            failure: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            },
+            error: function (response) {
+                Loader(false);
+                alert(response.responseText);
+            }
+        });
+    }
+
+</script>
+
+

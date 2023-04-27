@@ -1,0 +1,303 @@
+﻿@model QuickBetCore.Models.GamePricingViewModel
+@using QuickBetCore.Models;
+@{
+    ViewData["Title"] = "Managerandombonus";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    int startindex = 0;
+    bool isdatahas = false;
+    if (Model != null && Model.IsAdd)
+    {
+        isdatahas = false;
+    }
+    else
+    {
+        if(Model!=null && Model.gamePricings!=null && Model.gamePricings.Any())
+        {
+            isdatahas = true;
+        }
+    }
+}
+
+<div class="page-content">
+    <div class="page-bar">
+        <div class="page-title-breadcrumb">
+            <div class="pull-left">
+                <span class="pull-left">
+                    <a class="btn btn-sm btn-warning" href="@Url.Action("Index","AdminDashboard")">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>Back
+                    </a>
+                </span>
+            </div>
+            <ol class="breadcrumb page-breadcrumb pull-right">
+                <li>
+                    <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                       href="@Url.Action("Index", "AdminDashboard",new { area="Admin"})">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                </li>
+
+                <li class="active">Manage random bonus</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    @if (!Model.IsAdd)
+                    {
+                        <a href="@Url.Action("Addrandombonus","AdminDashboard",new {area="Admin" })" style="width: 250px; height: 50px;"
+                           class="btn btn-warning ml-auto" type="button">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            Reset Bonus Rule
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("CreateRandomBonus", "AdminDashboard", FormMethod.Post, new { @class = "row contact-form", autocomplete = "off" }))
+                    {
+                        <div class="row">
+                            @if (isdatahas)
+                            {
+                                <table class="user-list-table table" id="table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                CashBack(%)
+                                            </th>
+                                            <th>
+                                                No Of Ticket
+                                            </th>
+                                            <th>
+                                                NoOfSoldTicket
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblbody">
+                                        @if (Model != null && Model.gamePricings != null && Model.gamePricings.Count() > 0)
+                                        {
+                                            for (int i = 0; i < Model.gamePricings.Count; i++)
+                                            {
+                                                var payoutId = "gamePricings" + i + "Payout";
+                                                <tr>
+                                                    <td>
+
+                                                        @Html.Hidden("gamePricings[" + @i + "].Id",
+                                       Model.gamePricings[i].Id, new { })
+                                                        @Html.TextBox("gamePricings[" + @i + "].WinAmount",
+                                                         Model.gamePricings[i].WinAmount, new { type = "number", onchange = "UpdateCashBack(this,"+ Model.gamePricings[0].Id + ")", required = "true", @class = "form-control WinAmount" })
+
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("gamePricings[" + @i + "].NoOfTicket",
+                                                       Model.gamePricings[i].NoOfTicket, new { type = "number", onchange = "Calculation()", @readonly = "true", required = "true", @class = "form-control" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBox("gamePricings[" + @i + "].NoOfSoldTicket",
+                                                       Model.gamePricings[i].NoOfSoldTicket, new { type = "number", @readonly = "true", required = "true", @class = "form-control" })
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <table class="user-list-table table" id="table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                CashBack(%)
+                                            </th>
+                                            <th>
+                                                No Of Ticket
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblbody">
+                                    </tbody>
+                                </table>
+                            }
+
+                            <br />
+                            <br />
+                            <br />
+                            @if (!isdatahas)
+                            {
+                                <div>
+                                    <button onclick="addrow()" style="width: 125px; height: 50px;padding: 10px;float: right" 
+                                            class="btn btn-warning ml-auto" type="button">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                        Add
+                                    </button>
+                                </div>
+                                <br />
+                                <br />
+                                <div>
+                                    <button onclick="removerow()" style="margin-top: 5px; margin-bottom: 5px;width: 125px;float:right"
+                                            class="btn btn-danger ml-auto" type="button">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            }
+                            <div class="col-md-6 col-12">
+                                <div class="mb-1">
+                                    @*<label class="form-label" for="country-floating">Total Payout(₦):<b id="lbltotalpayout"></b> </label>*@
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="mb-1">
+                                    @*<label class="form-label" style="display:none" for="country-floating">Total TicketCost(₦):<b id="lbltotalticketcost"></b></label>*@
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="mb-1">
+                                    @*<label class="form-label" style="display:none" for="country-floating">Profit(₦):<b id="lblprofit"></b></label>*@
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="mb-1">
+                                    <label class="form-label" for="country-floating">Winning Profitability Ratio:<b id="lblwinningproblity"></b>%</label>
+                                </div>
+                            </div>
+                            @if (!isdatahas)
+                            {
+                                <br />
+                                <br />
+                                <button type="submit" id="btnSave" class="btn btn-primary me-1">Save</button>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.response != null)
+{
+    var response = ViewBag.response as ApiResponse;
+    if (response.Code == (int)ApiResponseCode.fail)
+    {
+        <script>
+            swal("@response.Msg");
+        </script>
+    }
+    else
+    {
+        <script>
+            swal("@response.Msg");
+        </script>
+    }
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        Calculation();
+    })
+    function CheckChange(obj) {
+        if ($(obj).prop("checked")) {
+            $(obj).val(true);
+        } else {
+            $(obj).val(false);
+        }
+    }
+    var indexstart = @startindex;
+    function addrow()
+    {
+        debugger;
+        var Id = "gamePricings_" + indexstart + "__Id";
+        var Idname = "gamePricings[" + indexstart + "].Id";
+
+        var winamount = "gamePricings_" + indexstart + "__WinAmount";
+        var winamountname = "gamePricings[" + indexstart + "].WinAmount";
+
+
+        var IsJackpotAmount = "gamePricings_" + indexstart + "__IsJackpotAmount";
+        var IsJackpotAmountname = "gamePricings[" + indexstart + "].IsJackpotAmount";
+
+
+        var JackpotType = "gamePricings_" + indexstart + "__JackpotType";
+        var JackpotTypename = "gamePricings[" + indexstart + "].JackpotType";
+
+
+        var NoOfTicket = "gamePricings_" + indexstart + "__NoOfTicket";
+        var NoOfTicketName = "gamePricings[" + indexstart + "].NoOfTicket";
+
+        var payout = "gamePricings" + indexstart + "Payout";
+        var tablerow = "";
+         tablerow = "<tr>"
+                + "<td><input type='hidden' name=" + Idname + " id=" + Id + " value='-1' /><input type='number' onchange = 'Calculation()' name=" + winamountname + " id=" + winamount + " min='' value='0' class='form-control sn-required WinAmount' required></td>"
+                + "<td><input type='number' onchange = 'Calculation()'   name=" + NoOfTicketName + " id=" + NoOfTicket + " min='' value='0' class='form-control sn-required NoOfTicket' required></td>"
+            tablerow = tablerow + "</tr>";
+        $("#tblbody").append(tablerow);
+        indexstart = indexstart + 1;
+    }
+
+    function removerow()
+    {
+        $('#table tr:last').remove();
+    }
+    function Calculation()
+    {
+        var TotalTicket = 0;
+        var CashbackTicket = 0;
+        debugger;
+        $(".WinAmount").each(function (index) {
+            var NoOfTicketId = "#gamePricings_" + index + "__NoOfTicket";
+            var NoOfTicketDiscount = $(NoOfTicketId).val();
+            if (NoOfTicketDiscount) {
+                TotalTicket = TotalTicket + Number(NoOfTicketDiscount);
+            }
+            var cash = $(this).val()
+            if (cash) {
+                cash = Number(cash);
+                if (cash > 0) {
+                    var NoOfTicketId = "#gamePricings_" + index + "__NoOfTicket";
+                    var NoOfTicketWithDiscount = $(NoOfTicketId).val();
+                    if (NoOfTicketWithDiscount) {
+                        CashbackTicket = CashbackTicket + Number(NoOfTicketWithDiscount);
+                    }
+                    
+                }
+             
+            }
+            
+        });
+
+        var percnet = (Number(CashbackTicket) / Number(TotalTicket)) * 100;
+        $("#lblwinningproblity").text(percnet.toFixed(2));
+    }
+
+    function UpdateCashBack(txtobj,ItemId)
+    {
+        debugger;
+        var value = $(txtobj).val();
+        Loader(true);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("UpdateCashBack", "AdminDashboard")",
+            data: '{value:"' + value + '",Id:"' + ItemId + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                Loader(false);
+                if (response.Code == 200) {
+                    alertify.success(response.Msg);
+                    Calculation();
+                }
+                else {
+                    alertify.error(response.Msg);
+                }
+            },
+            failure: function (response) {
+                Loader(false);
+                alertify.error(response.Msg);
+            },
+            error: function (response) {
+                Loader(false);
+                alertify.error(response.Msg);
+            }
+        });
+    }
+</script>
+

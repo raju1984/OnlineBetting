@@ -1,0 +1,699 @@
+﻿@using QuickBetCore.Models;
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    UserSession UserSession = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<UserSession>(SessionVariable.UserSession);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="keywords" content="@ViewBag.Keywords" />
+    <link rel="canonical" href="@ViewBag.Conical" />
+    <meta name="copyright" content="QuickBet" />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/css/all.min.css" />
+    <link rel="stylesheet" href="~/assets/css/magnific-popup.css" />
+    <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css" />
+    <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css" />
+    <link rel="stylesheet" href="~/assets/css/nice-select.css" />
+    <link rel="stylesheet" href="~/assets/css/bootstrap-popover-x.min.css" />
+    <link rel="stylesheet" href="~/assets/css/main.css" />
+    <link href="~/css/frntstyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+    <link href="~/css/style2.css" rel="stylesheet" />
+    <link href="~/css/global.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="shortcut icon" href="//assets/images/favicon.png" type="image/x-icon" />
+    <link href="~/css/alertify.core.css" rel="stylesheet" />
+    <link href="~/css/alertify.default.css" rel="stylesheet" />
+
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VQRJ56E7KE"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-VQRJ56E7KE');
+    </script>
+
+    <style>
+        .log-reg-area {
+            display: flex;
+        }
+
+        .dropdown {
+            margin-right: 10px;
+        }
+         .logo-res {
+                 width: auto;
+                height: 60px;
+               object-fit: contain;
+            }
+        @@media (min-width: 320px) and (max-width: 480px) {
+            .carousel-item img {
+                height: 165px;
+                width: 100%;
+            }
+
+            .footer-top-area.topdownlaod {
+                top: 160px;
+            }
+
+            .left img {
+                width: 125px;
+                height: 40px;
+            }
+
+            .left {
+                position: relative;
+                left: -10px;
+                margin: 20px 0;
+                display: initial;
+            }
+
+            .section-headline {
+                padding-bottom: 0px;
+                position: relative;
+            }
+
+                .section-headline h3 {
+                    font-size: 30px;
+                    text-transform: capitalize;
+                    line-height: 48px;
+                    color: #29446e;
+                }
+
+
+           
+
+            .headinng {
+                font-size: 16px !important;
+            }
+
+            .balance {
+                font-size: 16px !important;
+            }
+
+            .carousel-item img {
+                height: 165px;
+            }
+
+            .banner-subtitle {
+                font-size: 16px !important;
+                line-height: normal !important;
+                font-weight: 400;
+                color: #fff;
+                margin-bottom: 0px;
+                text-transform: uppercase;
+            }
+
+            .img-fluid {
+                max-width: 100%;
+                height: auto;
+                width: 100%;
+            }
+
+            .custom-button2 {
+                background-image: linear-gradient( 0deg, #f4ba2e 0%, #fea036 100%);
+                border-style: solid;
+                border-width: 1px;
+                border-color: #fea036;
+                border-radius: 5px;
+                box-shadow: 0px 3px 2px 0px rgb(32 29 30 / 25%);
+                font-size: 12px !important;
+                margin-top: 5px;
+                line-height: 26px;
+                display: inline-block;
+                cursor: pointer;
+                width: auto;
+                height: auto;
+            }
+
+            .banner-title {
+                font-size: 20px !important;
+                line-height: normal !important;
+                margin-top: 0px;
+                color: #fff;
+                text-shadow: none !important;
+                font-weight: 700;
+                text-transform: uppercase;
+                margin-bottom: 0 !important;
+            }
+
+            .text {
+                font-size: 12px !important;
+                line-height: normal !important;
+                color: #fff;
+                font-weight: 400;
+                margin-bottom: 0 !important;
+            }
+
+            .carousel-caption {
+                position: absolute;
+                right: 15%;
+                bottom: 0px !important;
+                left: 12% !important;
+                top: 0% !important;
+                z-index: 10;
+                padding-top: 20px;
+                padding-bottom: 20px;
+                color: #fff;
+                text-align: left;
+            }
+
+            .navbar-collapse {
+                padding-left: 20px;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 0rem 1rem;
+            }
+
+            ul.navbar-nav.mr-auto {
+                margin-left: 0px !important;
+            }
+        }
+    </style>
+    <style>
+        a.nav-link {
+            color: #4c4a4a;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0px;
+        }
+
+
+        ul.navbar-nav.mr-auto {
+            margin-left: 50px;
+        }
+
+        .lottery-result .section-header {
+            margin-bottom: 40px;
+            margin-top: 50px;
+        }
+
+        .features-section {
+            padding: 90px 0px 100px;
+        }
+
+        .lettery-carousel .col-md-4 {
+            width: 100%;
+            display: inline;
+            padding: 0 30px;
+        }
+
+        .header-top-area-inner {
+            width: 20%;
+            float: left;
+        }
+
+        .header-section {
+            background: #6c0092;
+            padding: 10px 0;
+        }
+
+        .header-wrapper {
+            position: relative;
+            left: 5%;
+        }
+
+        .owl-controls {
+            display: none;
+        }
+
+        .jackpot-item.text-center {
+            margin-bottom: 60px;
+        }
+
+        .single-ticket {
+            border: 1px solid #f5f5f5;
+            position: relative;
+            display: block;
+            overflow: hidden;
+            padding: 30px 20px;
+            margin: 0 20px;
+            text-align: center;
+            background: #fff;
+            border-radius: 3px;
+            margin-bottom: 30px;
+        }
+    </style>
+    <style>
+        a.cmn-btn {
+            cursor: pointer;
+        }
+
+        .section-padding {
+            padding-top: 50px;
+            padding-bottom: 120px;
+            background: #f5f5f5;
+        }
+
+        button.close {
+            border: 0;
+            background: #fff;
+            opacity: 1;
+            padding: 10px 18px;
+            border-radius: 50%;
+            position: relative;
+            top: 30px;
+            z-index: 99;
+            left: 15px;
+            cursor: pointer !important;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            right: 15%;
+            bottom: 20px;
+            left: 10%;
+            top: 10%;
+            z-index: 10;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            color: #fff;
+            text-align: left;
+        }
+
+        .modal-dialog {
+            max-width: 900px;
+            margin: 1.75rem auto;
+        }
+
+        .header-wrapper {
+            position: relative;
+            left: 5%;
+        }
+
+        select,
+        input,
+        textarea,
+        button {
+            width: auto;
+        }
+
+        .babe_search_results_filters {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid;
+            border-bottom-color: #e5e5e5;
+            display: flex;
+            -webkit-box-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            align-items: center;
+            font-size: 14px;
+        }
+
+            .babe_search_results_filters .count-posts {
+                margin-right: auto;
+            }
+
+            .babe_search_results_filters .filter-sort {
+                -webkit-box-align: center;
+                align-items: center;
+            }
+
+        .online-ticket-section button.cmn-btn {
+            margin-top: 30px;
+            width: 200px;
+            border: none;
+        }
+
+        .modal-body {
+            background: #700596;
+        }
+
+        .modal-footer {
+            display: block !important;
+            background: bisque;
+        }
+
+        .header-top-area-inner {
+            width: 20%;
+            float: left;
+        }
+        /* .header-section {
+                                                  background: #6c0092;
+                                                  padding: 10px 0;
+                                                } */
+        .header-section {
+            background: #ffffff;
+            padding: 10px 0;
+        }
+
+        .header-wrapper .menu li a {
+            color: #4c4a4a;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0px;
+        }
+
+        .online-ticket-section .jackpot-item {
+            margin-bottom: 100px;
+        }
+
+        .main-search-field {
+            background: #fff;
+            padding-bottom: 30px;
+        }
+
+        .col-lg-12.no-pds {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        .hvr-bounce-to-right {
+            display: inline-block;
+            vertical-align: middle;
+            width: 100%;
+            margin-top: 1.5rem;
+            font-size: 14px;
+            cursor: pointer !important;
+            background: #6c0092;
+            color: #ffffff;
+            text-transform: uppercase;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 5px;
+            transition: all 0.5s ease;
+        }
+
+        .widget-boxed {
+            border-radius: 6px;
+            padding: 1.5rem;
+            transform: translate3d(0, 0, 0);
+            z-index: 90;
+            margin-bottom: 0px;
+            position: relative;
+            border: 1px solid #eaeff5;
+            box-shadow: 0 0 10px 1px rgb(71 85 95 / 8%);
+        }
+
+        .banner-subtitle {
+            font-size: 36px;
+            line-height: 46px;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 0px;
+            text-transform: uppercase;
+        }
+
+        .banner-title {
+            font-size: 90px;
+            line-height: 100px;
+            margin-top: 0px;
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            text-shadow: 0px 10px 0px rgb(49 64 71 / 15%);
+        }
+
+        .text {
+            font-size: 22px;
+            line-height: 33px;
+            color: #fff;
+            font-weight: 400;
+            margin-bottom: 25px;
+        }
+
+
+        .custom-button2 {
+            background-image: linear-gradient( 0deg, #f4ba2e 0%, #fea036 100%);
+            border-style: solid;
+            border-width: 1px;
+            border-color: #fea036;
+            border-radius: 5px;
+            box-shadow: 0px 3px 2px 0px rgb(32 29 30 / 25%);
+            font-size: 16px;
+            line-height: 26px;
+            color: #ffffff;
+            display: inline-block;
+            cursor: pointer;
+            width: auto;
+            height: auto;
+        }
+    </style>
+    <script type="text/javascript">
+        function Loader(_value) {
+            if (_value) {
+                document.getElementById("preloader").style.display = "block";
+            }
+            else {
+                document.getElementById("preloader").style.display = "none";
+            }
+            setTimeout(function () { document.getElementById("preloader").style.display = "none"; }, 30000);
+        }
+    </script>
+    <!-- Google tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-237628863-1">
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-237628863-1');
+    </script>
+</head>
+<body>
+    <!-- ==========Preloader========== -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-icon">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <!-- ==========Preloader========== -->
+    <!-- ==========Overlay========== -->
+    <div class="overlay"></div>
+    <a href="#" class="scrollToTop">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <!-- ==========Overlay========== -->
+    <!-- ==========Header-Section========== -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <img src="/assets/images/logo.png" alt="" class="logo-res" />
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    @*<li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","Playgame")">Play Game</a>
+                        </li>*@
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Lottery","Home")">SCRATCH-CARDS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Contact","Home")">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("About","Home")">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Agent","Home")">Become-An-Agent</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="log-reg-area">
+                        <div class="dropdown">
+                            @if (UserSession != null && UserSession.Id > 0)
+                            {
+                                <button type="button" class="btn custom-button1 dropdown-toggle" data-toggle="dropdown">
+                                    @if (!string.IsNullOrEmpty(UserSession.profilepicture))
+                                    {
+                                        <img style="width: 15px;border-radius: 50%;" src="@UserSession.profilepicture" alt="">
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                    }
+                                    @UserSession.name
+                                </button>
+                                if (UserSession.UserType == (int)UserType.Agent || UserSession.UserType == (int)UserType.MobileAgent)
+                                {
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="@Url.Action("Index","Dashboard",new { area="Agent"})">Dashboard</a>
+                                        <a class="dropdown-item" href="@Url.Action("Logout","Account",new { area=""})">Logout</a>
+                                    </div>
+                                }
+                                else if (UserSession.UserType == (int)UserType.SuperAgent)
+                                {
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="@Url.Action("Index","SuperDashboard",new { area="SuperAgent"})">Dashboard</a>
+                                        <a class="dropdown-item" href="@Url.Action("Logout","Account",new { area=""})">Logout</a>
+                                    </div>
+                                }
+                                else if (UserSession.UserType == (int)UserType.Nationallottery)
+                                {
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="@Url.Action("Index","NationallotteryDashboard",new { area="Nationallottery"})">Dashboard</a>
+                                        <a class="dropdown-item" href="@Url.Action("Logout","Account",new { area=""})">Logout</a>
+                                    </div>
+                                }
+                                else if (UserSession.UserType == (int)UserType.Users)
+                                {
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="@Url.Action("Index","UserDashboard",new { area="User"})">Dashboard</a>
+                                        <a class="dropdown-item" href="@Url.Action("Logout","Account",new { area=""})">Logout</a>
+                                    </div>
+                                }
+                                else if (UserSession.UserType == (int)UserType.Admin || UserSession.UserType == (int)UserType.Staff)
+                                {
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="@Url.Action("Index","AdminDashboard",new { area="Admin"})">Dashboard</a>
+                                        <a class="dropdown-item" href="@Url.Action("Logout","Account",new { area=""})">Logout</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="@Url.Action("Index","UserDashboard",new { area="User"})">Dashboard</a>
+                                        <a class="dropdown-item" href="@Url.Action("Logout","Account",new { area=""})">Logout</a>
+                                    </div>
+                                }
+
+                            }
+                            else
+                            {
+                                <a class="custom-button2" href="@Url.Action("Login","Account")">Login</a>
+                                <button type="button" class="btn custom-button1 dropdown-toggle" data-toggle="dropdown">
+                                    Register
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="@Url.Action("SignUp","Account")">User Registration</a>
+                                    <a class="dropdown-item" href="@Url.Action("AgentSignUp","Account")">Agent Registration</a>
+                                </div>
+
+                            }
+
+                        </div>
+
+                        @*<a href="@Url.Action("PayStackPayment","Payment")" class="custom-button2">Register</a>*@
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/scripts/alertify.js"></script>
+    <script src="~/assets/js/modernizr-3.6.0.min.js"></script>
+    <script src="~/assets/js/plugins.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/magnific-popup.min.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/countdown.min.js"></script>
+    <script src="~/assets/js/bootstrap-popover-x.min.js"></script>
+    <script src="~/assets/js/amd.js"></script>
+    <script src="~/assets/js/nice-select.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <div>
+        @RenderBody()
+    </div>
+    <!-- ==========Newslater-Section========== -->
+    <footer class="footer-section">
+        <div class="container">
+            <div class="footer-links">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-top-area">
+                            <div class="left">
+                                <a href="https://www.apple.com/in/app-store/">
+                                    <img src="/assets/images/app_store_btn.png" alt="" />
+                                </a>
+                                <a href="https://play.google.com/store/games?utm_source=apac_med&utm_medium=hasem&utm_content=Oct0121&utm_campaign=Evergreen&pcampaignid=MKT-EDR-apac-in-1003227-med-hasem-py-Evergreen-Oct0121-Text_Search_BKWS-BKWS%7CONSEM_kwid_43700065205026418_creativeid_535350509939_device_c&gclid=CjwKCAjw7vuUBhBUEiwAEdu2pM3flfl0U9YkSaQ2VseYNXCi0Kuie6dekLRwzglJmS0L-riNEnMSSRoC6VUQAvD_BwE&gclsrc=aw.ds">
+                                    <img src="/assets/images/goole_play_btn.png" alt="" />
+                                </a>
+                            </div>
+                            <div class="right">
+                                <ul class="links">
+                                    <li>
+                                        <a href="/Home/About">About</a>
+                                    </li>
+                                    <li>
+                                        <a href="/Home/faq">FAQs</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Contact</a>
+                                    </li>
+                                    <li>
+                                        <a href="/Home/termsandservice">Terms of Service</a>
+                                    </li>
+                                    <li>
+                                        <a href="/Home/privacypolicy">Privacy</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <hr class="hr2" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 align-self-center">
+                        <div class="copyr-text">
+                            <span> Copyright © @DateTime.UtcNow.Year. All Rights Reserved By </span>
+                            <a href="#">Quickbet Nigeria</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 align-self-center">
+                        @*<ul class="footer-social-links">
+                            <li>
+                            <a href="#">
+                            <i class="fab fa-twitter"></i>
+                            </a>
+                            </li>
+                            <li>
+                            <a href="#">
+                            <i class="fab fa-facebook-f"></i>
+                            </a>
+                            </li>
+                            <li>
+                            <a href="#">
+                            <i class="fab fa-instagram"></i>
+                            </a>
+                            </li>
+                            <li>
+                            <a href="#">
+                            <i class="fab fa-dribbble"></i>
+                            </a>
+                            </li>
+                            </ul>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    @*<script src="assets/js/jquery-3.3.1.min.js"></script>*@
+
+    @*<script src="~/Scripts/bootstrap.min.js"></script>*@
+</body>
+</html>

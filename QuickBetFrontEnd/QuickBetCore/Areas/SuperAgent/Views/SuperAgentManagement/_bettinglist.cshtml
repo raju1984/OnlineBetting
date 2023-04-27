@@ -1,0 +1,38 @@
+﻿@model IEnumerable<QuickBetCore.Areas.Agent.Data.BettingViewModel>
+@using QuickBetCore.Models;
+<table class="table data-tables" id="datatable" style="width:100%">
+    <thead>
+        <tr>
+            <th>Customer Name</th>
+            <th>Agent Name</th>
+            <th>Game Name</th>
+            <th>Bet Amount</th>
+            <th>Commision Earned</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.customername</td>
+                    <td>@item.agentname</td>
+                    <td>
+                        @item.gamename
+                    </td>
+                    <td>
+                        @ApplicationVariable.currencysymbol @item.betamount
+                    </td>
+                    <td>
+                        @ApplicationVariable.currencysymbol   @item.quikbetcommision
+                    </td>
+                    <td>@item.datetime</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
